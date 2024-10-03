@@ -1,0 +1,103 @@
+body {
+    margin: 0px !important;
+    padding: 0px !important;
+    height: 100%;
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 16px;
+    font-variation-settings:
+        "slnt" 0,
+        "wdth" 100,
+        "GRAD" 0,
+        "XOPQ" 96,
+        "XTRA" 468,
+        "YOPQ" 79,
+        "YTAS" 750,
+        "YTDE" -203,
+        "YTFI" 738,
+        "YTLC" 514,
+        "YTUC" 712;
+}
+
+html {
+    height: 100%;
+}
+
+#imagenLogin {
+    background-image: url("../FuentesCorp-Platform/images/Bkgrd_Login.jpg");
+    background-size: cover;
+}
+
+#contenedor {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#rows-cont {
+    height: 100%;
+}
+
+#sidebar {
+    background-color: #23479E;
+}
+
+#head-menu {
+    width: 337.250px;
+    height: 158px;
+}
+
+#profileIcon {
+    width: 96px;
+}
+
+#main-cont {
+    background-color: #FFFFFF;
+    height: 100%;
+}
+
+#head-tab {
+    height: 47px;
+    background-color: #4468C1;
+}
+
+#navtab {
+    background-color: #D9D9D9;
+}
+
+#carrusel{
+    height: 300px;
+}
+
+.Subtitulo {
+    color: #4468C1;
+}
+
+.celda_Item {
+    background-color: #F8F9FA;
+    padding-left: 8px;
+}
+
+input::placeholder {
+    color: green;
+}
+
+/* Works on Firefox */
+#sideBarItem {
+    scrollbar-width: thin;
+    scrollbar-color: #4468C1 #23479E;
+}
+
+/* Works on Chrome, Edge, and Safari */
+#sideBarItem::-webkit-scrollbar {
+    width: 12px;
+}
+
+#sideBarItem::-webkit-scrollbar-track {
+    background: #23479E;
+}
+
+#sideBarItem::-webkit-scrollbar-thumb {
+    background-color: #4468C1;
+    border-radius: 20px;
+    border: 3px solid #23479E;
+}
