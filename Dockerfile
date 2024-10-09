@@ -7,7 +7,7 @@ ENV MYSQL_PASSWORD=TheFuentes2024
 ENV MYSQL_DB=The-Fuentes_Corp
 
 # Copiar el archivo de configuración de MySQL
-COPY mysql.conf /etc/mysql/conf.d/
+COPY my.ini /etc/mysql/my.cnf
 
 # Exponer el puerto de MySQL
 EXPOSE 3306
