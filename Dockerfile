@@ -1,9 +1,28 @@
 FROM php:7.2-apache
+
+# Agregar la configuración de MySQL
+ENV MYSQL_HOST=34.174.107.198
+ENV MYSQL_USER=the-fuentes-corp
+ENV MYSQL_PASSWORD=TheFuentes2024
+ENV MYSQL_DB=The-Fuentes_Corp
+
+# Copiar el archivo de configuración de MySQL
+COPY mysql.conf /etc/mysql/conf.d/
+
+# Exponer el puerto de MySQL
+EXPOSE 3306
+
+# Configurar Apache para que utilice la base de datos MySQL
+RUN sed -i 's/localhost/${MYSQL_HOST}/g' /etc/apache2/apache2.conf
+
+# Copiar el código de la aplicación
 COPY ./ /var/www/html/
-ENV APACHE_RUN_USER=www-data
-ENV APACHE_RUN_GROUP=www-data
+
+# Configurar Apache para que utilice el puerto 8080
 ENV APACHE_LISTEN_PORT=8080
 EXPOSE 8080
+
+# Iniciar Apache
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 
 
