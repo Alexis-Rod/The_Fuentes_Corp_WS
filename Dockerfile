@@ -12,6 +12,9 @@ COPY my.ini /etc/mysql/my.cnf
 # Exponer el puerto de MySQL
 EXPOSE 3306
 
+# Instalar el módulo php-mysql
+RUN apt-get update && apt-get install -y php-mysql
+
 # Configurar Apache para que utilice la base de datos MySQL
 RUN sed -i 's/localhost/${MYSQL_HOST}/g' /etc/apache2/apache2.conf
 
