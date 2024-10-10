@@ -20,5 +20,9 @@ ENV MYSQL_DATABASE The-Fuentes_Corp
 ENV MYSQL_USER the-fuentes-corp
 ENV MYSQL_PASSWORD TheFuentes2024
 
-# Expon el puerto 8080
+# ...
 EXPOSE 8080
+
+# Agrega la directiva ENTRYPOINT y CMD para especificar el punto de entrada principal
+ENTRYPOINT ["php", "-S", "0.0.0.0:8080"]
+CMD ["login.php"]
