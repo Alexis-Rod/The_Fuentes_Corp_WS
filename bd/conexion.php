@@ -1,17 +1,18 @@
 <?php
-    class Conexion{
-        public static function Conectar(){
-            define('servidor', '34.174.107.198');
-            define('nombre_bd', 'fuentes_group');
-            define('usuario', 'the-fuentes-corp');
-            define('password', 'TheFuentes2024');
-            $opciones = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');
-            try{
-                $conexion = new PDO("mysql:host=".servidor."; dbname=".nombre_bd,usuario,password,$opciones);
-                return $conexion;
-            }catch(Exception $e){
-                die("El error de conexion es: ". $e->getMessage());
-            }
+class Conexion {
+    public static function Conectar() {
+        $host = getenv('DB_HOST') ?: '34.174.107.198'; // IP de tu Cloud SQL
+        $dbname = getenv('DB_NAME') ?: 'fuentes_group';
+        $username = getenv('DB_USER') ?: 'the-fuentes-corp';
+        $password = getenv('DB_PASSWORD') ?: 'TheFuentes2024';
+
+        try {
+            $conexion = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+            $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conexion;
+        } catch(PDOException $e) {
+            die("El error de conexion es: " . $e->getMessage());
         }
     }
+}
 ?>

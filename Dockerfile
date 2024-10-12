@@ -1,28 +1,19 @@
-# Utiliza una imagen oficial de PHP 8.2 como base
-FROM php:8.2-fpm
+FROM php:7.4-apache
 
-# Establece el directorio de trabajo en /app
-WORKDIR /app
+# Instalar extensiones PHP necesarias
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Copia el código de la aplicación en el contenedor
-COPY . /app
+# Habilitar mod_rewrite para Apache
+RUN a2enmod rewrite
 
-# Instala las extensiones de PHP requeridas
-RUN apt-get update && apt-get install -y libzip-dev zip && \
-    docker-php-ext-install mysqli pdo pdo_mysql
+# Copiar los archivos de la aplicación
+COPY . /var/www/html/
 
-# Configura PHP para escuchar en el puerto 8080
-RUN echo "listen = 8080" >> /usr/local/etc/php/php.ini
+# Establecer permisos adecuados
+RUN chown -R www-data:www-data /var/www/html
 
-# Configura la conexión a la base de datos MySQL
-ENV MYSQL_HOST 34.174.107.198
-ENV MYSQL_DATABASE The-Fuentes_Corp
-ENV MYSQL_USER the-fuentes-corp
-ENV MYSQL_PASSWORD TheFuentes2024
+# Exponer el puerto 80
+EXPOSE 80
 
-# ...
-EXPOSE 8080
-
-# Agrega la directiva ENTRYPOINT y CMD para especificar el punto de entrada principal
-ENTRYPOINT ["php", "-S", "0.0.0.0:8080"]
-CMD ["login.php"]
+# Comando para iniciar Apache
+CMD ["apache2-foreground"]

@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+       - "8080:80"  # Cambiado de "80:80" a "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_HOST=34.174.107.198
+      - DB_USER=the-fuentes-corp
+      - DB_PASSWORD=TheFuentes2024
+      - DB_NAME=The-Fuentes_Corp
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: TheFuentes2024
+      MYSQL_DATABASE: The-Fuentes_Corp
+      MYSQL_USER: the-fuentes-corp
+      MYSQL_PASSWORD: TheFuentes2024
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
