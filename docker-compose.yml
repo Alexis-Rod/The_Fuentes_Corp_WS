@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-       - "8080:80"  # Cambiado de "80:80" a "8080:80"
+      - "8080:80"
     volumes:
       - ./:/var/www/html
     environment:
@@ -12,6 +12,7 @@ services:
       - DB_USER=the-fuentes-corp
       - DB_PASSWORD=TheFuentes2024
       - DB_NAME=The-Fuentes_Corp
+      - PORT=8080
 
   db:
     image: mysql:5.7
