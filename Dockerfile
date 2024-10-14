@@ -13,7 +13,7 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html
 
 # Exponer el puerto 80
-EXPOSE 80
+EXPOSE 8080
 
 # Comando para iniciar Apache
 CMD ["apache2-foreground"]
