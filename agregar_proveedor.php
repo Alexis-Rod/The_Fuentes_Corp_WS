@@ -8,7 +8,7 @@ include_once 'validarSesion.php';
     <meta charset="utf8">
     <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no" />
     <link rel="icon" type="image/jpg" href="./images/TheFuenteIcon.png" />
-    <!--llamar a la extension de sweet alert-->
+    <!--llamar a la extension de sweet alert.-->
     <link rel="stylesheet" href="plugins/sweetalert/sweetalert2.min.css">
     <!-- fuente de Roboto flex-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
