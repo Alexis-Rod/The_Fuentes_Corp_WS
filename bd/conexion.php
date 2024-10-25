@@ -39,7 +39,7 @@ class Conexion {
                 sprintf(
                     'No se pudo conectar a la base de datos. Verifica que ' .
                     'tu nombre de usuario y contraseña sean correctos, que la base de datos ' .
-                    'exista y esté lista para usar. El error de PDO fue: %s',
+                    '$username, $password, $dbname y $host. El error de PDO fue: %s',
                     $e->getMessage()
                 ),
                 $e->getCode(),
