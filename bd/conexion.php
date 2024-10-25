@@ -2,7 +2,7 @@
 class Conexion {
     public static function Conectar() {
         $host = getenv('DB_HOST') ?: '34.174.107.198'; // IP de tu Cloud SQL
-        $dbname = getenv('DB_NAME') ?: 'fuentes_group';
+        $dbname = getenv('DB_NAME') ?: 'The-Fuentes_Corp';
         $username = getenv('DB_USER') ?: 'the-fuentes-corp';
         $password = getenv('DB_PASSWORD') ?: 'TheFuentes2024';
 
