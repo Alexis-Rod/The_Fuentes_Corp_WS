@@ -22,7 +22,4 @@ RUN sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf /etc/a
 # Comando para iniciar Apache
 CMD ["apache2-foreground"]
 
-ENV DB_HOST=localhost
-ENV DB_USER=root
-ENV DB_PASSWORD=
-ENV DB_NAME=fuentes_group
+
