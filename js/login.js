@@ -51,7 +51,7 @@ const appLogin = new Vue({
                         icon: "success",
                         title: "Autenticacion Correcta"
                     });
-                    window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/index.php";
+                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/index.php";
                 }
                 else {
                     const Toast = Swal.mixin({
