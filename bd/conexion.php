@@ -5,7 +5,6 @@ use PDO;
 use PDOException;
 use RuntimeException;
 use TypeError;
-
 class Conexion
 {
     public static function Conectar(): PDO
@@ -14,12 +13,12 @@ class Conexion
         $dbname = 'The-Fuentes_Corp';
         $username = 'the-fuentes-corp';
         $password = 'TheFuentes2024';
-        $cloud_sql_connection_name = "the-fuentes-corporations:us-south1:the-fuentes-corp";
+        $cloud_sql_connection_name = getenv("CLOUD_SQL_CONNECTION_NAME");
         $socket_dir = getenv('DB_SOCKET_DIR') ?:'/cloudsql';
 
         try {
             // Configuración del DSN para la conexión
-            $dsn = sprintf('mysql:dbname=%s;unix_socket=%s%s', $dbname,'/cloudsql',"the-fuentes-corporations:us-south1:the-fuentes-corp");
+            $dsn = sprintf('mysql:dbname=%s;unix_socket=%s%s', $dbname, $socket_dir,$cloud_sql_connection_name);
 
             // Crear la conexión a la base de datos
             $conexion = new PDO($dsn, $username, $password);
