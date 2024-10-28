@@ -14,7 +14,7 @@ class Conexion
         $dbname = 'The-Fuentes_Corp';
         $username = 'the-fuentes-corp';
         $password = 'TheFuentes2024';
-        $cloud_sql_connection_name = getenv("CLOUD_SQL_CONNECTION_NAME");
+        $cloud_sql_connection_name = "the-fuentes-corporations:us-south1:the-fuentes-corp";
         $socket_dir = getenv('DB_SOCKET_DIR') ?:'/cloudsql';
 
         try {
