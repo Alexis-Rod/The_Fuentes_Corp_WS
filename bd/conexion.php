@@ -12,18 +12,16 @@ class Conexion
     public static function Conectar(): PDO
     {
         // Obtener las credenciales de las variables de entorno
-        $host = getenv('DB_HOST') ?: '34.174.107.198'; // IP de tu Cloud SQL
-        $dbname = getenv('DB_NAME') ?: 'The-Fuentes_Corp';
-        $username = getenv('DB_USER') ?: 'the-fuentes-corp';
-        $password = getenv('DB_PASSWORD') ?: 'TheFuentes2024';
-        define('servidor', 'localhost');
-        define('nombre_bd', 'fuentes_group');
-        define('usuario', 'root');
-        define('password', '');
+        $host = '34.174.107.198'; // IP de tu Cloud SQL
+        $dbname = 'The-Fuentes_Corp';
+        $username = 'the-fuentes-corp';
+        $password = 'TheFuentes2024';
+        $cloud_sql_conenction_name = 'the-fuentes-corporations:us-south1:the-fuentes-corp';
+        $socket_dir = '/cloudsql';
 
         try {
             // Configuración del DSN para la conexión
-            $dsn = sprintf('mysql:dbname=%s;host=%s', $dbname, $host);
+            $dsn = sprintf('mysql:dbname=%s;unix_socket=%s%s', $dbname, $socket_dir,$cloud_sql_conenction_name);
 
             // Crear la conexión a la base de datos
             $conexion = new PDO($dsn, $username, $password);
