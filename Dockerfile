@@ -1,7 +1,8 @@
 FROM php:8.2-apache
 
 # Instalar extensiones PHP necesarias
-RUN docker-php-ext-install pdo 
+RUN docker-php-ext-install -j $(nproc) opcache
+RUN docker-php-ext-install -j $(nproc) pdo_mysql
 
 # Habilitar mod_rewrite para Apache
 RUN a2enmod rewrite
