@@ -4,7 +4,7 @@ header("Content-Disposition: attachment; filename=Presion_de Gastos_".date('Y:m:
 header("Pragma: no-cache");
 header("Expires: 0");
 include_once 'conexion.php';
-$objeto = new Conexion();
+$objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
 $conexion = $objeto->Conectar();
 
 //Conexion con axios, por parametro POST
