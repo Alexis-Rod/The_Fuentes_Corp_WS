@@ -19,7 +19,7 @@ class Conexion
 
         try {
             // Configuración del DSN para la conexión
-            $dsn = sprintf('mysql:dbname=%s;unix_socket=%s%s', $dbname, $socket_dir,$cloud_sql_connection_name);
+            $dsn = sprintf('mysql:dbname=%s;unix_socket=%s%s', $dbname,'/cloudsql',"the-fuentes-corporations:us-south1:the-fuentes-corp");
 
             // Crear la conexión a la base de datos
             $conexion = new PDO($dsn, $username, $password);
