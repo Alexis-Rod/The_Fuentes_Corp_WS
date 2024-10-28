@@ -44,7 +44,7 @@ const appRequesition = new Vue({
         },
         irPresion(idPresion) {
             localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/presiones.php";
+            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
         },
         asignarDiaySamana() {
             this.semana = localStorage.getItem("Semana");

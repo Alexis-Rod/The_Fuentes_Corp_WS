@@ -153,7 +153,7 @@ const appRequesition = new Vue({
         },
         irPresion: function (idPresion) {
             localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/presiones.php";
+            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
         },
         getWeekNumber: function (date) {
             const onejan = new Date(date.getFullYear(), 0, 1);
