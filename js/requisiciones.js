@@ -13,7 +13,7 @@ const appRequesition = new Vue({
     methods: {
         ConsultarItemRq: async function (idRq) {
             localStorage.setItem("idRequisicion", idRq);
-            window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/items_requisicion.php";
+            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/items_requisicion.php";
         },
         listarRequisiciones: function (idPresion) {
             axios.post(url, { accion: 1, id_Presion: idPresion }).then(response => {
@@ -48,7 +48,7 @@ const appRequesition = new Vue({
         },
         irPresion(idPresion) {
             localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app//presiones.php";
+            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
         }
     },
     created: function () {
