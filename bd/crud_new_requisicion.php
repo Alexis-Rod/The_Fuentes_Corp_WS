@@ -29,7 +29,7 @@ $time = (isset($_POST['time'])) ? $_POST['time'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaSolicitud', '$id_user', '$time', 'Requesiciones')";
+        $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaSolicitud', 0, '$time', 'Requesiciones')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "SELECT `presiones_nombre`,`presiones_hojas` FROM `presiones` WHERE `presiones_id` = " . $id_presion;
