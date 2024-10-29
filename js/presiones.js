@@ -135,7 +135,7 @@ const appRequesition = new Vue({
             dia = dia < 10 ? '0' + dia : dia;
             var fechaActual = fecha.getFullYear() + "-" + mes + "-" + dia;
             console.log("Name user es "+localStorage.getItem("NameUser"));
-            axios.post(url, { accion: 3, alias: this.alias, semana: this.semana, dia: this.dia, clave: this.clave, time: this.timeNow, fecha: fechaActual, user_creado: this.NameUser, obra: localStorage.getItem("obraActiva") }).then(response => {
+            axios.post(url, { accion: 3, alias: this.alias, semana: this.semana, dia: this.dia, clave: this.clave, time: this.timeNow, fecha: fechaActual, user_creado: localStorage.getItem("NameUser"), obra: localStorage.getItem("obraActiva") }).then(response => {
                 console.log(response.data);
             });
         },
