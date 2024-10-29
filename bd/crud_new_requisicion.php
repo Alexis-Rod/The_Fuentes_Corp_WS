@@ -49,7 +49,7 @@ switch ($accion) {
         foreach ($datos as $item) {
             $Unidad = $item->Unidad;
             $Producto =  $item->Nombre;
-            $Precio = (double)$item->UnitedPrice;
+            $Precio = (float)$item->UnitedPrice;
             $IVA = $item->IVA;
             $Ret = $item->Retenciones;
             $cantidad = $item->Cantidad;
