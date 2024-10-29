@@ -21,13 +21,13 @@ const appRequesition = new Vue({
             switch (Accion) {
                 case 1:
                     localStorage.setItem("IdPresion", idPresion);
-                    window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/requisiciones.php";
+                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/requisiciones.php";
                     break;
                 case 2:
                     localStorage.setItem("Semana", week);
                     localStorage.setItem("Dia", day);
                     localStorage.setItem("IdPresion", idPresion);
-                    window.location.href = "http://localhost/FuentesCorp/FuentesCorp-Platform/presiones_detalles.php";
+                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones_detalles.php";
                     break;
             }
 
