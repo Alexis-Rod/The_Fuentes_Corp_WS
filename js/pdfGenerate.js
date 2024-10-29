@@ -336,6 +336,9 @@ function addCommas(nStr) {
 }
 
 function formatString(inputString) {
+    if (inputString === '') {
+        return '0';
+    }
     const formattedString = inputString.match(/.{1,4}/g).join('-');
     return formattedString;
 }
