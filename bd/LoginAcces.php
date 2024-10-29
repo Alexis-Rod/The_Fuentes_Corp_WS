@@ -14,7 +14,7 @@ $dato = array(
     'user_id' => 0
 );
 
-$consulta = "SELECT `user_password`,`user_id` FROM `users` WHERE `user_password`='$Contrasena';";
+$consulta = "SELECT `user_id`, `user_password` FROM `users` WHERE `user_nameUser` = '$Usuario' AND `user_password` = '$Contrasena';";
 $resultado = $conexion->prepare($consulta);
 $resultado->execute();
 $userArr = $resultado->fetchAll(PDO::FETCH_ASSOC);
