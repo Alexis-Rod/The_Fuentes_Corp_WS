@@ -194,7 +194,7 @@ const appRequesition = new Vue({
             $("#PagoTransfs").prop('disabled', true);
             console.log(ItemElement);
             console.log(this.Items);
-            console.log("Hola " + JSON.stringify(this.Items));
+            console.log("Hola " + JSON.stringify(this.Items) + "Forma de Pago: " + this.formaPago);
         },
         validarProv: async function (selected_Provedor) {
             axios.post(url, { accion: 4, id_prov: selected_Provedor }).then(response => {
