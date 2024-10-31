@@ -120,12 +120,12 @@ include_once 'validarSesion.php';
             <div class="container px-5">
                 <div class="row">
                     <div class="col-6">
-                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">Menu de la Obra: </h2>
+                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de la Obra: </h2>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-dark m-2 mt-5 mb-3">Selecciona la Accion que haras sobre la obra.</p>
+                        <p class="text-dark m-2 mb-3">Selecciona la Accion que haras sobre la obra.</p>
                     </div>
                 </div>
             </div>
