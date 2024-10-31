@@ -74,15 +74,23 @@ const appRequesition = new Vue({
                 title: "¿Quieres guardar la Requisicion?",
                 showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "Guardar",
-                denyButtonText: `No Guardar`
+                confirmButtonText: "Guardar y Salir",
+                denyButtonText: `Guardar`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                     this.guardarRequisicion(localStorage.getItem("IdPresion"));
-                    Swal.fire("La requisicion fue guardada con Exito", "", "success");
+                    Swal.fire("La requisición fue guardada con éxito", "", "success").then(() => {
+                        // Redirigir a otra página
+                        window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/requisiciones.php"; // Cambia esto por la URL de tu página
+                    });
                 } else if (result.isDenied) {
-                    Swal.fire("No se guardo la requisicion", "", "info");
+                    // Acción para "Guardar"
+                    this.guardarRequisicion(localStorage.getItem("IdPresion"));
+                    Swal.fire("La requisición fue guardada con éxito", "", "success").then(() => {
+                        // Se recarga la pagian
+                        window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/nueva_requisicion.php"; // Cambia esto por la URL de tu página
+                    });
                 }
             });
         },
@@ -92,7 +100,7 @@ const appRequesition = new Vue({
                 'Unidad': "",
                 'Cantidad': "",
                 'UnitedPrice': "",
-                'IVA':"",
+                'IVA': "",
                 'Retenciones': "",
                 'bandFlete': false,
                 'bandFisico': false,
@@ -120,7 +128,7 @@ const appRequesition = new Vue({
                             this.RetResico = document.getElementById("RetencionRESICO").checked,
                         ];
                     }
-                    else{
+                    else {
                         return [
                             ItemElement['Nombre'] = document.getElementById("Producto").value,
                             ItemElement['Unidad'] = document.getElementById("Unidad").value,
@@ -172,7 +180,7 @@ const appRequesition = new Vue({
                     ItemElement['bandResico'] = true;
                 }
                 this.IVA = aux * 0.16;
-                this.retenciones = this.indexFisica + this.indexFlete + this.indexResico; 
+                this.retenciones = this.indexFisica + this.indexFlete + this.indexResico;
                 ItemElement['IVA'] = this.IVA;
                 ItemElement['Retenciones'] = this.retenciones;
                 ItemElement['STotal'] = aux - this.retenciones + this.IVA;
@@ -185,7 +193,7 @@ const appRequesition = new Vue({
             this.SubTotal = this.SubTotal + Number.parseFloat(ItemElement['STotal']);
             this.Subtotal_Mostrar = Number.parseFloat(this.SubTotal).toFixed(2);
             this.Item_Lote++;
-            var HtmlTableRow = '<tr><th scope="row" class="py-3 celda_Item">' + this.Item_Lote + '</th><td class="py-3 celda_Item">' + ItemElement['Unidad'] + '</td><td class="py-3 celda_Item text-break">' + ItemElement['Nombre'] + '</td><td class="py-3 celda_Item">' + ItemElement['Cantidad'] + '</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['UnitedPrice']).toFixed(2) + '</td><td class="py-3 celda_Item">+ $' + Number.parseFloat(this.IVA).toFixed(2) + '</td><td class="py-3 celda_Item">- $'+Number.parseFloat(this.retenciones).toFixed(2)+'</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['STotal']).toFixed(2) + '</td></tr>';
+            var HtmlTableRow = '<tr><th scope="row" class="py-3 celda_Item">' + this.Item_Lote + '</th><td class="py-3 celda_Item">' + ItemElement['Unidad'] + '</td><td class="py-3 celda_Item text-break">' + ItemElement['Nombre'] + '</td><td class="py-3 celda_Item">' + ItemElement['Cantidad'] + '</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['UnitedPrice']).toFixed(2) + '</td><td class="py-3 celda_Item">+ $' + Number.parseFloat(this.IVA).toFixed(2) + '</td><td class="py-3 celda_Item">- $' + Number.parseFloat(this.retenciones).toFixed(2) + '</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['STotal']).toFixed(2) + '</td></tr>';
             $('#Tabla_Items').append(HtmlTableRow);
             ItemElement['Lote'] = this.Item_Lote;
             this.Items.unshift(ItemElement);
@@ -233,13 +241,13 @@ const appRequesition = new Vue({
             this.timeNow = this.getTime();
             const fecha = new Date();
             var year = fecha.getFullYear();
-            var mes = fecha.getMonth()+1;
+            var mes = fecha.getMonth() + 1;
             var dia = fecha.getDate();
-            mes = mes < 10 ? '0'+ mes: mes ;
-            dia = dia < 10 ? '0'+ dia: dia ;
-            FechaReq = year+"-"+mes+"-"+dia;
-            console.log(this.Items+" Forma de Pago "+this.FormaPago);
-            axios.post(url, { accion: 1 , time: this.timeNow,  id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), id_Presion: idPresion, observaciones: this.observaciones }).then(response => {
+            mes = mes < 10 ? '0' + mes : mes;
+            dia = dia < 10 ? '0' + dia : dia;
+            FechaReq = year + "-" + mes + "-" + dia;
+            console.log(this.Items + " Forma de Pago " + this.FormaPago);
+            axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), id_Presion: idPresion, observaciones: this.observaciones }).then(response => {
                 console.log(response.data);
             });
         },
@@ -250,8 +258,8 @@ const appRequesition = new Vue({
                 console.log(this.users);
             });
         },
-        listarObras: function(){
-            axios.post(url, { accion: 6}).then(response => {
+        listarObras: function () {
+            axios.post(url, { accion: 6 }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
             });
@@ -264,10 +272,9 @@ const appRequesition = new Vue({
 
             const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-           return formattedTime;
+            return formattedTime;
         },
-        irPresion(idPresion)
-        {
+        irPresion(idPresion) {
             localStorage.setItem("obraActiva", idPresion);
             window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
         }
