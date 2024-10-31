@@ -25,7 +25,7 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>Inicio:: The Fuentes Corporation</title>
 </head>
 
 <body style="display: flex;">

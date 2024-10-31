@@ -25,7 +25,7 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>Menu de Obras</title>
 </head>
 
 <body style="display: flex;">
@@ -83,9 +83,13 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-catalago" role="tabpanel" aria-labelledby="v-pills-catalago-tab">
-                                <li>
-                                    <a href="agregar_proveedor.php" class="nav-link text-white ms-4" aria-current="page">PROVEEDORES</a>
+                                <li class="breadcrumb-item">
+                                    <a href="./index.php">
+                                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                                        <span>Inicio</span>
+                                    </a>
                                 </li>
+                                <li class="breadcrumb-item"><span>Menu de la Obra </span></li>
                             </ul>
                         </div>
                     </li>
@@ -115,7 +119,11 @@ include_once 'validarSesion.php';
                 </ol>
             </nav>
             <div class="container px-5">
-                
+                <div class="row">
+                    <div class="col-6">
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">Menu de la Obra: </h2>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
