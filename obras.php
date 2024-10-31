@@ -128,6 +128,14 @@ include_once 'validarSesion.php';
                         <p class="text-dark m-2 mb-3">Selecciona la Accion que haras sobre la obra.</p>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="btn-outline-primary"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="btn-outline-primary"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
