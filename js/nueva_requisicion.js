@@ -61,13 +61,11 @@ const appRequesition = new Vue({
             if (this.PagoTrans == false) {
                 this.PagoTrans = true;
                 this.FormaPago = "Transferencia";
-                console.log(this.FormaPago);
                 this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LTS">LITROS</option><option value="SER">SERVICIO</option><option value="MES">MENSUALIDAD</option><option value="RENTA">RENTA</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';
             }
             else {
                 this.PagoTrans = false;
                 this.FormaPago = "Efectivo";
-                console.log(this.FormaPago);
                 this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LTS">LITROS</option><option value="SER">SERVICIO</option><option value="MES">MENSUALIDAD</option><option value="RENTA">RENTA</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /></div>';
             }
         },
@@ -196,7 +194,6 @@ const appRequesition = new Vue({
             $("#PagoTransfs").prop('disabled', true);
             console.log(ItemElement);
             console.log(this.Items);
-            console.log("Hola " + JSON.stringify(this.Items) + "Forma de Pago: " + this.FormaPago);
         },
         validarProv: async function (selected_Provedor) {
             axios.post(url, { accion: 4, id_prov: selected_Provedor }).then(response => {
@@ -241,7 +238,7 @@ const appRequesition = new Vue({
             mes = mes < 10 ? '0'+ mes: mes ;
             dia = dia < 10 ? '0'+ dia: dia ;
             FechaReq = year+"-"+mes+"-"+dia;
-            console.log(this.Items);
+            console.log(this.Items+" Forma de Pago "+this.FormaPago);
             axios.post(url, { accion: 1 , time: this.timeNow,  id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), id_Presion: idPresion, observaciones: this.observaciones }).then(response => {
                 console.log(response.data);
             });
