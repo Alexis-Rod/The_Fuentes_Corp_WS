@@ -83,13 +83,9 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-catalago" role="tabpanel" aria-labelledby="v-pills-catalago-tab">
-                                <li class="breadcrumb-item">
-                                    <a href="./index.php">
-                                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
-                                        <span>Inicio</span>
-                                    </a>
+                                <li>
+                                    <a href="agregar_proveedor.php" class="nav-link text-white ms-4" aria-current="page">PROVEEDORES</a>
                                 </li>
-                                <li class="breadcrumb-item"><span>Menu de la Obra </span></li>
                             </ul>
                         </div>
                     </li>
@@ -112,10 +108,13 @@ include_once 'validarSesion.php';
             </nav>
             <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
                 <ol class="breadcrumb py-2 px-3 my-0">
-                    <li class="breadcrumb-item active d-flex align-items-center">
-                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
-                        <span>Inicio</span>
+                    <li class="breadcrumb-item">
+                        <a href="./index.php">
+                            <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                            <span>Inicio</span>
+                        </a>
                     </li>
+                    <li class="breadcrumb-item"><span>Presiones de {{this.obras[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
             <div class="container px-5">
