@@ -293,6 +293,17 @@ const appRequesition = new Vue({
                 <option value="DISEÑO">DISEÑO</option>
                 <option value="PIEZAS">PIEZAS</option>
                 <option value="BULTOS">BULTOS</option>
+                <option value="PESOS">PESOS</option>
+                <option value="LITROS">LITROS</option>
+                <option value="SERVICIOS">SERVICIOS</option>
+                <option value="MESUALIDAD">MESUALIDAD</option>
+                <option value="RENTA">RENTA</option>
+                <option value="CUBETAS">CUBETAS</option>
+                <option value="TONELADAS">TONELADAS</option>
+                <option value="METROS">METROS</option>
+                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                <option value="KILOGRAMOS">KILOGRAMOS</option>
               </select>
         </div>
         <div class="col-4">
@@ -350,10 +361,21 @@ const appRequesition = new Vue({
             <div class="col-4">
                 <label for="unidad" class="form-label">Unidad</label>
                 <select class="form-select" id="unidad" aria-label="Default select example">
-                    <option value="" selected>Selecciona la Cantidad</option>
-                    <option value="DISEÑO">DISEÑO</option>
-                    <option value="PIEZAS">PIEZAS</option>
-                    <option value="BULTOS">BULTOS</option>
+                <option value="" selected>Selecciona la Cantidad</option>
+                <option value="DISEÑO">DISEÑO</option>
+                <option value="PIEZAS">PIEZAS</option>
+                <option value="BULTOS">BULTOS</option>
+                <option value="PESOS">PESOS</option>
+                <option value="LITROS">LITROS</option>
+                <option value="SERVICIOS">SERVICIOS</option>
+                <option value="MESUALIDAD">MESUALIDAD</option>
+                <option value="RENTA">RENTA</option>
+                <option value="CUBETAS">CUBETAS</option>
+                <option value="TONELADAS">TONELADAS</option>
+                <option value="METROS">METROS</option>
+                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                <option value="KILOGRAMOS">KILOGRAMOS</option>
                   </select>
             </div>
             <div class="col-4">
