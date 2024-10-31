@@ -130,10 +130,10 @@ include_once 'validarSesion.php';
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <button type="button" class="btn btn-outline-primary">Primary</button>
+                        <button type="button" class="btn btn-outline-primary mx-auto">Presiones</button>
                     </div>
                     <div class="col-6">
-                        <button type="button" class="btn btn-outline-primary">Primary</button>
+                        <button type="button" class="btn btn-outline-primary mx-auto">Requisiciones</button>
                     </div>
                 </div>
             </div>
