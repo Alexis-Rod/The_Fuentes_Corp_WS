@@ -111,6 +111,7 @@ const appRequesition = new Vue({
                     title: 'Presion Agregada'
                 })
                 this.agregarPresion();
+                window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
             }
         },
         listarPresiones: function (obrasId) {
