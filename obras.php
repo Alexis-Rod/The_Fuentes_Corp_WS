@@ -114,13 +114,18 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><span>Presiones de {{this.obras[0].obras_nombre}}</span></li>
+                    <li class="breadcrumb-item"><span>Menu de la Obra {{this.obras[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
             <div class="container px-5">
                 <div class="row">
                     <div class="col-6">
                         <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">Menu de la Obra: </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p class="text-dark m-2 mt-5 mb-3">Selecciona la Accion que haras sobre la obra.</p>
                     </div>
                 </div>
             </div>
