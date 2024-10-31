@@ -44,7 +44,7 @@ const appRequesition = new Vue({
         retenciones: 0,
         //Datos Generales
         PagoTrans: true,
-        FormaPago: "Efectivo",
+        FormaPago: "Transferencia",
         Date_Req: "",
         IVA: 0,
         Total_Pagar: 0,
