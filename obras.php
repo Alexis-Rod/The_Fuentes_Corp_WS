@@ -129,11 +129,17 @@ include_once 'validarSesion.php';
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-outline-primary mx-auto" @click="enterPresiones">Presiones</button>
+                <div class="col-4 d-grid">
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterPresiones">
+                            <img class="me-2" src="images/icons/requisiciones.svg" alt="user-icon" height="100" width="100">
+                            <span class="h3 d-block mt-2 mb-0"><strong>Presiones</strong></span>
+                        </button>
                     </div>
-                    <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-outline-primary mx-auto"  @click="enterRequisiciones" >Requisiciones</button>
+                    <div class="col-4 d-grid">
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterRequisiciones">
+                            <img class="me-2" src="images/icons/presiones.svg" alt="user-icon" height="100" width="100">
+                            <span class="h3 d-block mt-2 mb-0"><strong>Requisiciones</strong></span>
+                        </button>
                     </div>
                 </div>
             </div>
