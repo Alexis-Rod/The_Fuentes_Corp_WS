@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-$objeto = new /*\Google\Cloud\Samples\CloudSQL\MySQL\*/Conexion();
+$objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
 $conexion = $objeto->Conectar();
 
 //Conexion con axios, por parametro POST
