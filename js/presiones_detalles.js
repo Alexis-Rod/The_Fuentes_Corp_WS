@@ -1,4 +1,5 @@
 var url = "bd/crud_presionDetail.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppPresionDetail",
@@ -42,36 +43,33 @@ const appRequesition = new Vue({
                 console.log(this.obraActiva);
             });
         },
-        irPresion(idPresion) {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
         },
         asignarDiaySamana() {
             this.semana = localStorage.getItem("Semana");
             this.dia = localStorage.getItem("Dia");
         },
-        ordenarDatosPresion(dataArray)
-        {
+        ordenarDatosPresion(dataArray) {
             var auxRow = {
-                'clave' : "",
-                'requisicion' : "",
-                'proveedor' : "",
-                'concepto' : [],
-                'adeudo' : "",
-                'neto' : "",
-                'observaciones' : [],
-                'formaPago' : ""
+                'clave': "",
+                'requisicion': "",
+                'proveedor': "",
+                'concepto': [],
+                'adeudo': "",
+                'neto': "",
+                'observaciones': [],
+                'formaPago': ""
             };
             var AuxArray = [];
 
-            for(var i = 0;i < dataArray.length; i++)
-            {
-                
+            for (var i = 0; i < dataArray.length; i++) {
+
             }
         },
-        cargarDataTable: function()
-        {
-            let table = new DataTable('#example',{
+        cargarDataTable: function () {
+            let table = new DataTable('#example', {
                 "order": [],
                 "language": {
                     "sProcessing": "Procesando...",
@@ -123,17 +121,16 @@ const appRequesition = new Vue({
 
             const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-           return formattedTime;
+            return formattedTime;
         },
-        AplicarItem: function(id,parcial, fecha, banco){
+        AplicarItem: function (id, parcial, fecha, banco) {
             //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
             var estatus = "LIQUIDADO";
             this.timeNow = this.getTime();
-            if(parcial > 0)
-            {
+            if (parcial > 0) {
                 estatus = "PAGO PARCIAL"
             }
-            axios.post(url, { accion: 5,  idReq: id , time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus }).then(response => {
+            axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus }).then(response => {
                 console.log(response.data);
             });
             const Toast = Swal.mixin({
@@ -147,9 +144,8 @@ const appRequesition = new Vue({
                 title: 'Se Actualizo los datos'
             })
         },
-        exportarExcel: function()
-        {
-            axios.post(url, { accion: 6 , export: ""}).then(response => {
+        exportarExcel: function () {
+            axios.post(url, { accion: 6, export: "" }).then(response => {
                 console.log(response.data);
             });
         }

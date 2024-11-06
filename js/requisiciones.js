@@ -1,4 +1,5 @@
 var url = "bd/crud_Requisiciones.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppPresion",
@@ -6,17 +7,27 @@ const appRequesition = new Vue({
         requisiciones: [],
         presiones: [],
         obras: [],
+        obrasLista: [],
         requisicion: "",
         NameUser: "",
-        gastosTotalPresion: 0
+        gastosTotalPresion: 0,
+        nombreRequisicion: "",
+        fechaGeneracion: "",
+        clave: ""
     },
     methods: {
         ConsultarItemRq: async function (idRq) {
             localStorage.setItem("idRequisicion", idRq);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/items_requisicion.php";
+            window.location.href = url2 + "/hojas_requisicion.php";
         },
-        listarRequisiciones: function (idPresion) {
-            axios.post(url, { accion: 1, id_Presion: idPresion }).then(response => {
+        infoObraActiva: function (obrasId) {
+            axios.post(url, { accion: 3, obra: obrasId }).then(response => {
+                this.obras = response.data;
+                console.log(this.obras);
+            });
+        },
+        listarRequisiciones: function (idObra) {
+            axios.post(url, { accion: 1, obra: idObra }).then(response => {
                 this.requisiciones = response.data;
                 console.log(this.requisiciones);
             });
@@ -28,35 +39,95 @@ const appRequesition = new Vue({
                 console.log(this.users);
             });
         },
-        cargarDatosPresion: function (idPresion) {
-            axios.post(url, { accion: 3, id_Presion: idPresion }).then(response => {
-                this.presiones = response.data;
-                console.log(this.presiones);
-            });
-        },
-        obtenerTotalPresion: function (idPresion) {
-            axios.post(url, { accion: 4, id_Presion: idPresion }).then(response => {
-                this.gastosTotalPresion = response.data[0].totalPresion;;
-                console.log(this.gastosTotalPresion);
-            });
-        },
         listarObras: function () {
             axios.post(url, { accion: 5 }).then(response => {
-                this.obras = response.data;
-                console.log(this.obras);
+                this.obrasLista = response.data;
+                console.log(this.obrasLista);
             });
         },
-        irPresion(idPresion) {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
+        },
+        addRequisicion: async function () {
+            const { value: formValues } = await Swal.fire({
+                title: "Nueva Requisicion",
+                html: `
+                    <div class="col">
+                        <hr/>
+                        <form id="requisicionForm">
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col d-flex flex-column">
+                                    <label class="text-start py-2" for="nombreRequisicion">Nombre de la Requisición</label>
+                                    <input type="text" class="form-control" id="nombreRequisicion" placeholder="Ingrese el nombre de la requisición" required>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col d-flex flex-column">
+                                    <label class="text-start py-2" for="fechaGeneracion">Fecha de Generación</label>
+                                    <input type="date" class="form-control" id="fechaGeneracion" required>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col d-flex flex-column">
+                                    <label for="Clv" class="text-start py-2">Clave</label>
+                                    <select class="form-select" aria-label="Default select example" id="Clv">
+                                        <option>Selecciona Clave</option>
+                                        <option value="MAT">MAT -Material</option>
+                                        <option value="EQH">EQH -Equipo/Maquinaria</option>
+                                        <option value="IND">IND -Indirectos</option>
+                                        <option value="MO">MO -Mano de Obra</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <hr/>
+                    </div>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Agregar',
+                confirmButtonColor: '#0d6efd',
+                cancelButtonColor: '#dc3545',
+                preConfirm: () => {
+                    this.nombreRequisicion = document.getElementById("nombreRequisicion").value;
+                    this.fechaGeneracion = document.getElementById("fechaGeneracion").value;
+                    this.clave = document.getElementById("Clv").value;
+
+                    if (!this.nombreRequisicion  || !this.fechaGeneracion || this.clave === "Selecciona Clave") {
+                        Swal.showValidationMessage('Por favor completa todos los campos');
+                        return false;
+                    }
+                    return true;
+                }
+            });
+
+            if (formValues) {
+                // Lógica para solo "Agregar"
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Requisicion Agregada'
+                });
+               this.newRequisicion();
+            }
+        },
+        newRequisicion: function(){
+            axios.post(url, { accion: 6, nombreReq: this.nombreRequisicion, fechaReq: this.fechaGeneracion, clave: this.clave, obra: localStorage.getItem("obraActiva") }).then(response => {
+                console.log(response.data);
+            });
         }
     },
     created: function () {
         this.listarObras();
-        this.listarRequisiciones(localStorage.getItem("IdPresion"));
-        this.obtenerTotalPresion(localStorage.getItem("IdPresion"));
-        this.cargarDatosPresion(localStorage.getItem("IdPresion"));
+        this.listarRequisiciones(localStorage.getItem("obraActiva"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
+        this.infoObraActiva(localStorage.getItem("obraActiva"));
         $('#example').DataTable({
             "order": [],
             "language": {

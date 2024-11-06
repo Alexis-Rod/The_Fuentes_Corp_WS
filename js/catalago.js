@@ -1,30 +1,30 @@
 var url = "bd/crud_catalago.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppCatalague",
     data: {
-      users: [],
-      obras: [],
-      NameUser: ""
+        users: [],
+        obras: [],
+        NameUser: ""
     },
     methods: {
-        consultarUsuario: function(user_id){
-            axios.post(url, { accion: 1, id_user: user_id}).then(response => {
+        consultarUsuario: function (user_id) {
+            axios.post(url, { accion: 1, id_user: user_id }).then(response => {
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
             });
         },
-        listarObras: function(){
-            axios.post(url, { accion: 2}).then(response => {
+        listarObras: function () {
+            axios.post(url, { accion: 2 }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
             });
         },
-        irPresion(idPresion)
-        {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
         }
     },
     created: function () {

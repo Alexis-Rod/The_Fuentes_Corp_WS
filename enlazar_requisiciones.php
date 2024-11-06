@@ -25,11 +25,11 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>Inicio:: The Fuentes Corporation</title>
+    <title>ENLAZAR REQUISICIONES</title>
 </head>
 
 <body style="display: flex;">
-    <div id="AppIndex">
+    <div id="AppPresion">
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -52,7 +52,7 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obras">
+                                <li v-for="obra in this.obrasLista">
                                     <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
@@ -108,59 +108,68 @@ include_once 'validarSesion.php';
             </nav>
             <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
                 <ol class="breadcrumb py-2 px-3 my-0">
-                    <li class="breadcrumb-item active d-flex align-items-center">
-                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
-                        <span>Inicio</span>
+                    <li class="breadcrumb-item">
+                        <a href="./index.php">
+                            <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                            <span>Inicio</span>
+                        </a>
                     </li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra: {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presiones de {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>Relacion de Requisiciones</span></li>
                 </ol>
             </nav>
-            <div class="container px-5">
+            <div class="container px-5 overflow-auto">
                 <div class="row">
-                    <!-- <div id="carrusel" class="bg-primary w-100 mt-4"></div> -->
-                    <!-- <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        </div>
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="./images/carousel/img1.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>First slide label</h5>
-                                    <p>Some representative placeholder content for the first slide.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="./images/carousel/img2.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Second slide label</h5>
-                                    <p>Some representative placeholder content for the second slide.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="./images/carousel/img3.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Third slide label</h5>
-                                    <p>Some representative placeholder content for the third slide.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div> -->
+                    <div class="col">
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">REQUISICIONES DISPONIBLES DE LA OBRA DE {{this.obras[0].obras_nombre}}</h2>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col">
-
+                        <p class="text-dark m-2 mb-3">Las Requisiciones de la Obra de {{this.obras[0].obras_nombre}} se enlistan en la siguiente tabla estan disponibles para su adicción de la Presion "{{this.presiones[0].presiones_nombre}}"</p>
                     </div>
                 </div>
+                <div class="row mb-5">
+                    <div class="col">
+                        <table id="example" class="table table-hover w-100">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Numero de Requisicion</th>
+                                    <th scope="col">Numero de Hoja</th>
+                                    <th scope="col">Clave</th>
+                                    <th scope="col">Estatus</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light" id="Tabla_Items">
+                                <tr class="my-3" v-for="(req,indice) of requisiciones">
+                                    <td scope="row">{{req.requisicion_Numero}}</td>
+                                    <td>Hoja N° {{req.hojaRequisicion_numero}}</td>
+                                    <td>{{req.requisicion_Clave}}</td>
+                                    <td>
+                                        <span class="badge bg-danger" v-if="req.hojaRequisicion_estatus == 'PENDIENTE'">PENDIENTE DE PAGO</span>
+                                        <span class="badge bg-success" v-if="req.hojaRequisicion_estatus == 'PAGADO'">PAGADO</span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" @click="enlazarConPresion(req.hojaRequisicion_id, req.requisicion_id,req.requisicion_Numero, req.hojaRequisicion_numero)">
+                                            Enlazar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-dark">
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- <div class="row w-100 mt-0 mb-3 mx-auto">
+                    <div class="col px-0 d-flex justify-content-center">
+                        <button class="btn btn-success" @click="" title="Agregar Requisicion">
+                            <span class="text-center">Enlazar Requisiciones con la Presion "{{this.presiones[0].presiones_nombre}}"</span>
+                        </button>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -183,7 +192,7 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!-- scripts constume-->
-    <script src="./js/index.js"></script>
+    <script src="./js/enlazar_requisiciones.js"></script>
 </body>
 
 </html>

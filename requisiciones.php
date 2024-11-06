@@ -25,7 +25,7 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>REQUISICIONES</title>
 </head>
 
 <body style="display: flex;">
@@ -52,8 +52,8 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obras">
-                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irPresion(obra.obras_id)">{{obra.obras_nombre}}</a>
+                                <li v-for="obra in this.obrasLista">
+                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -114,44 +114,24 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presiones</span></a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><span>Requisiciones de la Presion {{presiones[0].presiones_nombre}}</span></li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra: {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>Requisiciones de la Obra de {{this.obras[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
             <div class="container px-5 overflow-auto">
                 <div class="row">
                     <div class="col-8">
-                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">REQUISICIONES DE LA PRESION {{presiones[0].presiones_nombre}}</h2>
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">REQUISICIONES DE LA OBRA DE {{this.obras[0].obras_nombre}}</h2>
                     </div>
                     <div class="col-4 d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-success ms-auto">
-                            <a href="./nueva_requisicion.php"><span class="fw-bold text-white">Agregar Nueva Requisicion</span></a>
+                            <span class="fw-bold text-white" @click="addRequisicion" >Agregar Nueva Requisicion</span>
                         </button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-4">
-                        <label for="" class="fs-6">Creado por: <span class="text-primary">{{presiones[0].presiones_userCreado}}</span></label>
-                    </div>
-                    <div class="col-4">
-                        <label for="" class="fs-6">Feche de creacion: <span class="text-primary">{{presiones[0].presiones_fechaCreacion}}</span></label>
-                    </div>
-                    <div class="col-4">
-                        <label for="" class="fs-6">Gastos de la Obra: <span class="text-primary">${{gastosTotalPresion}}</span></label>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-4">
-                        <label for="" class="fs-6">Prevalidado por: <span class="text-primary">{{presiones[0].presiones_userValidado}}</span></label>
-                    </div>
-                    <div class="col-4">
-                        <label for="" class="fs-6">Estatus: <span class="text-primary">{{presiones[0].presiones_estatus}}</span></label>
-                    </div>
-                    <div class="col-2">
-                        <label for="" class="fs-6">Semana: <span class="text-primary">{{presiones[0].presiones_semana}}</span></label>
-                    </div>
-                    <div class="col-2">
-                        <label for="" class="fs-6">DIa: <span class="text-primary">{{presiones[0].presiones_dia}}</span></label>
+                    <div class="col">
+                        <p class="text-dark m-2 mb-3">Las Requisiciones de la Obra de {{this.obras[0].obras_nombre}} se enlistan en la siguiente tabla</p>
                     </div>
                 </div>
                 <div class="row mb-5">
@@ -159,36 +139,21 @@ include_once 'validarSesion.php';
                         <table id="example" class="table table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
+                                    <th scope="col">Numero de Requisicion</th>
+                                    <th scope="col">Nombre</th>
                                     <th scope="col">Clave</th>
-                                    <th scope="col">Numero de Factura</th>
-                                    <th scope="col">Adeudo</th>
-                                    <th scope="col">Forma de Pago</th>
                                     <th scope="col">Estatus</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(req,indice) of requisiciones">
-                                    <!--<td scope="row">123</td>
-                                    <td>Presion Cactus_I</td>
-                                    <td>22</td>
-                                    <td>Lunes</td>
-                                    <td><span class="badge bg-danger">Danger</span></td>
+                                    <td scope="row">{{req.requisicion_Numero}}</td>
+                                    <td>{{req.requisicion_Nombre}}</td>
+                                    <td>{{req.requisicion_Clave}}</td>
                                     <td>
-                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <button type="button" class="btn btn-danger">C</button>
-                                            <button type="button" class="btn btn-warning">E</button>
-                                            <button type="button" class="btn btn-success">X</button>
-                                        </div>
-                                    </td>-->
-                                    <td scope="row"></td>
-                                    <td>{{req.requisicion_Numero}}</td>
-                                    <td>${{req.requisicion_total}}</td>
-                                    <td>{{req.requisicion_formaPago}}</td>
-                                    <td>
-                                        <span class="badge bg-danger" v-if="req.requisicion_estatus == 'PENDIENTE'">Pendiente</span>
-                                        <span class="badge bg-success" v-if="req.requisicion_estatus == 'LIQUIDADO'">Liquidado</span>
-                                        <span class="badge bg-warning" v-if="req.requisicion_estatus == 'REVISION'">Revision</span>
+                                        <span class="badge bg-danger" v-if="req.requisicion_estatus == 'ABIERTO'">ABIERTO</span>
+                                        <span class="badge bg-success" v-if="req.requisicion_estatus == 'CERRADO'">CERRADO</span>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">

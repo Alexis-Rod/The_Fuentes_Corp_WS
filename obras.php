@@ -52,8 +52,8 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obras">
-                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irPresion(obra.obras_id)">{{obra.obras_nombre}}</a>
+                                <li v-for="obra in this.obrasLista">
+                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -119,8 +119,8 @@ include_once 'validarSesion.php';
             </nav>
             <div class="container px-5">
                 <div class="row">
-                    <div class="col-6">
-                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de la Obra: </h2>
+                    <div class="col-12">
+                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de la Obra: {{this.obras[0].obras_nombre}}</h2>
                     </div>
                 </div>
                 <div class="row">
@@ -130,10 +130,10 @@ include_once 'validarSesion.php';
                 </div>
                 <div class="row">
                     <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-outline-primary mx-auto">Presiones</button>
+                        <button type="button" class="btn btn-outline-primary mx-auto" @click="enterPresiones">Presiones</button>
                     </div>
                     <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-outline-primary mx-auto">Requisiciones</button>
+                        <button type="button" class="btn btn-outline-primary mx-auto"  @click="enterRequisiciones" >Requisiciones</button>
                     </div>
                 </div>
             </div>

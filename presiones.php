@@ -53,7 +53,7 @@ include_once 'validarSesion.php';
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
                                 <li v-for="obra in this.obrasLista">
-                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irPresion(obra.obras_id)">{{obra.obras_nombre}}</a>
+                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -114,6 +114,7 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra: {{this.obras[0].obras_nombre}}</span></a></li>
                     <li class="breadcrumb-item"><span>Presiones de {{this.obras[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
@@ -149,7 +150,7 @@ include_once 'validarSesion.php';
                                     <td scope="row">{{presion.presiones_alias}}</td>
                                     <td>{{presion.presiones_semana}}</td>
                                     <td>{{presion.presiones_dia}}</td>
-                                    <td><span class="badge bg-danger">Pendiente</span></td>
+                                    <td><span class="badge bg-danger">PENDIENTE</span></td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <div class="btn-group dropdown" role="group">
@@ -160,8 +161,8 @@ include_once 'validarSesion.php';
                                                     </svg>
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                    <li><a class="dropdown-item" href="#" @click="ConsultarPresion(presion.presiones_id,1,0,0)">Vista Requisiciones</a></li>
-                                                    <li><a class="dropdown-item" href="#" @click="ConsultarPresion(presion.presiones_id,2,presion.presiones_semana,presion.presiones_dia)">Vista Resumen Presion</a></li>
+                                                    <li><a class="dropdown-item" href="#" @click="ConsultarPresion(presion.presiones_id,1,0,0)">Enlazar Requisiciones</a></li>
+                                                    <li><a class="dropdown-item" href="#" @click="ConsultarPresion(presion.presiones_id,2,presion.presiones_semana,presion.presiones_dia)">Detalles de la Presion</a></li>
                                                 </ul>
                                             </div>
                                             <!-- <button type="button" class="btn btn-danger">

@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-$objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
+$objeto = new /*\Google\Cloud\Samples\CloudSQL\MySQL\*/ Conexion();
 $conexion = $objeto->Conectar();
 
 //Conexion con axios, por parametro POST
@@ -31,34 +31,17 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fecha', 0, '$time', 'Presiones')";
+        /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fecha', 0, '$time', 'Presiones')";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
+        $resultado->execute(); */
         $consulta = "SELECT `obras_nombre`,`ciudadesObras_codigo` FROM `obras` JOIN estadosobra ON estadosobra.ciudadesObras_id = obras.obras_cuidad WHERE `obras_id` = '$obra'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        $nombre_presion = $data[0]['ciudadesObras_codigo'] . "-" . $data[0]['obras_nombre'];
-        $consulta = "SELECT * FROM `presiones` WHERE `presiones_clave` LIKE '$clave' AND `presiones_obra` = '$obra'";
+        $nombre_presion = $data[0]['obras_nombre'] . "-" . $semana . "-" . $dia;
+        $consulta = "INSERT INTO `presiones` (`presiones_id`, `presiones_nombre`, `presiones_alias`, `presiones_semana`, `presiones_dia`, `presiones_adeudo`, `presiones_fechaCreacion`, `presiones_gastosObra`, `presiones_obra`, `presiones_userCreado`, `presiones_userValidado`, `presiones_estatus`) VALUES (NULL, '$nombre_presion', '$alias', '$semana', '$dia', '0', '$fecha', '0', '$obra', '$user_creado', '', 'PENDIENTE')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        if (count($data) == 0) {
-            $nombre_presion = $nombre_presion . "-" . $clave . "-000";
-            $consulta = "INSERT INTO `presiones` (`presiones_id`, `presiones_nombre`, `presiones_alias`, `presiones_semana`, `presiones_dia`, `presiones_clave`, `presiones_adeudo`, `presiones_fechaCreacion`, `presiones_gastosObra`, `presiones_obra`, `presiones_userCreado`, `presiones_userValidado`, `presiones_folio`, `presiones_hojas`, `presiones_estatus`) VALUES (NULL, '$nombre_presion', '$alias', '$semana', '$dia', '$clave', '0', '$fecha', '0', '$obra', '$user_creado', '', '0', '1', 'PENDIENTE')";
-            $resultado = $conexion->prepare($consulta);
-            $resultado->execute();
-        } else {
-            $consulta = "SELECT `presiones_folio` FROM `presiones` WHERE `presiones_clave` =  '$clave';";
-            $resultado = $conexion->prepare($consulta);
-            $resultado->execute();
-            $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-            $folio = $data[count($data) - 1]['presiones_folio'] + 1;
-            $nombre_presion = $nombre_presion . "-" . $clave . "-" . convertFolio($folio);
-            $consulta = "INSERT INTO `presiones` (`presiones_id`, `presiones_nombre`, `presiones_alias`, `presiones_semana`, `presiones_dia`, `presiones_clave`, `presiones_adeudo`, `presiones_fechaCreacion`, `presiones_gastosObra`, `presiones_obra`, `presiones_userCreado`, `presiones_userValidado`, `presiones_folio`, `presiones_hojas`, `presiones_estatus`) VALUES (NULL, '$nombre_presion', '$alias', '$semana', '$dia', '$clave', '0', '$fecha', '0', '$obra', '$user_creado', '', '$folio', '1', 'PENDIENTE')";
-            $resultado = $conexion->prepare($consulta);
-            $resultado->execute();
-        }
         break;
     case 4:
         $consulta = "SELECT `obras_nombre` FROM `obras` WHERE `obras_id` =" . $obra;

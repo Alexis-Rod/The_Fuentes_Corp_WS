@@ -53,7 +53,7 @@ include_once 'validarSesion.php';
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
                                 <li v-for="obra in this.obrasLista">
-                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irPresion(obra.obras_id)">{{obra.obras_nombre}}</a>
+                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -114,15 +114,16 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presion</span></a></li>
-                    <li class="breadcrumb-item"><a href="./requisiciones.php"><span>Requisiciones</span></a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><span>{{requisicion[0].requisicion_Numero}}</span></li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu Obras</span></a></li>
+                    <li class="breadcrumb-item"><a href="./requisiciones.php"><span>Requisiciones de la Obra</span></a></li>
+                    <li class="breadcrumb-item"><a href="./hojas_requisicion.php"><span>Hojas de la Requisicion</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>{{this.Numero_Req}} HOJA N° {{hojas[0].hojaRequisicion_numero}} </span></li>
                 </ol>
             </nav>
             <div class="container px-5 overflow-auto">
                 <div class="row">
                     <div class="col-6">
-                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">DETALLES DE LA REQUISICION {{requisicion[0].requisicion_Numero}}</h2>
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">DETALLES DE LA REQUISICION {{this.Numero_Req}} HOJA NUMERO {{hojas[0].hojaRequisicion_numero}}</h2>
                     </div>
                     <div class="col-6 d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-danger ms-auto" @click="imprimirReq">
@@ -132,7 +133,7 @@ include_once 'validarSesion.php';
                 </div>
                 <div class="row card border-primary">
                     <div class="card-header">
-                        <h5 class="card-title">Encabezado de la Requisicion {{requisicion[0].requisicion_Numero}}</h5>
+                        <h5 class="card-title">Encabezado de la Requisicion {{this.Numero_Req}} Hoja Numero {{hojas[0].hojaRequisicion_numero}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mt-3">
@@ -145,7 +146,7 @@ include_once 'validarSesion.php';
                                 <p class="card-subtitle mb-2 text-muted">Clave de la Requisicion: <span class="text-primary">{{this.clve}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Fecha de la Solicitud: <span class="text-primary">{{requisicion[0].requisicion_fechaSolicitud}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Fecha de la Solicitud: <span class="text-primary">{{hojas[0].hojaRequisicion_FechaSolicitud}}</span></p>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -156,26 +157,26 @@ include_once 'validarSesion.php';
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Nombre de la Empresa: <span class="text-primary">{{requisicion[0].emisor_nombre}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Nombre de la Empresa: <span class="text-primary">{{hojas[0].emisor_nombre}}</span></p>
                             </div>
                             <div class="col-4">
-                                <p class="card-subtitle mb-2 text-muted">RFC: <span class="text-primary">{{requisicion[0].emisor_rfc}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">RFC: <span class="text-primary">{{hojas[0].emisor_rfc}}</span></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Direccion: <span class="text-primary">{{requisicion[0].emisor_direccion}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Direccion: <span class="text-primary">{{hojas[0].emisor_direccion}}</span></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Telefono: <span class="text-primary">{{requisicion[0].emisor_telefono}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Telefono: <span class="text-primary">{{hojas[0].emisor_telefono}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Fax: <span class="text-primary">{{requisicion[0].emisor_fax}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Fax: <span class="text-primary">{{hojas[0].emisor_fax}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Codigo Postal: <span class="text-primary">{{requisicion[0].emisor_zipCode}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Codigo Postal: <span class="text-primary">{{hojas[0].emisor_zipCode}}</span></p>
                             </div>
                         </div>
                         <hr class="my-2">
@@ -186,35 +187,35 @@ include_once 'validarSesion.php';
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Nombre de la Empresa: <span class="text-primary">{{requisicion[0].proveedor_nombre}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Nombre de la Empresa: <span class="text-primary">{{hojas[0].proveedor_nombre}}</span></p>
                             </div>
                             <div class="col-4">
-                                <p class="card-subtitle mb-2 text-muted">RFC: <span class="text-primary">{{requisicion[0].proveedor_rfc}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">RFC: <span class="text-primary">{{hojas[0].proveedor_rfc}}</span></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">CLABE Bancaria: <span class="text-primary">{{requisicion[0].proveedor_clabe}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">CLABE Bancaria: <span class="text-primary">{{hojas[0].proveedor_clabe}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Cuenta Bancaria: <span class="text-primary">{{requisicion[0].proveedor_numeroCuenta}} </span></p>
+                                <p class="card-subtitle mb-2 text-muted">Cuenta Bancaria: <span class="text-primary">{{hojas[0].proveedor_numeroCuenta}} </span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Banco: <span class="text-primary">{{requisicion[0].proveedor_banco}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Banco: <span class="text-primary">{{hojas[0].proveedor_banco}}</span></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Referencia Bancaria: <span class="text-primary">{{requisicion[0].proveedor_refBanco}} </span></p>
+                                <p class="card-subtitle mb-2 text-muted">Referencia Bancaria: <span class="text-primary">{{hojas[0].proveedor_refBanco}} </span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Correo electronico: <span class="text-primary">{{requisicion[0].proveedor_email}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Correo electronico: <span class="text-primary">{{hojas[0].proveedor_email}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Telefono: <span class="text-primary">{{requisicion[0].proveedor_telefono}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Telefono: <span class="text-primary">{{hojas[0].proveedor_telefono}}</span></p>
                             </div>
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Sucursal Bancaria: <span class="text-primary">{{requisicion[0].proveedor_sucursal}}</span></p>
+                                <p class="card-subtitle mb-2 text-muted">Sucursal Bancaria: <span class="text-primary">{{hojas[0].proveedor_sucursal}}</span></p>
                             </div>
                         </div>
                     </div>
@@ -241,7 +242,7 @@ include_once 'validarSesion.php';
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
-                                <tr class="my-3" v-for="(item,indice) of itemsRequisicion">
+                                <tr class="my-3" v-for="(item,indice) of itemsHoja">
                                     <td>{{item.itemRequisicion_unidad}}</td>
                                     <td>{{item.itemRequisicion_producto}}</td>
                                     <td>{{item.itemRequisicion_cantidad}}</td>

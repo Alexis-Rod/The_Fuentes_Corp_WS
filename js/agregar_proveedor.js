@@ -1,10 +1,11 @@
 var url = "bd/crud_addProveedor.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppNewProv",
     data: {
         users: [],
-        bancos:[],
+        bancos: [],
         obras: [],
         NameUser: "",
         selected_Banco: "",
@@ -21,31 +22,30 @@ const appRequesition = new Vue({
         email_prov: ""
     },
     methods: {
-        consultarUsuario: function(user_id){
-            axios.post(url, { accion: 2, id_user: user_id}).then(response => {
+        consultarUsuario: function (user_id) {
+            axios.post(url, { accion: 2, id_user: user_id }).then(response => {
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
             });
         },
-        irPresion(idPresion)
-        {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
         },
-        listarObras: function(){
-            axios.post(url, {accion: 3}).then(response => {
+        listarObras: function () {
+            axios.post(url, { accion: 3 }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
             });
         },
-        listarBancos: function(){
+        listarBancos: function () {
             axios.post(url, { accion: 1 }).then(response => {
                 this.bancos = response.data;
                 console.log(this.bancos);
             });
         },
-        agregarProveedor: async function(){
+        agregarProveedor: async function () {
             const { value: formValues } = await Swal.fire({
                 title: "¿Quieres guardar el proveedor?",
                 showDenyButton: true,
@@ -55,7 +55,7 @@ const appRequesition = new Vue({
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    axios.post(url, { accion: 4, nombre: this.nombre_prov, direccion: this.direccion_prov, rfc: this.rfc_prov, clabe: this.clabe_prov, cuenta: this.cuenta_prov, tarjeta: this.tarjeta_prov, referencia: this.referencia_prov, banco: this.selected_Banco, tipoProv: this.tipo_prov, sucursal: this.suc_prov, telefono: this.tel_prov, correo: this.email_prov}).then(response => {
+                    axios.post(url, { accion: 4, nombre: this.nombre_prov, direccion: this.direccion_prov, rfc: this.rfc_prov, clabe: this.clabe_prov, cuenta: this.cuenta_prov, tarjeta: this.tarjeta_prov, referencia: this.referencia_prov, banco: this.selected_Banco, tipoProv: this.tipo_prov, sucursal: this.suc_prov, telefono: this.tel_prov, correo: this.email_prov }).then(response => {
                         console.log(response.data);
                     });
                     Swal.fire("El proveedor fue guardada con Exito", "", "success");

@@ -53,7 +53,7 @@ include_once 'validarSesion.php';
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
                                 <li v-for="obra in this.obras">
-                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irPresion(obra.obras_id)">{{obra.obras_nombre}}</a>
+                                    <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -114,8 +114,9 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presiones</span></a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><span>Presiones de la Semana {{this.semana}} y del dia {{this.dia}} de la obra {{this.obraActiva[0].obras_nombre}}</span></li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra</span></a></li>
+                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presiones de Obra</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>Presion de la Semana {{this.semana}} y del dia {{this.dia}} de la obra {{this.obraActiva[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
             <div class="container px-5 overflow-auto">
@@ -154,15 +155,15 @@ include_once 'validarSesion.php';
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(presion,indice) of presiones">
-                                    <td scope="row">{{presion.presiones_clave}}</td>
+                                    <td scope="row">{{presion.requisicion_Clave}}</td>
                                     <td>{{presion.requisicion_Numero}}</td>
                                     <td>{{presion.proveedor_nombre}}</td>
                                     <td>{{presion.itemRequisicion_producto}}</td>
-                                    <td>{{presion.requisicion_total}}</td>
+                                    <td>{{presion.hojaRequisicion_total}}</td>
                                     <td></td>
-                                    <td>{{presion.requisicion_total}}</td>
-                                    <td>{{presion.requisicion_observaciones}}</td>
-                                    <td>{{presion.requisicion_formaPago}}</td>
+                                    <td>{{presion.hojaRequisicion_total}}</td>
+                                    <td>{{presion.hojaRequisicion_observaciones}}</td>
+                                    <td>{{presion.hojaRequisicion_formaPago}}</td>
                                     <td>
                                         <input type="date" class="form-control" id="FechaPago" v-model="presion.itemRequisicion_fechaPago">
                                     </td>

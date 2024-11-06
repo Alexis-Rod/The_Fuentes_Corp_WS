@@ -1,4 +1,5 @@
 var url = "./bd/LoginAcces.php";
+var url2 = ".";
 
 const appLogin = new Vue({
     el: "#LoginApp",
@@ -51,7 +52,7 @@ const appLogin = new Vue({
                         icon: "success",
                         title: "Autenticacion Correcta"
                     });
-                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/index.php";
+                    window.location.href = url2+"/index.php";
                 }
                 else {
                     const Toast = Swal.mixin({

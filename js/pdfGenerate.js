@@ -5,7 +5,7 @@ image.src = "./images/LogoFuentes.png";
 watermark.src = "./images/watermark.jpg"
 var ultimapagina = false;
 
-function generarPDFRequisicion(requisicion, NameUser, itemsOrdenArray, obras) {
+function generarPDFRequisicion(Numero_Req, clave, requisicion, NameUser, itemsOrdenArray, obras) {
     console.log('primera llamada');
 
     var pages = createPages(convertToArrayStrings(itemsOrdenArray));
@@ -17,7 +17,7 @@ function generarPDFRequisicion(requisicion, NameUser, itemsOrdenArray, obras) {
         //crea el encabezado de la pagina
         creaEncabezadoOrden();
         //datos de la empresa
-        datosEmpresa(requisicion);
+        datosEmpresa(Numero_Req, clave, requisicion);
         //datos del proveedor
         datosProveedor(requisicion);
         //datos complementarios
@@ -44,7 +44,7 @@ function creaEncabezadoOrden() {
     doc.line(92, 29, 92 + textWidth, 29);
     doc.text('AREA DE RECURSOS MATERIALES Y SERVICIOS GENERALES', 145, 28, 'center');
 }
-function datosEmpresa(requisicion) {
+function datosEmpresa(Numero_Req, clave, requisicion) {
     console.log('segunda llamada');
     console.log(requisicion);
     doc.setFontSize(8);
@@ -74,8 +74,8 @@ function datosEmpresa(requisicion) {
 
     doc.text('RFC', 25, 49, 'center');
     doc.text(requisicion.emisor_rfc, 115, 49, 'center');
-    doc.text(requisicion.requisicion_Numero, 237, 47, 'center');
-    doc.text('HOJA N°' + requisicion.requisicion_hojaNumero, 237, 53, 'center');
+    doc.text(Numero_Req, 237, 47, 'center');
+    doc.text('HOJA N°' + requisicion.hojaRequisicion_numero, 237, 53, 'center');
 
     doc.text('DIRECCION', 25, 59, 'center');
     doc.text(requisicion.emisor_direccion, 162, 59, 'center');
@@ -141,7 +141,7 @@ function datosProveedor(requisicion) {
     doc.text('N° TELEFONICO', 159, 91, 'center');
     doc.text(requisicion.proveedor_telefono, 199, 91, 'center');
     doc.text('MONEDA', 229, 91, 'center');
-    doc.text(requisicion.requisicion_formaPago, 262, 91, 'center');
+    doc.text(requisicion.hojaRequisicion_formaPago, 262, 91, 'center');
 
     doc.text('TERMINO DE ENTREGA', 30, 96, 'center');
     doc.text('', 167, 96, 'center');
@@ -163,7 +163,7 @@ function complementarios(requisicion, obras) {
     doc.text('OBRA', 25, 106, 'center');
     doc.text(obras.obras_nombre + ", " + obras.ciudadesObras_nombre, 115, 106, 'center');
     doc.text('FECHA DE SOLICITUD', 210, 106, 'center');
-    doc.text(requisicion.requisicion_fechaSolicitud, 257, 106, 'center');
+    doc.text(requisicion.hojaRequisicion_FechaSolicitud, 257, 106, 'center');
 
     doc.text('Sirvase por este medio para suministrar los siguientes articulos', 85, 116, 'center');
     doc.text('FECHA DE ENTREGA', 210, 116, 'center');
@@ -227,14 +227,14 @@ function itemDeOrden(ArrayString, requisicion, ultimapagina) {
         doc.rect(250, y, 35, 6, 'FD');
 
         doc.text('TOTAL', 237, (y + 6) - 2, 'center');
-        doc.text("$ " + addCommas(requisicion.requisicion_total), 267, (y + 6) - 2, 'center');
+        doc.text("$ " + addCommas(requisicion.hojaRequisicion_total), 267, (y + 6) - 2, 'center');
 
-        if (requisicion.requisicion_observaciones != "") {
+        if (requisicion.hojaRequisicion_observaciones != "") {
             doc.setFillColor(255, 234, 0);
             doc.rect(10, y + 10, 200, 12, 'F');
 
 
-            doc.text('NOTA:' + requisicion.requisicion_observaciones, 15, ((y + 10) + 7) - 2, 'left');
+            doc.text('NOTA:' + requisicion.hojaRequisicion_observaciones, 15, ((y + 10) + 7) - 2, 'left');
         }
     }
 }
@@ -248,7 +248,7 @@ function creaPieDeOrden(NameUser, requisicion, pagina, paginas) {
     doc.line(190, 190, 270, 190);
     doc.text(requisicion.emisor_nombre, 230, 193, 'center'); */
     doc.setFontStyle('bold');
-    doc.text("Esta orden la elaboro "+NameUser+" el dia "+requisicion.requisicion_fechaSolicitud+" a las 08:49", 180, 200, 'left');
+    doc.text("Esta orden la elaboro "+NameUser+" el dia "+requisicion.hojaRequisicion_FechaSolicitud+" a las 08:49", 180, 200, 'left');
     doc.text("Pagina " + pagina + " de " + paginas, 143, 200, 'center');
 }
 

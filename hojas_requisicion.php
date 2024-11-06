@@ -25,11 +25,11 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>Inicio:: The Fuentes Corporation</title>
+    <title>HOJAS DE LA REQUISICION</title>
 </head>
 
 <body style="display: flex;">
-    <div id="AppIndex">
+    <div id="AppHojas">
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -52,7 +52,7 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obras">
+                                <li v-for="obra in this.obrasLista">
                                     <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
@@ -108,57 +108,75 @@ include_once 'validarSesion.php';
             </nav>
             <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
                 <ol class="breadcrumb py-2 px-3 my-0">
-                    <li class="breadcrumb-item active d-flex align-items-center">
-                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
-                        <span>Inicio</span>
+                    <li class="breadcrumb-item">
+                        <a href="./index.php">
+                            <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                            <span>Inicio</span>
+                        </a>
                     </li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra: {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item"><a href="./requisiciones.php"><span>Requisiciones de Obra</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>Hojas de la Requisicion</span></li>
                 </ol>
             </nav>
-            <div class="container px-5">
+            <div class="container px-5 overflow-auto">
                 <div class="row">
-                    <!-- <div id="carrusel" class="bg-primary w-100 mt-4"></div> -->
-                    <!-- <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        </div>
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="./images/carousel/img1.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>First slide label</h5>
-                                    <p>Some representative placeholder content for the first slide.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="./images/carousel/img2.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Second slide label</h5>
-                                    <p>Some representative placeholder content for the second slide.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <img src="./images/carousel/img3.jpg" class="d-block w-100 h-25" alt="...">
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Third slide label</h5>
-                                    <p>Some representative placeholder content for the third slide.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
+                    <div class="col-8">
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">HOJAS DE LA REQUISICION {{this.requisiciones[0].requisicion_Numero}}</h2>
+                    </div>
+                    <div class="col-4 d-flex align-items-end mb-3">
+                        <button type="button" class="btn btn-success ms-auto">
+                            <span class="fw-bold text-white" @click="addHoja" >Agregar Nueva Hoja</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div> -->
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col">
-
+                        <p class="text-dark m-2 mb-3">Las hojas de la Requisicion: {{this.requisiciones[0].requisicion_Numero}} se enlistan en la siguiente tabla</p>
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="col">
+                        <table id="example" class="table table-hover w-100">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Numero de Hoja</th>
+                                    <th scope="col">Forma de Pago</th>
+                                    <th scope="col">Total de Pagar</th>
+                                    <th scope="col">Estatus</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light" id="Tabla_Items">
+                                <tr class="my-3" v-for="(hoja,indice) of hojas">
+                                    <td scope="row">Hoja N° {{hoja.hojaRequisicion_numero}}</td>
+                                    <td>{{hoja.hojaRequisicion_formaPago}}</td>
+                                    <td>$ {{hoja.hojaRequisicion_total}}</td>
+                                    <td>
+                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'PENDIENTE'">PENDIENTE A PAGO</span>
+                                        <span class="badge bg-warning" v-if="hoja.hojaRequisicion_estatus == 'LIGADA'">LIGADA A PRESION</span>
+                                        <span class="badge bg-success" v-if="hoja.hojaRequisicion_estatus == 'LIQUIDADA'">PAGADA</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <button type="button" class="btn btn-success" @click="ConsultarItemHoja(hoja.hojaRequisicion_id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
+                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                                </svg>
+                                            </button>
+                                            <!-- <button type="button" class="btn btn-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg>
+                                            </button> -->
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-dark">
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -183,7 +201,7 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!-- scripts constume-->
-    <script src="./js/index.js"></script>
+    <script src="./js/hojas_requisicion.js"></script>
 </body>
 
 </html>

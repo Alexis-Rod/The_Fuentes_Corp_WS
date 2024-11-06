@@ -1,34 +1,51 @@
 var url = "bd/crud_obras.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppObras",
     data: {
-      users: [],
-      obras: [],
-      NameUser: ""
+        users: [],
+        obras: [],
+        obrasLista: [],
+        NameUser: ""
     },
     methods: {
-        consultarUsuario: function(user_id){
-            axios.post(url, { accion: 1, id_user: user_id}).then(response => {
+        consultarUsuario: function (user_id) {
+            axios.post(url, { accion: 1, id_user: user_id }).then(response => {
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
             });
         },
-        listarObras: function(){
-            axios.post(url, { accion: 2}).then(response => {
+        infoObraActiva: function (obrasId) {
+            axios.post(url, { accion: 3, obra: obrasId }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
             });
         },
-        irPresion(idPresion)
+        listarObras: function () {
+            axios.post(url, { accion: 2 }).then(response => {
+                this.obrasLista = response.data;
+                console.log(this.obrasLista);
+            });
+        },
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
+        },
+        enterRequisiciones: function()
         {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+            window.location.href = url2 + "/requisiciones.php";
+        },
+        enterPresiones: function()
+        {
+            window.location.href = url2 + "/presiones.php";
         }
+        
     },
     created: function () {
         this.listarObras();
+        this.infoObraActiva(localStorage.getItem("obraActiva"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
     },
     computed: {

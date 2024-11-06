@@ -1,4 +1,5 @@
 var url = "bd/crud_Presiones.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppPresion",
@@ -21,13 +22,13 @@ const appRequesition = new Vue({
             switch (Accion) {
                 case 1:
                     localStorage.setItem("IdPresion", idPresion);
-                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/requisiciones.php";
+                    window.location.href = url2 + "/enlazar_requisiciones.php";
                     break;
                 case 2:
                     localStorage.setItem("Semana", week);
                     localStorage.setItem("Dia", day);
                     localStorage.setItem("IdPresion", idPresion);
-                    window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones_detalles.php";
+                    window.location.href = url2 + "/presiones_detalles.php";
                     break;
             }
 
@@ -64,18 +65,6 @@ const appRequesition = new Vue({
                                 </select>
                             </div>
                         </div>
-                        <div class="row form-group mx-0 my-3">
-                            <div class="col d-flex flex-column">
-                                <label for="Clv" class="text-start py-2">Clave</label>
-                                <select class="form-select" aria-label="Default select example" id="Clv">
-                                    <option> Selecciona Clave</option>
-                                    <option value="MAT">MAT -Material</option>
-                                    <option value="EQH">EQH -Equipo/Maquinaria</option>
-                                    <option value="IND">IND -Indirectos</option>
-                                    <option value="MO">MO -Mano de Obra</option>
-                                </select>
-                            </div>
-                        </div>
                     <hr/>
                     </div>
                 `,
@@ -88,7 +77,6 @@ const appRequesition = new Vue({
                     return [
                         this.semana = document.getElementById("Sem_Press").value,
                         this.dia = document.getElementById("Day_Press").value,
-                        this.clave = document.getElementById("Clv").value,
                         this.alias = document.getElementById("Alias").value,
                     ];
                 }
@@ -111,7 +99,7 @@ const appRequesition = new Vue({
                     title: 'Presion Agregada'
                 })
                 this.agregarPresion();
-                window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+                window.location.href = url2 + "/presiones.php";
             }
         },
         listarPresiones: function (obrasId) {
@@ -135,8 +123,8 @@ const appRequesition = new Vue({
             mes = mes < 10 ? '0' + mes : mes;
             dia = dia < 10 ? '0' + dia : dia;
             var fechaActual = fecha.getFullYear() + "-" + mes + "-" + dia;
-            console.log("Name user es "+localStorage.getItem("NameUser"));
-            axios.post(url, { accion: 3, alias: this.alias, semana: this.semana, dia: this.dia, clave: this.clave, time: this.timeNow, fecha: fechaActual, user_creado: 0, obra: localStorage.getItem("obraActiva") }).then(response => {
+            console.log("Name user es " + localStorage.getItem("NameUser"));
+            axios.post(url, { accion: 3, alias: this.alias, semana: this.semana, dia: this.dia, time: this.timeNow, fecha: fechaActual, user_creado: 0, obra: localStorage.getItem("obraActiva") }).then(response => {
                 console.log(response.data);
             });
         },
@@ -152,9 +140,9 @@ const appRequesition = new Vue({
                 console.log(this.obrasLista);
             });
         },
-        irPresion: function (idPresion) {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
         },
         getWeekNumber: function (date) {
             const onejan = new Date(date.getFullYear(), 0, 1);
@@ -180,7 +168,7 @@ const appRequesition = new Vue({
 
             const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-           return formattedTime;
+            return formattedTime;
         },
         cargarDataTable: function () {
 

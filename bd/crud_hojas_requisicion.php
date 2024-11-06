@@ -12,10 +12,11 @@ $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $nombreReq  = (isset($_POST['nombreReq'])) ? $_POST['nombreReq'] : '';
 $fechaReq =   (isset($_POST['fechaReq'])) ? $_POST['fechaReq'] : '';
 $clave =   (isset($_POST['clave'])) ? $_POST['clave'] : '';
+$IdReq =   (isset($_POST['IdReq'])) ? $_POST['IdReq'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra'";
+        $consulta = "SELECT * FROM `hojasrequisicion` WHERE `hojaRequisicion_idReq` = '$IdReq'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -57,8 +58,8 @@ switch ($accion) {
         if (count($data) == 0) {
             $numero_requesicion = $numero_requesicion . "-" . $clave . "-000";
             // Consulta para insertar datos en la tabla requisiciones
-            $consulta = "INSERT INTO `requisiciones` (`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre`, `requisicion_Obra`, `requisicion_fechaSolicitud`, `requisicion_Folio`, `requisicion_Hojas`, `requisicion_total`, `requisicion_estatus`) 
-            VALUES (NULL, :requisicion_clave, :requisicion_Numero, :requisicion_nombre, :requisicion_Obra , :requisicion_fechaSolicitud, '0', '0', '0', 'ABIERTO')";
+            $consulta = "INSERT INTO `requisiciones` (`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre`, `requisicion_Obra`, `requisicion_fechaSolicitud`, `requisicion_Folio`, `requisicion_total`, `requisicion_estatus`) 
+            VALUES (NULL, :requisicion_clave, :requisicion_Numero, :requisicion_nombre, :requisicion_Obra , :requisicion_fechaSolicitud, '0', '0', 'ABIERTO')";
             $resultado = $conexion->prepare($consulta);
             // Vincular las variables a la consulta
             $resultado->bindParam(':requisicion_clave', $clave);
@@ -77,8 +78,8 @@ switch ($accion) {
             $numero_requesicion = $numero_requesicion . "-" . $clave . "-" . convertFolio($folio);
 
             // Consulta para insertar datos en la tabla requisiciones
-            $consulta = "INSERT INTO `requisiciones` (`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre`, `requisicion_Obra`, `requisicion_fechaSolicitud`, `requisicion_Folio`, `requisicion_Hojas`, `requisicion_total`, `requisicion_estatus`) 
-             VALUES (NULL, :requisicion_clave, :requisicion_Numero, :requisicion_nombre, :requisicion_Obra , :requisicion_fechaSolicitud, :requisicion_Folio, '0', '0', 'ABIERTO')";
+            $consulta = "INSERT INTO `requisiciones` (`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre`, `requisicion_Obra`, `requisicion_fechaSolicitud`, `requisicion_Folio`, `requisicion_total`, `requisicion_estatus`) 
+             VALUES (NULL, :requisicion_clave, :requisicion_Numero, :requisicion_nombre, :requisicion_Obra , :requisicion_fechaSolicitud, :requisicion_Folio, '0', 'ABIERTO')";
             $resultado = $conexion->prepare($consulta);
             // Vincular las variables a la consulta
             $resultado->bindParam(':requisicion_clave', $clave);
@@ -90,6 +91,12 @@ switch ($accion) {
             // Ejecutar la consulta
             $resultado->execute();
         }
+        break;
+    case 7:
+        $consulta = "SELECT `requisicion_Numero` FROM `requisiciones` WHERE `requisicion_id` =" . $IdReq;
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
 }
 

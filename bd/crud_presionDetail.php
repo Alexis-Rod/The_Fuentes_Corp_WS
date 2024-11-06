@@ -1,10 +1,10 @@
 <?php
 header("Content-Type: application/xls");
-header("Content-Disposition: attachment; filename=Presion_de Gastos_".date('Y:m:d:m:s').".xls");
+header("Content-Disposition: attachment; filename=Presion_de Gastos_" . date('Y:m:d:m:s') . ".xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 include_once 'conexion.php';
-$objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
+$objeto = new /*\Google\Cloud\Samples\CloudSQL\MySQL\*/ Conexion();
 $conexion = $objeto->Conectar();
 
 //Conexion con axios, por parametro POST
@@ -37,15 +37,21 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `itemRequisicion_id`,`presiones_clave`,`requisicion_Numero`,`proveedor_nombre`,`itemRequisicion_producto`,`requisicion_total`,`requisicion_observaciones`,`requisicion_formaPago`,`itemRequisicion_parcialidad`,`itemRequisicion_fechaPago`,`itemRequisicion_bancoPago` FROM `presiones`\n"
+        $consulta = "SELECT `itemRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`proveedor_nombre`,`itemRequisicion_producto`,`hojaRequisicion_total`,`hojaRequisicion_observaciones`,`hojaRequisicion_formaPago`,`itemRequisicion_parcialidad`,`itemRequisicion_fechaPago`,`itemRequisicion_bancoPago` FROM `requisicionesligadas`\n"
+            . "JOIN presiones\n"
+            . "ON presiones.presiones_id = requisicionesLigada_presionID\n"
             . "JOIN requisiciones\n"
-            . "ON presiones.presiones_id = requisiciones.requisicion_idPresion\n"
+            . "ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
+            . "JOIN hojasrequisicion\n"
+            . "ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
             . "JOIN itemrequisicion\n"
-            . "on requisiciones.requisicion_id = itemrequisicion.itemRequisicion_idReq\n"
+            . "ON itemrequisicion.itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id\n"
             . "JOIN provedores\n"
-            . "on requisiciones.requisicion_receptorID = provedores.proveedor_id\n"
-            . "WHERE`presiones_semana`= '$semana' AND `presiones_dia` = '$dia' AND `presiones_obra` = '$obra'\n"
-            . "ORDER BY `presiones_clave` DESC;";
+            . "ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
+            . "WHERE presiones.presiones_obra = '$obra'\n"
+            . "AND hojasrequisicion.hojaRequisicion_estatus = 'LIGADA'\n"
+            . "OR hojasrequisicion.hojaRequisicion_estatus = 'PAGADA'\n"
+            . "ORDER BY requisiciones.requisicion_Clave DESC;";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -65,8 +71,8 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 6:
-        if(isset($_POST["export"])){
-            $output .="
+        if (isset($_POST["export"])) {
+            $output .= "
                 <table>
                     <thead>
                         <tr>
@@ -92,8 +98,8 @@ switch ($accion) {
                     </tbody>
                 </table>
                 ";
-             echo $output; 
-             $data = $output;  
+            echo $output;
+            $data = $output;
         }
         break;
 }

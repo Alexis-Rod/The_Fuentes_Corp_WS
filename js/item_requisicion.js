@@ -1,10 +1,11 @@
 var url = "bd/crud_items_requisiciones.php";
+var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppPresion",
     data: {
-        itemsRequisicion: [],
-        requisicion: [],
+        itemsHoja: [],
+        hojas: [],
         obras: [],
         obrasLista: [],
         NameUser: "",
@@ -24,13 +25,14 @@ const appRequesition = new Vue({
         strFisca: "",
         strResico: "",
         id: 0,
-        clve: ""
+        clve: "",
+        Numero_Req: "",
     },
     methods: {
-        listarItems: function (idReq) {
-            axios.post(url, { accion: 1, id_req: idReq }).then(response => {
-                this.itemsRequisicion = response.data;
-                console.log(this.itemsRequisicion);
+        listarItems: function (id_Hoja) {
+            axios.post(url, { accion: 1, id_Hoja: id_Hoja }).then(response => {
+                this.itemsHoja = response.data;
+                console.log(this.itemsHoja);
             });
         },
         consultarUsuario: function (user_id) {
@@ -162,7 +164,7 @@ const appRequesition = new Vue({
                 html: this.HtmlRet,
                 focusConfirm: false,
                 showCancelButton: true,
-                confirmButtonText: 'Agregar',
+                confirmButtonText: 'Modificar',
                 confirmButtonColor: '#0d6efd',
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
@@ -245,26 +247,26 @@ const appRequesition = new Vue({
                 confirmButtonText: "Eliminar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.deleteItem(ID, cantidad, precio, localStorage.getItem("idRequisicion"), iva, retenciones);
+                    this.deleteItem(ID, cantidad, precio, localStorage.getItem("idHoja"), iva, retenciones);
                     Swal.fire("El item fue eliminado con exito", "", "success");
                 }
             });
         },
-        deleteItem: function (ID, cantidad, precio, idReq, iva, retenciones) {
+        deleteItem: function (ID, cantidad, precio, id_Hoja, iva, retenciones) {
             var aux = cantidad * precio;
             aux = aux + Number.parseFloat(iva);
             aux = aux - Number.parseFloat(retenciones);
             this.AuxTotal = this.AuxTotal - Number.parseFloat(aux);
-            axios.post(url, { accion: 4, id: ID, total: this.AuxTotal, id_req: idReq }).then(response => {
+            axios.post(url, { accion: 4, id: ID, total: this.AuxTotal, id_Hoja: id_Hoja }).then(response => {
                 console.log(response.data);
                 console.log("y el total es " + this.AuxTotal);
             });
         },
-        agregarInformacionRequisicion: function (idReq) {
-            axios.post(url, { accion: 5, id_req: idReq }).then(response => {
-                this.requisicion = response.data;
-                this.AuxTotal = Number.parseFloat(this.requisicion[0].requisicion_total);
-                console.log(this.requisicion);
+        agregarInformacionHoja: function (idHoja) {
+            axios.post(url, { accion: 5, id_Hoja: idHoja }).then(response => {
+                this.hojas = response.data;
+                this.AuxTotal = Number.parseFloat(this.hojas[0].hojaRequisicion_total);
+                console.log(this.hojas);
                 console.log("y el total es " + this.AuxTotal);
             });
         },
@@ -275,7 +277,7 @@ const appRequesition = new Vue({
                 confirmButtonText: "Continuar",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (this.requisicion[0].requisicion_formaPago == "Transferencia") {
+                    if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
                         this.HtmlRet = `
                     <div class="col">
     <hr />
@@ -405,7 +407,7 @@ const appRequesition = new Vue({
                 confirmButtonColor: '#0d6efd',
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
-                    if (this.requisicion[0].requisicion_formaPago == "Transferencia") {
+                    if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
                         return [
                             this.producto = document.getElementById("producto").value,
                             this.unidad = document.getElementById("unidad").value,
@@ -453,7 +455,7 @@ const appRequesition = new Vue({
             var auxResico = 0;
             var auxRet = 0;
             var auxIVA = 0;
-            if (this.requisicion[0].requisicion_formaPago == "Transferencia") {
+            if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
                 if (this.bandFlete == true) {
                     auxFlete = aux * 0.4
                 }
@@ -470,7 +472,7 @@ const appRequesition = new Vue({
             this.subTotal = this.subTotal - auxRet;
             this.AuxTotal = this.AuxTotal + this.subTotal;
             //alert(this.unidad+" "+this.producto+" "+auxIVA+" "+auxRet+" "+this.bandFlete+" "+this.bandeFisica+" "+this.bandResico+" "+this.precio+" "+this.cantidad+" el total es ["+total+"] "+ this.requisicion[0].requisicion_id);
-            axios.post(url, { accion: 6, unidad: this.unidad, producto: this.producto, iva: auxIVA, retenciones: auxRet, banderaFlete: this.bandFlete, banderaFisica: this.bandeFisica, banderaResico: this.bandResico, precio: this.precio, cantidad: this.cantidad, total: this.AuxTotal, id_req: this.requisicion[0].requisicion_id }).then(response => {
+            axios.post(url, { accion: 6, unidad: this.unidad, producto: this.producto, iva: auxIVA, retenciones: auxRet, banderaFlete: this.bandFlete, banderaFisica: this.bandeFisica, banderaResico: this.bandResico, precio: this.precio, cantidad: this.cantidad, total: this.AuxTotal, id_Hoja: this.hojas[0].hojaRequisicion_id }).then(response => {
                 console.log(response.data);
                 console.log("y el total es " + this.AuxTotal);
             });
@@ -493,30 +495,30 @@ const appRequesition = new Vue({
             });
         },
         imprimirReq: function () {
-            generarPDFRequisicion(this.requisicion[0], this.NameUser, this.itemsRequisicion,this.obras[0]);
+            generarPDFRequisicion(this.Numero_Req, this.clve, this.hojas[0], this.NameUser, this.itemsHoja, this.obras[0]);
         },
-        obtnerInfoObras: function(idObras){
+        obtnerInfoObras: function (idObras) {
             axios.post(url, { accion: 8, obra: idObras }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
             });
         },
-        obtenerInfoPresion: function(idPress){
-            axios.post(url, { accion: 9, idPresion: idPress }).then(response => {
-                this.clve = response.data[0].presiones_clave;
-                console.log(response.data);
+        obtenerInfoRequisicion: function (idReq) {
+            axios.post(url, { accion: 9, id_req: idReq }).then(response => {
+                this.clve = response.data[0].requisicion_Clave;
+                this.Numero_Req = response.data[0].requisicion_Numero;
+                console.log(this.clve + " "+ this.Numero_Req);
             });
         },
-        listarObras: function(){
-            axios.post(url, { accion: 10}).then(response => {
+        listarObras: function () {
+            axios.post(url, { accion: 10 }).then(response => {
                 this.obrasLista = response.data;
                 console.log(this.obrasLista);
             });
         },
-        irPresion(idPresion)
-        {
-            localStorage.setItem("obraActiva", idPresion);
-            window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        irObra(idObra) {
+            localStorage.setItem("obraActiva", idObra);
+            window.location.href = url2 + "/obras.php";
         }
     },
     created: function () {
@@ -548,10 +550,10 @@ const appRequesition = new Vue({
             }
         });
         this.listarObras();
-        this.obtenerInfoPresion(localStorage.getItem("IdPresion"));
+        this.obtenerInfoRequisicion(localStorage.getItem("idRequisicion"));
         this.obtnerInfoObras(localStorage.getItem("obraActiva"));
-        this.agregarInformacionRequisicion(localStorage.getItem("idRequisicion"));
-        this.listarItems(localStorage.getItem("idRequisicion"));
+        this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+        this.listarItems(localStorage.getItem("idHoja"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
     },
     computed: {
