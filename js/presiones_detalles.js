@@ -145,9 +145,24 @@ const appRequesition = new Vue({
             })
         },
         exportarExcel: function () {
-            axios.post(url, { accion: 6, export: "" }).then(response => {
-                console.log(response.data);
-            });
+            axios.post(url, { accion: 6, obra: localStorage.getItem("obraActiva"), export: "" }, { responseType: 'blob' })
+                .then(response => {
+                    // Crear un objeto URL para el blob
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    // Crear un enlace para descargar el archivo
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'archivo.csv'); // Nombre del archivo que se descargará
+                    // Agregar el enlace al DOM
+                    document.body.appendChild(link);
+                    // Hacer clic en el enlace para iniciar la descarga
+                    link.click();
+                    // Limpiar el DOM
+                    link.remove();
+                })
+                .catch(error => {
+                    console.error('Error al descargar el archivo:', error);
+                });
         }
     },
     created: function () {

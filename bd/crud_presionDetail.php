@@ -71,36 +71,50 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 6:
-        if (isset($_POST["export"])) {
-            $output .= "
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                         <tr>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                        </tr>
-                         <tr>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                            <th>ID</th>
-                        </tr>
-                    </tbody>
-                </table>
-                ";
-            echo $output;
-            $data = $output;
+        $consulta = "SELECT `itemRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`proveedor_nombre`,`itemRequisicion_producto`,`hojaRequisicion_total`,`hojaRequisicion_observaciones`,`hojaRequisicion_formaPago`,`itemRequisicion_parcialidad`,`itemRequisicion_fechaPago`,`itemRequisicion_bancoPago` FROM `requisicionesligadas`\n"
+            . "JOIN presiones\n"
+            . "ON presiones.presiones_id = requisicionesLigada_presionID\n"
+            . "JOIN requisiciones\n"
+            . "ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
+            . "JOIN hojasrequisicion\n"
+            . "ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
+            . "JOIN itemrequisicion\n"
+            . "ON itemrequisicion.itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id\n"
+            . "JOIN provedores\n"
+            . "ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
+            . "WHERE presiones.presiones_obra = '$obra'\n"
+            . "AND hojasrequisicion.hojaRequisicion_estatus = 'LIGADA'\n"
+            . "OR hojasrequisicion.hojaRequisicion_estatus = 'PAGADA'\n"
+            . "ORDER BY requisiciones.requisicion_Clave DESC;";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+
+        // Verificar que se hayan obtenido datos
+        if (!empty($data)) {
+            // Definir el nombre del archivo CSV
+            $filename = "presion.csv";
+
+            // Abrir el archivo para escritura
+            $file = fopen('php://output', 'w');
+            // Escribir la cabecera del archivo CSV
+            fputcsv($file, array_keys($data[0]));
+
+            // Escribir los datos al archivo CSV
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+
+            // Cerrar el archivo
+            fclose($file);
+
+            // Forzar la descarga del archivo CSV
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+        } else {
+            echo "No hay datos para descargar";
         }
+        exit;
         break;
 }
 
