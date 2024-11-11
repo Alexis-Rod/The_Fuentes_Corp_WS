@@ -89,7 +89,7 @@ switch ($accion) {
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-
+        
         // Verificar que se hayan obtenido datos
         if (!empty($data)) {
             // Definir el nombre del archivo CSV
