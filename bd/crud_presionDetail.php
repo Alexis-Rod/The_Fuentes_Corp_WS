@@ -89,7 +89,7 @@ switch ($accion) {
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        
+
         // Verificar que se hayan obtenido datos
         if (!empty($data)) {
             // Definir el nombre del archivo CSV
@@ -115,7 +115,6 @@ switch ($accion) {
             echo "No hay datos para descargar";
         }
         exit;
-        break;
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
