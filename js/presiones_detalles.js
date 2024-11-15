@@ -123,36 +123,72 @@ const appRequesition = new Vue({
 
             return formattedTime;
         },
-        AplicarItem: function (id, parcial, fecha, banco) {
-            //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
-            var estatus = "LIQUIDADO";
-            this.timeNow = this.getTime();
-            if (parcial > 0) {
-                estatus = "PAGO PARCIAL"
-            }
-            axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus }).then(response => {
-                console.log(response.data);
+        AplicarItem: async function (id, parcial, fecha, banco) {
+            const swalWithBootstrapButtons = await Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: true
             });
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
+            swalWithBootstrapButtons.fire({
+                title: "¿Aprobaras este este Concepto para pago?",
+                text: "Esta operacion no se puede revertir",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "SI",
+                cancelButtonText: "NO",
+                reverseButtons: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Pagado",
+                        text: "El articulo fue Aprovado.",
+                        icon: "success"
+                    });
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire({
+                        title: "No autorizado",
+                        text: "El articulo no se aprobo para pago.",
+                        icon: "error"
+                    });
+                }
             });
-            Toast.fire({
-                icon: 'success',
-                title: 'Se Actualizo los datos'
-            })
+        },
+        autorizado: function(){
+              //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
+              var estatus = "LIQUIDADO";
+              this.timeNow = this.getTime();
+              if (parcial > 0) {
+                  estatus = "PAGO PARCIAL"
+              }
+              axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
+                  console.log(response.data);
+              });
+        },
+        rechazado: function(){
+             //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
+             var estatus = "RECHAZADO";
+             this.timeNow = this.getTime();
+             if (parcial > 0) {
+                 estatus = "PAGO PARCIAL"
+             }
+             axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
+                 console.log(response.data);
+             });
         },
         exportarExcel: function () {
-            axios.post(url, { accion: 6, obra: localStorage.getItem("obraActiva"), export: "" }, { responseType: 'blob' })
+            axios.post(url, { accion: 6, datos: JSON.stringify(this.presiones), namePres: this.obraActiva[0].obras_nombre ,export: "" }, { responseType: 'blob' })
                 .then(response => {
                     // Crear un objeto URL para el blob
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     // Crear un enlace para descargar el archivo
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'archivo.csv'); // Nombre del archivo que se descargará
+                    link.setAttribute('download', 'PRESIONES DE LA SEMANA "'+this.semana+'" Y DIA "'+this.dia+'" DE LA OBRA "'+this.obraActiva[0].obras_nombre+'".xls'); // Nombre del archivo que se descargará
                     // Agregar el enlace al DOM
                     document.body.appendChild(link);
                     // Hacer clic en el enlace para iniciar la descarga

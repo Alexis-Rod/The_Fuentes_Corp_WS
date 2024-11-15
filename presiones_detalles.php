@@ -133,7 +133,7 @@ include_once 'validarSesion.php';
                         </button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-5">
                     <div class="col table-responsive">
                         <table id="example" class="table align-middle table-hover w-100">
                             <thead class="table-dark">
@@ -150,31 +150,27 @@ include_once 'validarSesion.php';
                                     <th scope="col">FECHA DE PAGO</th>
                                     <th scope="col">BANCO DE PAGO</th>
                                     <th scope="col">APLICAR ACCIONES</th>
-                                    <th scope="col">ESTATUS</th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(presion,indice) of presiones">
-                                    <td scope="row">{{presion.requisicion_Clave}}</td>
-                                    <td>{{presion.requisicion_Numero}}</td>
-                                    <td>{{presion.proveedor_nombre}}</td>
-                                    <td>{{presion.itemRequisicion_producto}}</td>
-                                    <td>{{presion.hojaRequisicion_total}}</td>
+                                    <td scope="row">{{presion.clave}}</td>
+                                    <td>{{presion.NumReq}}</td>
+                                    <td>{{presion.proveedor}}</td>
+                                    <td>{{presion.concepto}}</td>
+                                    <td>{{presion.total}}</td>
                                     <td></td>
-                                    <td>{{presion.hojaRequisicion_total}}</td>
-                                    <td>{{presion.hojaRequisicion_observaciones}}</td>
-                                    <td>{{presion.hojaRequisicion_formaPago}}</td>
+                                    <td>{{presion.total}}</td>
+                                    <td>{{presion.Observaciones}}</td>
+                                    <td>{{presion.formaPago}}</td>
                                     <td>
-                                        <input type="date" class="form-control" id="FechaPago" v-model="presion.itemRequisicion_fechaPago">
+                                        <input type="date" class="form-control" id="FechaPago" v-model="presion.Fecha">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" id="BancoPago" v-model="presion.itemRequisicion_bancoPago" placeholder="Ingresa Banco">
+                                        <input type="text" class="form-control" id="BancoPago" v-model="presion.Banco" placeholder="Ingresa Banco">
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" @click="AplicarItem(presion.itemRequisicion_id,presion.itemRequisicion_parcialidad,presion.itemRequisicion_fechaPago,presion.itemRequisicion_bancoPago)">Aplicar</button>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-danger">Pendiente</span>
+                                        <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja,presion.Fecha,presion.Banco)">Autorizar</button>
                                     </td>
                                 </tr>
                             </tbody>

@@ -21,6 +21,9 @@ $fechaPago = (isset($_POST['fechaPago'])) ? $_POST['fechaPago'] : '';
 $bancoPago = (isset($_POST['bancoPago'])) ? $_POST['bancoPago'] : '';
 $estatus = (isset($_POST['status'])) ? $_POST['status'] : '';
 $time = (isset($_POST['time'])) ? $_POST['time'] : '';
+$autorizado = (isset($_POST['autorizado'])) ? $_POST['autorizado'] : '';
+$DatosExport = json_decode((isset($_POST['datos'])) ? $_POST['datos'] : '',true);
+$NombrePress = (isset($_POST['namePres'])) ? $_POST['namePres'] : '';
 $output = "";
 
 switch ($accion) {
@@ -37,24 +40,43 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `itemRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`proveedor_nombre`,`itemRequisicion_producto`,`hojaRequisicion_total`,`hojaRequisicion_observaciones`,`hojaRequisicion_formaPago`,`itemRequisicion_parcialidad`,`itemRequisicion_fechaPago`,`itemRequisicion_bancoPago` FROM `requisicionesligadas`\n"
+        $consulta = "SELECT `hojaRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`hojaRequisicion_observaciones`,`hojaRequisicion_numero`,`requisicion_Nombre`,`proveedor_nombre`,`hojaRequisicion_total`,`hojaRequisicion_formaPago` FROM `requisicionesligadas`\n"
             . "JOIN presiones\n"
             . "ON presiones.presiones_id = requisicionesLigada_presionID\n"
             . "JOIN requisiciones\n"
             . "ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
             . "JOIN hojasrequisicion\n"
             . "ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
-            . "JOIN itemrequisicion\n"
-            . "ON itemrequisicion.itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id\n"
             . "JOIN provedores\n"
             . "ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
             . "WHERE presiones.presiones_obra = '$obra'\n"
             . "AND hojasrequisicion.hojaRequisicion_estatus = 'LIGADA'\n"
             . "OR hojasrequisicion.hojaRequisicion_estatus = 'PAGADA'\n"
             . "ORDER BY requisiciones.requisicion_Clave DESC;";
+
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $dataBD = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $data = array();
+
+        foreach ($dataBD as $hoja) {
+            $consulta = "SELECT `itemRequisicion_producto` FROM `itemrequisicion` WHERE itemRequisicion_idHoja =" . $hoja["hojaRequisicion_id"];
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute();
+            $dataitms = $resultado->fetchAll(PDO::FETCH_ASSOC);
+            array_push($data, array(
+                'id_hoja' => $hoja['hojaRequisicion_id'],
+                'formaPago' => $hoja['hojaRequisicion_formaPago'],
+                'NumReq' => $hoja['requisicion_Numero'] . " Hoja N° " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
+                'clave' => $hoja['requisicion_Clave'],
+                'concepto' => convertToString($dataitms),
+                'proveedor' => $hoja['proveedor_nombre'],
+                'total' => formatearMoneda($hoja['hojaRequisicion_total']),
+                'Observaciones' => $hoja['hojaRequisicion_observaciones'],
+                "Banco" => "",
+                "Fecha" => ""
+            ));
+        };
         break;
     case 4:
         $consulta = "SELECT `obras_nombre` FROM `obras` WHERE `obras_id`= '$obra'";
@@ -63,59 +85,146 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 5:
-        $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaPago', '$id_user', '$time', 'Presion Detalle')";
+        /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaPago', '$id_user', '$time', 'Presion Detalle')";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
+        $resultado->execute(); */
         $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_parcialidad` = '$parcial', `itemRequisicion_fechaPago` = '$fechaPago', `itemRequisicion_bancoPago` = '$bancoPago' WHERE `itemrequisicion`.`itemRequisicion_id` = '$idReq'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
+        if ($autorizado) {
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PAGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = 448";
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute();
+        } else {
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = 448";
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute();
+        }
         break;
     case 6:
-        $consulta = "SELECT `itemRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`proveedor_nombre`,`itemRequisicion_producto`,`hojaRequisicion_total`,`hojaRequisicion_observaciones`,`hojaRequisicion_formaPago`,`itemRequisicion_parcialidad`,`itemRequisicion_fechaPago`,`itemRequisicion_bancoPago` FROM `requisicionesligadas`\n"
-            . "JOIN presiones\n"
-            . "ON presiones.presiones_id = requisicionesLigada_presionID\n"
-            . "JOIN requisiciones\n"
-            . "ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
-            . "JOIN hojasrequisicion\n"
-            . "ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
-            . "JOIN itemrequisicion\n"
-            . "ON itemrequisicion.itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id\n"
-            . "JOIN provedores\n"
-            . "ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
-            . "WHERE presiones.presiones_obra = '$obra'\n"
-            . "AND hojasrequisicion.hojaRequisicion_estatus = 'LIGADA'\n"
-            . "OR hojasrequisicion.hojaRequisicion_estatus = 'PAGADA'\n"
-            . "ORDER BY requisiciones.requisicion_Clave DESC;";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
-        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-
-        // Verificar que se hayan obtenido datos
-        if (empty($data)) {
-            // Definir el nombre del archivo CSV
-            $filename = "presion.csv";
-
-            // Abrir el archivo para escritura
-            $file = fopen('php://output', 'w');
-            // Escribir la cabecera del archivo CSV
-            fputcsv($file, array_keys($data[0]));
-
-            // Escribir los datos al archivo CSV
-            foreach ($data as $row) {
-                fputcsv($file, $row);
+        if (isset($_POST["export"])) {
+            $output .= '
+                <table border="1">
+                    <thead>
+                        <tr bgcolor="orange">
+                            <th colspan="11">PRESION OBRA: '.$NombrePress.' ('. date('d/m/Y') .')</th>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr bgcolor="yellow">
+                            <th>CLAVE</th>
+                            <th>NUMERO DE REQUISICION</th>
+                            <th>PROVEEDOR</th>
+                            <th>CONCEPTO</th>
+                            <th>ADEUDO</th>
+                            <th>PAGO PROGRAMADO</th>
+                            <th>NETO</th>
+                            <th>OBSERVACIONES</th>
+                            <th>FORMA DE PAGO</th>
+                            <th>FECHA DE PAGO</th>
+                            <th>BANCO DE PAGO</th>
+                        </tr>
+                    </thead>';
+            $output .= "<tbody>";
+            $indexAct = 0;
+            $indexNext = 1;
+            foreach ($DatosExport as $datosExcel) {
+                if($indexAct == 0){
+                    $output .= '<tr bgcolor="Silver"><th colspan="11">'.putNameSection($datosExcel['clave'])."</th></tr>";
+                };
+                if($datosExcel['formaPago'] == 'Efectivo'){
+                    $output .= '
+                         <tr style="color: red;">
+                           <th>'. $datosExcel['clave'].'</th>
+                            <th>'. $datosExcel['NumReq'].'</th>
+                            <th>'. $datosExcel['proveedor'].'</th>
+                            <th>'. $datosExcel['concepto'].'</th>
+                            <th>'. $datosExcel['total'].'</th>
+                            <th>  </th>
+                            <th>'. $datosExcel['total'].'</th>
+                            <th>'. $datosExcel['Observaciones'].'</th>
+                            <th>'. $datosExcel['formaPago'].'</th>
+                            <th>'. $datosExcel['Fecha'].'</th>
+                            <th>'. $datosExcel['Banco'].'</th>
+                        </tr>
+                ';
+                }
+                else{
+                    $output .= "
+                         <tr>
+                           <th>". $datosExcel['clave']."</th>
+                            <th>". $datosExcel['NumReq']."</th>
+                            <th>". $datosExcel['proveedor']."</th>
+                            <th>". $datosExcel['concepto']."</th>
+                            <th>". $datosExcel['total']."</th>
+                            <th>  </th>
+                            <th>". $datosExcel['total']."</th>
+                            <th>". $datosExcel['Observaciones']."</th>
+                            <th>". $datosExcel['formaPago']."</th>
+                            <th>". $datosExcel['Fecha']."</th>
+                            <th>". $datosExcel['Banco']."</th>
+                        </tr>
+                ";
+                }
+                if($indexNext < count($DatosExport)){
+                    if($DatosExport[$indexAct]['clave']!= $DatosExport[$indexNext]['clave']){
+                        $output .= '<tr bgcolor="Silver"><th colspan="11">'.putNameSection($DatosExport[$indexNext]['clave'])."</th></tr>";
+                    };
+                }
+                $indexAct++;
+                $indexNext++;
             }
-
-            // Cerrar el archivo
-            fclose($file);
-
-            // Forzar la descarga del archivo CSV
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-        } else {
-            echo "No hay datos para descargar";
+            $output .= '<tr bgcolor="yellow">
+                            <th colspan="4" style="text-align: right;">GRAN TOTAL '.$NombrePress."</th>
+                            <th>  </th>
+                            <th>  </th>
+                            <th>  </th>
+                            <th>  </th>
+                            <th>  </th>
+                            <th>  </th>
+                            <th>  </th>
+                        </tr>";
+            $output .= "</tbody></table>";
+            echo $output;
+            $data="PRESION GENERADA DESDE EL SISTEMA THE FUENTES WS";
         }
-        exit;
+        break;
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
 $conexion = NULL;
+
+
+function convertToString($Arr)
+{
+    $result = "";
+    $indes = 0;
+    foreach ($Arr as $cadenaAux) {
+        $result = $result . $cadenaAux['itemRequisicion_producto'];
+        if ($indes < count($Arr) - 1) {
+            $result = $result . " /// ";
+        }
+        $indes++;
+    };
+    return $result;
+}
+
+function formatearMoneda($cantidad)
+{
+    // Asegurarse de que la cantidad sea un número
+    if (!is_numeric($cantidad)) {
+        return "Entrada no válida";
+    }
+
+    // Formatear la cantidad como moneda
+    return "$" . number_format($cantidad, 2, '.', '');
+}
+
+function putNameSection($clave){
+    switch($clave){
+        case 'MAT': return 'MATERIAL';
+        case 'EQH': return 'MAQUINARIA';
+        case 'IND': return 'INDIRECTOS';
+        case 'MO': return 'MANO DE OBRA';
+    }
+}
