@@ -247,7 +247,7 @@ function creaPieDeOrden(NameUser, requisicion, pagina, paginas) {
     doc.line(190, 190, 270, 190);
     doc.text(requisicion.emisor_nombre, 230, 193, 'center'); */
     doc.setFontStyle('bold');
-    doc.text("Esta orden la elaboro "+NameUser+" el dia "+requisicion.hojaRequisicion_FechaSolicitud+" a las 08:49", 180, 200, 'left');
+    doc.text("Esta orden la elaboro "+NameUser+" el dia "+requisicion.hojaRequisicion_FechaSolicitud, 180, 200, 'left');
     doc.text("Pagina " + pagina + " de " + paginas, 143, 200, 'center');
 }
 
