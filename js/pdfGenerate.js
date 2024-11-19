@@ -231,7 +231,7 @@ function itemDeOrden(ArrayString, requisicion, ultimapagina) {
 
         if (requisicion.hojaRequisicion_observaciones != "") {
             doc.setFillColor(255, 234, 0);
-            doc.rect(10, y + 10, 250, 16, 'F');
+            doc.rect(10, y + 10, 300, 16, 'F');
 
             doc.text(convertToMultilines('NOTA:' + requisicion.hojaRequisicion_observaciones,151), 15, ((y + 10) + 7) - 2, 'left');
         }
