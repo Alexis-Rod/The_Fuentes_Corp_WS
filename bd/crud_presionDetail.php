@@ -1,5 +1,6 @@
 <?php
 header("Content-Type: application/xls");
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8');
 header("Content-Disposition: attachment; filename=Presion_de Gastos_" . date('Y:m:d:m:s') . ".xls");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -65,7 +66,7 @@ switch ($accion) {
             array_push($data, array(
                 'id_hoja' => $hoja['hojaRequisicion_id'],
                 'formaPago' => $hoja['hojaRequisicion_formaPago'],
-                'NumReq' => $hoja['requisicion_Numero'] . " Hoja N° " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
+                'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
                 'clave' => $hoja['requisicion_Clave'],
                 'concepto' => convertToString($dataitms),
                 'proveedor' => $hoja['proveedor_nombre'],
