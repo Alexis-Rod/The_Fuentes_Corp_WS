@@ -234,7 +234,7 @@ function itemDeOrden(ArrayString, requisicion, ultimapagina) {
             doc.rect(10, y + 10, 200, 12, 'F');
 
 
-            doc.text('NOTA:' + requisicion.hojaRequisicion_observaciones, 15, ((y + 10) + 7) - 2, 'left');
+            doc.text(convertToMultilines('NOTA:' + requisicion.hojaRequisicion_observaciones,151), 15, ((y + 10) + 7) - 2, 'left');
         }
     }
 }
@@ -258,8 +258,8 @@ function convertToArrayStrings(itemsOrdenArray) {
 
     for (var i = 0; i < itemsOrdenArray.length; i++) {
         if (itemsOrdenArray[i].itemRequisicion_producto.length > 50) {
-            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto);
-            tamano = 12;
+            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto,51);
+            tamano = 20;
         }
         else {
             tamano = 6;
@@ -307,12 +307,12 @@ function createPages(ArrayString) {
     return pages;
 }
 
-function convertToMultilines(cadena) {
+function convertToMultilines(cadena, lengthCad) {
     var cadenaAuxiliar = "";
     var indexMultilines = 0;
 
     for (i = 0; i < cadena.length; i++) {
-        if (indexMultilines == 51) {
+        if (indexMultilines == lengthCad) {
             cadenaAuxiliar = cadenaAuxiliar + "\n";
             indexMultilines = 0;
         }

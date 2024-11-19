@@ -149,6 +149,7 @@ include_once 'validarSesion.php';
                                     <th scope="col">FORMA DE PAGO</th>
                                     <th scope="col">FECHA DE PAGO</th>
                                     <th scope="col">BANCO DE PAGO</th>
+                                    <th scope="col">ESTATUS</th>
                                     <th scope="col">APLICAR ACCIONES</th>
                                 </tr>
                             </thead>
@@ -170,13 +171,31 @@ include_once 'validarSesion.php';
                                         <input type="text" class="form-control" id="BancoPago" v-model="presion.Banco" placeholder="Ingresa Banco">
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja,presion.Fecha,presion.Banco)">Autorizar</button>
+                                        <span class="badge bg-warning" v-if="presion.HojaEstatus == 'PENDIENTE'">PENDIENTE</span>
+                                        <span class="badge bg-warning" v-if="presion.HojaEstatus == 'LIGADA'">PENDIENTE</span>
+                                        <span class="badge bg-danger" v-if="presion.HojaEstatus == 'RECHAZADA'">RECHAZADO</span>
+                                        <span class="badge bg-success" v-if="presion.HojaEstatus == 'PAGADA'">PAGADA</span>
+                                    </td>
+                                    <td>
+                                        <div v-if="presion.PresionEstatus == 'PENDIENTE'">
+                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.NumReq, presion.id_hoja, presion.Fecha, presion.Banco)">Autorizar</button>
+                                        </div>
+                                        <div v-if="presion.PresionEstatus == 'AUTORIZADO'">
+                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.NumReq, presion.id_hoja, presion.Fecha, presion.Banco)" disabled>Autorizar</button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                             <tfoot class="table-dark">
                             </tfoot>
                         </table>
+                    </div>
+                </div>
+                <div class="row w-100 mt-0 mb-3 mx-auto">
+                    <div class="col px-0 d-flex justify-content-center">
+                        <button class="btn btn-primary" @click="cerrarPresion" title="Cerrar Presion">
+                            <span class="text-center">CERRAR PRESION</span>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -61,7 +61,7 @@ const appRequesition = new Vue({
     <div class="row form-group mx-0 my-3">
         <div class="col">
             <label for="producto" class="form-label">Nombre del Producto</label>
-            <input type="text" class="form-control" id="producto" value="`+ productoEdit + `">
+            <textarea class="form-control" id="producto" rows="3">`+ productoEdit + `</textarea>
         </div>
     </div>
     <div class="row form-group mx-0 my-3">
@@ -77,6 +77,13 @@ const appRequesition = new Vue({
                 <option value="SER">SERVICIO</option>
                 <option value="MES">MENSUALIDAD</option>
                 <option value="RENTA">RENTA</option>
+                <option value="CUBETA">CUBETA</option>
+                <option value="TONELADAS">TONELADAS</option>
+                <option value="METROS">METROS</option>
+                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                <option value="KILOGRAMOS">KILOGRAMOS</option>
+                <option value="VIAJES">VIAJES</option>
               </select>
         </div>
         <div class="col-4">
@@ -144,6 +151,13 @@ const appRequesition = new Vue({
                 <option value="SER">SERVICIO</option>
                 <option value="MES">MENSUALIDAD</option>
                 <option value="RENTA">RENTA</option>
+                <option value="CUBETA">CUBETA</option>
+                <option value="TONELADAS">TONELADAS</option>
+                <option value="METROS">METROS</option>
+                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                <option value="KILOGRAMOS">KILOGRAMOS</option>
+                <option value="VIAJES">VIAJES</option>
               </select>
         </div>
         <div class="col-4">

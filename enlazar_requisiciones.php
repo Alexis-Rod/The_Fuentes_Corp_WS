@@ -137,6 +137,7 @@ include_once 'validarSesion.php';
                                 <tr>
                                     <th scope="col">Numero de Requisicion</th>
                                     <th scope="col">Numero de Hoja</th>
+                                    <th scope="col">Nombre de la Requisicion</th>
                                     <th scope="col">Clave</th>
                                     <th scope="col">Estatus</th>
                                     <th scope="col"></th>
@@ -146,9 +147,11 @@ include_once 'validarSesion.php';
                                 <tr class="my-3" v-for="(req,indice) of requisiciones">
                                     <td scope="row">{{req.requisicion_Numero}}</td>
                                     <td>Hoja N° {{req.hojaRequisicion_numero}}</td>
+                                    <td>{{req.requisicion_Nombre}}</td>
                                     <td>{{req.requisicion_Clave}}</td>
                                     <td>
                                         <span class="badge bg-danger" v-if="req.hojaRequisicion_estatus == 'PENDIENTE'">PENDIENTE DE PAGO</span>
+                                        <span class="badge bg-danger" v-if="req.hojaRequisicion_estatus == 'RECHAZADA'">PENDIENTE DE PAGO</span>
                                         <span class="badge bg-success" v-if="req.hojaRequisicion_estatus == 'PAGADO'">PAGADO</span>
                                     </td>
                                     <td>

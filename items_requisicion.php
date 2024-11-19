@@ -274,7 +274,7 @@ include_once 'validarSesion.php';
                 </div>
                 <div class="row w-100 mt-3 mb-5 mx-auto">
                     <div class="col px-0 d-flex justify-content-center">
-                        <button class="btn btn-success" @click="validarRequisicion" title="Solicitud de Revision">
+                        <button class="btn btn-success" @click="validarRequisicion" title="Solicitud de Revision" hidden>
                             <span class="text-center">Solicitar Revision de la Requisicion</span>
                         </button>
                     </div>

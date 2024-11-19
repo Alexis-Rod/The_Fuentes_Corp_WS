@@ -16,15 +16,18 @@ $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $dia = (isset($_POST['dia'])) ? $_POST['dia'] : '';
 $semana = (isset($_POST['semana'])) ? $_POST['semana'] : '';
 $idReq = (isset($_POST['idReq'])) ? $_POST['idReq'] : '';
+$idHoja = (isset($_POST['idHoja'])) ? $_POST['idHoja'] : '';
+$idPresion = (isset($_POST['idPresion'])) ? $_POST['idPresion'] : '';
 $parcial = (isset($_POST['parcial'])) ? $_POST['parcial'] : '';
 $fechaPago = (isset($_POST['fechaPago'])) ? $_POST['fechaPago'] : '';
 $bancoPago = (isset($_POST['bancoPago'])) ? $_POST['bancoPago'] : '';
 $estatus = (isset($_POST['status'])) ? $_POST['status'] : '';
 $time = (isset($_POST['time'])) ? $_POST['time'] : '';
 $autorizado = (isset($_POST['autorizado'])) ? $_POST['autorizado'] : '';
-$DatosExport = json_decode((isset($_POST['datos'])) ? $_POST['datos'] : '',true);
+$DatosExport = json_decode((isset($_POST['datos'])) ? $_POST['datos'] : '', true);
 $NombrePress = (isset($_POST['namePres'])) ? $_POST['namePres'] : '';
 $output = "";
+$textExpecial = "";
 
 switch ($accion) {
     case 1:
@@ -40,19 +43,14 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `hojaRequisicion_id`,`requisicion_Clave`,`requisicion_Numero`,`hojaRequisicion_observaciones`,`hojaRequisicion_numero`,`requisicion_Nombre`,`proveedor_nombre`,`hojaRequisicion_total`,`hojaRequisicion_formaPago` FROM `requisicionesligadas`\n"
-            . "JOIN presiones\n"
-            . "ON presiones.presiones_id = requisicionesLigada_presionID\n"
-            . "JOIN requisiciones\n"
-            . "ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
-            . "JOIN hojasrequisicion\n"
-            . "ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
-            . "JOIN provedores\n"
-            . "ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
-            . "WHERE presiones.presiones_obra = '$obra'\n"
-            . "AND hojasrequisicion.hojaRequisicion_estatus = 'LIGADA'\n"
-            . "OR hojasrequisicion.hojaRequisicion_estatus = 'PAGADA'\n"
-            . "ORDER BY requisiciones.requisicion_Clave DESC;";
+        $consulta = "SELECT `hojaRequisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_observaciones`, `hojaRequisicion_numero`, `requisicion_Nombre`, `proveedor_nombre`, `hojaRequisicion_total`, `hojaRequisicion_formaPago`, `hojaRequisicion_estatus`, `presiones_estatus`\n"
+            . "FROM `requisicionesligadas`\n"
+            . "JOIN presiones ON presiones.presiones_id = requisicionesLigada_presionID\n"
+            . "JOIN requisiciones ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
+            . "JOIN hojasrequisicion ON hojasrequisicion.hojaRequisicion_id = requisicionesLigadas_hojaID\n"
+            . "JOIN provedores ON hojasrequisicion.hojaRequisicion_proveedor = provedores.proveedor_id\n"
+            . "WHERE requisicionesLigada_presionID = '$idPresion'\n"
+            . "ORDER BY `requisicion_Clave` DESC";
 
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
@@ -74,7 +72,9 @@ switch ($accion) {
                 'total' => formatearMoneda($hoja['hojaRequisicion_total']),
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
                 "Banco" => "",
-                "Fecha" => ""
+                "Fecha" => "",
+                "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
+                "PresionEstatus" => $hoja['presiones_estatus']
             ));
         };
         break;
@@ -92,22 +92,22 @@ switch ($accion) {
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         if ($autorizado) {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PAGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = 448";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PAGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         } else {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = 448";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         }
         break;
     case 6:
         if (isset($_POST["export"])) {
-            $output .= '
+            $textExpecial .= '
                 <table border="1">
                     <thead>
                         <tr bgcolor="orange">
-                            <th colspan="11">PRESION OBRA: '.$NombrePress.' ('. date('d/m/Y') .')</th>
+                            <th colspan="11">PRESION OBRA: ' . $NombrePress . ' (' . date('d/m/Y') . ')</th>
                         </tr>
                     </thead>
                     <thead>
@@ -125,57 +125,56 @@ switch ($accion) {
                             <th>BANCO DE PAGO</th>
                         </tr>
                     </thead>';
-            $output .= "<tbody>";
+            $textExpecial .= "<tbody>";
             $indexAct = 0;
             $indexNext = 1;
             foreach ($DatosExport as $datosExcel) {
-                if($indexAct == 0){
-                    $output .= '<tr bgcolor="Silver"><th colspan="11">'.putNameSection($datosExcel['clave'])."</th></tr>";
+                if ($indexAct == 0) {
+                    $textExpecial .= '<tr bgcolor="Silver"><th colspan="11">' . putNameSection($datosExcel['clave']) . "</th></tr>";
                 };
-                if($datosExcel['formaPago'] == 'Efectivo'){
-                    $output .= '
+                if ($datosExcel['formaPago'] == 'Efectivo') {
+                    $textExpecial .= '
                          <tr style="color: red;">
-                           <th>'. $datosExcel['clave'].'</th>
-                            <th>'. $datosExcel['NumReq'].'</th>
-                            <th>'. $datosExcel['proveedor'].'</th>
-                            <th>'. $datosExcel['concepto'].'</th>
-                            <th>'. $datosExcel['total'].'</th>
+                           <th>' . $datosExcel['clave'] . '</th>
+                            <th>' . $datosExcel['NumReq'] . '</th>
+                            <th>' . $datosExcel['proveedor'] . '</th>
+                            <th>' . $datosExcel['concepto'] . '</th>
+                            <th>' . $datosExcel['total'] . '</th>
                             <th>  </th>
-                            <th>'. $datosExcel['total'].'</th>
-                            <th>'. $datosExcel['Observaciones'].'</th>
-                            <th>'. $datosExcel['formaPago'].'</th>
-                            <th>'. $datosExcel['Fecha'].'</th>
-                            <th>'. $datosExcel['Banco'].'</th>
+                            <th>' . $datosExcel['total'] . '</th>
+                            <th>' . $datosExcel['Observaciones'] . '</th>
+                            <th>' . $datosExcel['formaPago'] . '</th>
+                            <th>' . $datosExcel['Fecha'] . '</th>
+                            <th>' . $datosExcel['Banco'] . '</th>
                         </tr>
                 ';
-                }
-                else{
-                    $output .= "
+                } else {
+                    $textExpecial .= "
                          <tr>
-                           <th>". $datosExcel['clave']."</th>
-                            <th>". $datosExcel['NumReq']."</th>
-                            <th>". $datosExcel['proveedor']."</th>
-                            <th>". $datosExcel['concepto']."</th>
-                            <th>". $datosExcel['total']."</th>
+                           <th>" . $datosExcel['clave'] . "</th>
+                            <th>" . $datosExcel['NumReq'] . "</th>
+                            <th>" . $datosExcel['proveedor'] . "</th>
+                            <th>" . $datosExcel['concepto'] . "</th>
+                            <th>" . $datosExcel['total'] . "</th>
                             <th>  </th>
-                            <th>". $datosExcel['total']."</th>
-                            <th>". $datosExcel['Observaciones']."</th>
-                            <th>". $datosExcel['formaPago']."</th>
-                            <th>". $datosExcel['Fecha']."</th>
-                            <th>". $datosExcel['Banco']."</th>
+                            <th>" . $datosExcel['total'] . "</th>
+                            <th>" . $datosExcel['Observaciones'] . "</th>
+                            <th>" . $datosExcel['formaPago'] . "</th>
+                            <th>" . $datosExcel['Fecha'] . "</th>
+                            <th>" . $datosExcel['Banco'] . "</th>
                         </tr>
                 ";
                 }
-                if($indexNext < count($DatosExport)){
-                    if($DatosExport[$indexAct]['clave']!= $DatosExport[$indexNext]['clave']){
-                        $output .= '<tr bgcolor="Silver"><th colspan="11">'.putNameSection($DatosExport[$indexNext]['clave'])."</th></tr>";
+                if ($indexNext < count($DatosExport)) {
+                    if ($DatosExport[$indexAct]['clave'] != $DatosExport[$indexNext]['clave']) {
+                        $textExpecial .= '<tr bgcolor="Silver"><th colspan="11">' . putNameSection($DatosExport[$indexNext]['clave']) . "</th></tr>";
                     };
                 }
                 $indexAct++;
                 $indexNext++;
             }
-            $output .= '<tr bgcolor="yellow">
-                            <th colspan="4" style="text-align: right;">GRAN TOTAL '.$NombrePress."</th>
+            $textExpecial .= '<tr bgcolor="yellow">
+                            <th colspan="4" style="text-align: right;">GRAN TOTAL ' . $NombrePress . "</th>
                             <th>  </th>
                             <th>  </th>
                             <th>  </th>
@@ -184,10 +183,16 @@ switch ($accion) {
                             <th>  </th>
                             <th>  </th>
                         </tr>";
-            $output .= "</tbody></table>";
+            $textExpecial .= "</tbody></table>";
+            $output = mb_convert_encoding($textExpecial, 'UTF-8', 'auto');
             echo $output;
-            $data="PRESION GENERADA DESDE EL SISTEMA THE FUENTES WS";
+            $data = "PRESION GENERADA DESDE EL SISTEMA THE FUENTES WS";
         }
+        break;
+    case 7:
+        $consulta = "UPDATE `presiones` SET `presiones_estatus` = 'AUTORIZADO' WHERE `presiones`.`presiones_id` = '$idPresion'";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
         break;
 }
 
@@ -220,11 +225,16 @@ function formatearMoneda($cantidad)
     return "$" . number_format($cantidad, 2, '.', '');
 }
 
-function putNameSection($clave){
-    switch($clave){
-        case 'MAT': return 'MATERIAL';
-        case 'EQH': return 'MAQUINARIA';
-        case 'IND': return 'INDIRECTOS';
-        case 'MO': return 'MANO DE OBRA';
+function putNameSection($clave)
+{
+    switch ($clave) {
+        case 'MAT':
+            return 'MATERIAL';
+        case 'EQH':
+            return 'MAQUINARIA';
+        case 'IND':
+            return 'INDIRECTOS';
+        case 'MO':
+            return 'MANO DE OBRA';
     }
 }

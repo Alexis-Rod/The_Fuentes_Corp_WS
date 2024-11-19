@@ -62,12 +62,12 @@ const appRequesition = new Vue({
             if (this.PagoTrans == false) {
                 this.PagoTrans = true;
                 this.FormaPago = "Transferencia";
-                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';
+                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';
             }
             else {
                 this.PagoTrans = false;
                 this.FormaPago = "Efectivo";
-                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /></div>';
+                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /></div>';
             }
         },
         agregarRequisicion: async function () {
@@ -118,9 +118,19 @@ const appRequesition = new Vue({
                 confirmButtonColor: '#0d6efd',
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
+                    const productoValue = document.getElementById("Producto").value;
+                    if (productoValue.length > 200) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'El campo Producto no puede exceder los 200 caracteres.'
+                        });
+                        return false; // Evita que se continúe con el proceso
+                    }
+        
                     if (this.PagoTrans == true) {
                         return [
-                            ItemElement['Nombre'] = document.getElementById("Producto").value,
+                            ItemElement['Nombre'] = productoValue,
                             ItemElement['Unidad'] = document.getElementById("Unidad").value,
                             ItemElement['Cantidad'] = document.getElementById("Cantidad").value,
                             ItemElement['UnitedPrice'] = document.getElementById("UnitedPrice").value,
@@ -128,27 +138,25 @@ const appRequesition = new Vue({
                             this.RetFisica = document.getElementById("RetPersonaFIsica").checked,
                             this.RetResico = document.getElementById("RetencionRESICO").checked,
                         ];
-                    }
-                    else {
+                    } else {
                         return [
-                            ItemElement['Nombre'] = document.getElementById("Producto").value,
+                            ItemElement['Nombre'] = productoValue,
                             ItemElement['Unidad'] = document.getElementById("Unidad").value,
                             ItemElement['Cantidad'] = document.getElementById("Cantidad").value,
                             ItemElement['UnitedPrice'] = document.getElementById("UnitedPrice").value,
                         ];
                     }
-
                 }
             });
+        
             if (ItemElement['Nombre'] == '' || ItemElement['Cantidad'] == 0 || ItemElement['UnitedPrice'] == 0) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Datos Incompletos',
                 });
-            }
-            else {
+            } else {
                 this.agregarItem(ItemElement);
-
+        
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -158,7 +166,7 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success',
                     title: 'Item agregado'
-                })
+                });
             }
         },
         agregarItem: async function (ItemElement) {
@@ -285,7 +293,7 @@ const appRequesition = new Vue({
         this.agregarEmisor();
         this.consultarUsuario(localStorage.getItem("NameUser"));
         this.mostrarProvedores();
-        this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';;
+        this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';;
 
     },
     computed: {

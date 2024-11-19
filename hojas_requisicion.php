@@ -155,7 +155,8 @@ include_once 'validarSesion.php';
                                     <td>
                                         <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'PENDIENTE'">PENDIENTE A PAGO</span>
                                         <span class="badge bg-warning" v-if="hoja.hojaRequisicion_estatus == 'LIGADA'">LIGADA A PRESION</span>
-                                        <span class="badge bg-success" v-if="hoja.hojaRequisicion_estatus == 'LIQUIDADA'">PAGADA</span>
+                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'RECHAZADA'">PENDIENTE A PAGO</span>
+                                        <span class="badge bg-success" v-if="hoja.hojaRequisicion_estatus == 'PAGADA'">PAGADA</span>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">

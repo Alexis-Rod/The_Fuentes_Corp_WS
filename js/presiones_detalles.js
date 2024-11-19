@@ -30,8 +30,8 @@ const appRequesition = new Vue({
                 console.log(this.obras);
             });
         },
-        cargarDatosPresion: function (obrasId) {
-            axios.post(url, { accion: 3, obra: obrasId, dia: this.dia, semana: this.semana }).then(response => {
+        cargarDatosPresion: function (IdPresion) {
+            axios.post(url, { accion: 3, idPresion: IdPresion, dia: this.dia, semana: this.semana }).then(response => {
                 console.log(response.data);
                 this.presiones = response.data;
                 console.log(this.presiones);
@@ -123,7 +123,7 @@ const appRequesition = new Vue({
 
             return formattedTime;
         },
-        AplicarItem: async function (id, parcial, fecha, banco) {
+        AplicarItem: async function (idReq, idHoja, fecha, banco) {
             const swalWithBootstrapButtons = await Swal.mixin({
                 customClass: {
                     confirmButton: "btn btn-success",
@@ -141,6 +141,7 @@ const appRequesition = new Vue({
                 reverseButtons: false
             }).then((result) => {
                 if (result.isConfirmed) {
+                    this.autorizado(idReq, idHoja, fecha, banco);
                     swalWithBootstrapButtons.fire({
                         title: "Pagado",
                         text: "El articulo fue Aprovado.",
@@ -150,6 +151,7 @@ const appRequesition = new Vue({
                     /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
+                    this.rechazado(idReq, idHoja, fecha, banco);
                     swalWithBootstrapButtons.fire({
                         title: "No autorizado",
                         text: "El articulo no se aprobo para pago.",
@@ -158,25 +160,19 @@ const appRequesition = new Vue({
                 }
             });
         },
-        autorizado: function(){
+        autorizado: function(idReq, idHoja, fecha, banco){
               //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
               var estatus = "LIQUIDADO";
               this.timeNow = this.getTime();
-              if (parcial > 0) {
-                  estatus = "PAGO PARCIAL"
-              }
-              axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
+              axios.post(url, { accion: 5, idReq: idReq, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
                   console.log(response.data);
               });
         },
-        rechazado: function(){
+        rechazado: function(idReq, idHoja, fecha, banco){
              //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
              var estatus = "RECHAZADO";
              this.timeNow = this.getTime();
-             if (parcial > 0) {
-                 estatus = "PAGO PARCIAL"
-             }
-             axios.post(url, { accion: 5, idReq: id, time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
+             axios.post(url, { accion: 5, idReq: idReq, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
                  console.log(response.data);
              });
         },
@@ -199,6 +195,38 @@ const appRequesition = new Vue({
                 .catch(error => {
                     console.error('Error al descargar el archivo:', error);
                 });
+        },
+        cerrarPresion: async function () {
+            const swalWithBootstrapButtons = await Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: true
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Quieres cerrar esta presion?",
+                text: "Esta operacion no se puede revertir",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "SI",
+                cancelButtonText: "NO",
+                reverseButtons: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.closePresion(localStorage.getItem("IdPresion"));
+                    swalWithBootstrapButtons.fire({
+                        title: "CARRADA",
+                        text: "La presion a sido cerrada con exito.",
+                        icon: "success"
+                    });
+                } 
+            });
+        },
+        closePresion: function (idPresion) {
+            axios.post(url, { accion: 7, idPresion: idPresion}).then(response => {
+                console.log(response.data);
+            });
         }
     },
     created: function () {
@@ -206,7 +234,7 @@ const appRequesition = new Vue({
         this.asignarDiaySamana();
         this.infoObraActiva(localStorage.getItem("obraActiva"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
-        this.cargarDatosPresion(localStorage.getItem("obraActiva"));
+        this.cargarDatosPresion(localStorage.getItem("IdPresion"));
         this.cargarDataTable();
     },
     computed: {
