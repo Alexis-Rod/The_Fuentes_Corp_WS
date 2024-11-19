@@ -15,7 +15,7 @@ $clave =   (isset($_POST['clave'])) ? $_POST['clave'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra'";
+        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
