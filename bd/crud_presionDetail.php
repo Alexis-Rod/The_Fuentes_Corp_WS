@@ -16,7 +16,6 @@ $id_user = (isset($_POST['id_user'])) ? $_POST['id_user'] : '';
 $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $dia = (isset($_POST['dia'])) ? $_POST['dia'] : '';
 $semana = (isset($_POST['semana'])) ? $_POST['semana'] : '';
-$idReq = (isset($_POST['idReq'])) ? $_POST['idReq'] : '';
 $idHoja = (isset($_POST['idHoja'])) ? $_POST['idHoja'] : '';
 $idPresion = (isset($_POST['idPresion'])) ? $_POST['idPresion'] : '';
 $parcial = (isset($_POST['parcial'])) ? $_POST['parcial'] : '';
@@ -44,7 +43,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `hojaRequisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_observaciones`, `hojaRequisicion_numero`, `requisicion_Nombre`, `proveedor_nombre`, `hojaRequisicion_total`, `hojaRequisicion_formaPago`, `hojaRequisicion_estatus`, `presiones_estatus`\n"
+        $consulta = "SELECT `hojaRequisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_observaciones`, `hojaRequisicion_numero`, `requisicion_Nombre`, `proveedor_nombre`, `hojaRequisicion_total`, `hojaRequisicion_formaPago`, `hojaRequisicion_estatus`, `presiones_estatus`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago` \n"
             . "FROM `requisicionesligadas`\n"
             . "JOIN presiones ON presiones.presiones_id = requisicionesLigada_presionID\n"
             . "JOIN requisiciones ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
@@ -72,8 +71,8 @@ switch ($accion) {
                 'proveedor' => $hoja['proveedor_nombre'],
                 'total' => formatearMoneda($hoja['hojaRequisicion_total']),
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
-                "Banco" => NULL,
-                "Fecha" => NULL,
+                "Banco" => $hoja['hojasRequisicion_bancoPago'],
+                "Fecha" => $hoja['hojaRequisicion_fechaPago'],
                 "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
                 "PresionEstatus" => $hoja['presiones_estatus']
             ));
@@ -89,15 +88,12 @@ switch ($accion) {
         /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaPago', '$id_user', '$time', 'Presion Detalle')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute(); */
-        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_parcialidad` = '$parcial', `itemRequisicion_fechaPago` = '2023-10-23', `itemRequisicion_bancoPago` = '$bancoPago' WHERE `itemrequisicion`.`itemRequisicion_id` = '$idReq'";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
         if ($autorizado) {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PAGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PAGADA', `hojaRequisicion_fechaPago` = '$fechaPago', `hojasRequisicion_bancoPago` = '$bancoPago' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         } else {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA', `hojaRequisicion_fechaPago` = '$fechaPago', `hojasRequisicion_bancoPago` = '$bancoPago' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         }

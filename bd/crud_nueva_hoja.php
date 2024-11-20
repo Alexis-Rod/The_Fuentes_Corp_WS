@@ -36,7 +36,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         $hoja = $data[0]['requisicion_Hojas'];
         $hoja++;
-        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojaRequisicion_formaPago`, `hojaRequisicion_total`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', '$formaPago', '$totalPagar', 'PENDIENTE')";
+        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', '$formaPago',NULL, NULL, '$totalPagar','PENDIENTE')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "UPDATE `requisiciones` SET `requisicion_Hojas` = '$hoja' WHERE `requisiciones`.`requisicion_id` =" . $id_Req;
@@ -53,7 +53,7 @@ switch ($accion) {
             $banderaFlete = (int)$item->bandFlete;
             $banderaFisica = (int)$item->bandFisico;
             $banderaResico = (int)$item->bandResico;
-            $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_parcialidad`, `itemRequisicion_fechaPago`, `itemRequisicion_bancoPago`, `itemRequisicion_estatus`) VALUES (NULL, '$id_hoja', '$Unidad', '$Producto', '$IVA', '$Ret', '$banderaFlete', '$banderaFisica', '$banderaResico', '$Precio', '$cantidad', NULL, NULL, NULL, 'N')";
+            $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_parcialidad`, `itemRequisicion_estatus`) VALUES (NULL, '$id_hoja', '$Unidad', '$Producto', '$IVA', '$Ret', '$banderaFlete', '$banderaFisica', '$banderaResico', '$Precio', '$cantidad', NULL, 'N')";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         }

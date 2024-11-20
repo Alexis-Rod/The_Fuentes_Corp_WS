@@ -178,10 +178,10 @@ include_once 'validarSesion.php';
                                     </td>
                                     <td>
                                         <div v-if="presion.PresionEstatus == 'PENDIENTE'">
-                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.NumReq, presion.id_hoja, presion.Fecha, presion.Banco)">Autorizar</button>
+                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja, presion.Fecha, presion.Banco)">Autorizar</button>
                                         </div>
                                         <div v-if="presion.PresionEstatus == 'AUTORIZADO'">
-                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.NumReq, presion.id_hoja, presion.Fecha, presion.Banco)" disabled>Autorizar</button>
+                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja, presion.Fecha, presion.Banco)" disabled>Autorizar</button>
                                         </div>
                                     </td>
                                 </tr>

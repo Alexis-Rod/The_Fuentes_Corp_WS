@@ -123,7 +123,7 @@ const appRequesition = new Vue({
 
             return formattedTime;
         },
-        AplicarItem: async function (idReq, idHoja, fecha, banco) {
+        AplicarItem: async function (idHoja, fecha, banco) {
             const swalWithBootstrapButtons = await Swal.mixin({
                 customClass: {
                     confirmButton: "btn btn-success",
@@ -141,7 +141,7 @@ const appRequesition = new Vue({
                 reverseButtons: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.autorizado(idReq, idHoja, fecha, banco);
+                    this.autorizado(idHoja, fecha, banco);
                     swalWithBootstrapButtons.fire({
                         title: "Pagado",
                         text: "El articulo fue Aprovado.",
@@ -151,7 +151,7 @@ const appRequesition = new Vue({
                     /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
-                    this.rechazado(idReq, idHoja, fecha, banco);
+                    this.rechazado(idHoja, fecha, banco);
                     swalWithBootstrapButtons.fire({
                         title: "No autorizado",
                         text: "El articulo no se aprobo para pago.",
@@ -160,19 +160,19 @@ const appRequesition = new Vue({
                 }
             });
         },
-        autorizado: function(idReq, idHoja, fecha, banco){
+        autorizado: function(idHoja, fecha, banco){
               //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
               var estatus = "LIQUIDADO";
               this.timeNow = this.getTime();
-              axios.post(url, { accion: 5, idReq: idReq, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
+              axios.post(url, { accion: 5, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
                   console.log(response.data);
               });
         },
-        rechazado: function(idReq, idHoja, fecha, banco){
+        rechazado: function( idHoja, fecha, banco){
              //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
              var estatus = "RECHAZADO";
              this.timeNow = this.getTime();
-             axios.post(url, { accion: 5, idReq: idReq, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
+             axios.post(url, { accion: 5, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
                  console.log(response.data);
              });
         },
