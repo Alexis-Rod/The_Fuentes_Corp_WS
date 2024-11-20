@@ -12,6 +12,8 @@ $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $nombreReq  = (isset($_POST['nombreReq'])) ? $_POST['nombreReq'] : '';
 $fechaReq =   (isset($_POST['fechaReq'])) ? $_POST['fechaReq'] : '';
 $clave =   (isset($_POST['clave'])) ? $_POST['clave'] : '';
+$folioReq =   (isset($_POST['folio'])) ? $_POST['folio'] : '';
+$Hoja =   (isset($_POST['hoja'])) ? $_POST['hoja'] : '';
 
 switch ($accion) {
     case 1:
@@ -27,7 +29,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `obras_nombre` FROM `obras` WHERE `obras_id` =" . $obra;
+        $consulta = "SELECT `obras_nombre`, `obra_automatico` FROM `obras` WHERE `obras_id` =" . $obra;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -90,6 +92,28 @@ switch ($accion) {
             // Ejecutar la consulta
             $resultado->execute();
         }
+        break;
+    case 7:
+        $consulta = "SELECT `obras_nombre`,`ciudadesObras_codigo` FROM `obras` JOIN estadosobra ON estadosobra.ciudadesObras_id = obras.obras_cuidad WHERE `obras_id` = '$obra'";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $numero_requesicion = $data[0]['ciudadesObras_codigo'] . "-" . $data[0]['obras_nombre'];
+        $numero_requesicion = $numero_requesicion . "-" . $clave . "-" . convertFolio($folioReq);
+        // Consulta para insertar datos en la tabla requisiciones
+        $consulta = "INSERT INTO `requisiciones` (`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre`, `requisicion_Obra`, `requisicion_fechaSolicitud`, `requisicion_Folio`, `requisicion_Hojas`, `requisicion_total`, `requisicion_estatus`) 
+            VALUES (NULL, :requisicion_clave, :requisicion_Numero, :requisicion_nombre, :requisicion_Obra , :requisicion_fechaSolicitud, :requisicion_Folio, :requisicion_Hojas, '0', 'ABIERTO')";
+        $resultado = $conexion->prepare($consulta);
+        // Vincular las variables a la consulta
+        $resultado->bindParam(':requisicion_clave', $clave);
+        $resultado->bindParam(':requisicion_nombre', $nombreReq);
+        $resultado->bindParam(':requisicion_fechaSolicitud', $fechaReq);
+        $resultado->bindParam(':requisicion_Obra', $obra);
+        $resultado->bindParam(':requisicion_Numero', $numero_requesicion);
+        $resultado->bindParam(':requisicion_Folio', $folioReq);
+        $resultado->bindParam(':requisicion_Hojas', $Hoja);
+        // Ejecutar la consulta
+        $resultado->execute();
         break;
 }
 
