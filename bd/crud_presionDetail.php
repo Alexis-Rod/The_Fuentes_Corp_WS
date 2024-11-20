@@ -89,7 +89,7 @@ switch ($accion) {
         /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaPago', '$id_user', '$time', 'Presion Detalle')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute(); */
-        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_parcialidad` = '$parcial', `itemRequisicion_fechaPago` = '$fechaPago', `itemRequisicion_bancoPago` = '$bancoPago' WHERE `itemrequisicion`.`itemRequisicion_id` = '$idReq'";
+        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_parcialidad` = '$parcial', `itemRequisicion_fechaPago` = '2023-10-23', `itemRequisicion_bancoPago` = '$bancoPago' WHERE `itemrequisicion`.`itemRequisicion_id` = '$idReq'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         if ($autorizado) {
