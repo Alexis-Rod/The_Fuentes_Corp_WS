@@ -72,8 +72,8 @@ switch ($accion) {
                 'proveedor' => $hoja['proveedor_nombre'],
                 'total' => formatearMoneda($hoja['hojaRequisicion_total']),
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
-                "Banco" => "",
-                "Fecha" => "",
+                "Banco" => NULL,
+                "Fecha" => NULL,
                 "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
                 "PresionEstatus" => $hoja['presiones_estatus']
             ));
