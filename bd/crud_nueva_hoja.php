@@ -27,7 +27,7 @@ $time = (isset($_POST['time'])) ? $_POST['time'] : '';
 
 switch ($accion) {
     case 1:
-       /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaSolicitud', 0, '$time', 'Requesiciones')";
+        /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaSolicitud', 0, '$time', 'Requesiciones')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute(); */
         $consulta = "SELECT `requisicion_Hojas` FROM `requisiciones` WHERE `requisicion_id` = " . $id_Req;
@@ -53,9 +53,9 @@ switch ($accion) {
             $banderaFlete = (int)$item->bandFlete;
             $banderaFisica = (int)$item->bandFisico;
             $banderaResico = (int)$item->bandResico;
-            $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_parcialidad`, `itemRequisicion_estatus`) VALUES (NULL, '$id_hoja', '$Unidad', '$Producto', '$IVA', '$Ret', '$banderaFlete', '$banderaFisica', '$banderaResico', '$Precio', '$cantidad', NULL, 'N')";
+            $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_parcialidad`, `itemRequisicion_estatus`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'N')";
             $resultado = $conexion->prepare($consulta);
-            $resultado->execute();
+            $resultado->execute([$id_hoja, $Unidad, $Producto, $IVA, $Ret, $banderaFlete, $banderaFisica, $banderaResico, $Precio, $cantidad]);
         }
         unset($item);
         break;
