@@ -58,7 +58,7 @@ const appRequesition = new Vue({
                             <div class="col d-flex flex-column">
                                 <label class="text-start py-2" for="Alias">Alias</label>
                                 <select class="form-select" aria-label="Default select example" id="Alias">
-                                    <option> Selecciona Alias</option>
+                                    <option value="Selecciona Alias">Selecciona Alias</option>
                                     <option value="Acarreo">Acarreo</option>
                                     <option value="Indirectos">Indirectos</option>
                                     <option value="Maquinaria">Maquinaria</option>
@@ -74,20 +74,18 @@ const appRequesition = new Vue({
                 confirmButtonColor: '#0d6efd',
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
-                    return [
-                        this.semana = document.getElementById("Sem_Press").value,
-                        this.dia = document.getElementById("Day_Press").value,
-                        this.alias = document.getElementById("Alias").value,
-                    ];
+                    this.semana = document.getElementById("Sem_Press").value;
+                    this.dia = document.getElementById("Day_Press").value;
+                    this.alias = document.getElementById("Alias").value;
+                    if (this.alias === "Selecciona Alias") {
+                        Swal.showValidationMessage('Por favor selecciona un alias');
+                        return false;
+                    }
+                    return true;
                 }
             });
-            if (this.semana == 0 || this.dia == "Selecciona Dia") {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Datos Incompletos',
-                });
-            }
-            else {
+            if(formValues){
+                this.agregarPresion();
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -97,9 +95,9 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success',
                     title: 'Presion Agregada'
-                })
-                this.agregarPresion();
-                window.location.href = url2 + "/presiones.php";
+                }).then(()=>{
+                    window.location.href = url2 + "/presiones.php";
+                });
             }
         },
         listarPresiones: function (obrasId) {

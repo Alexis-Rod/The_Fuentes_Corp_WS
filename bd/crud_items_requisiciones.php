@@ -25,7 +25,7 @@ $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `itemRequisicion_id`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`, `hojaRequisicion_total` FROM itemrequisicion INNER JOIN hojasrequisicion ON itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id WHERE itemRequisicion_idHoja = '$idHoja'";
+        $consulta = "SELECT `itemRequisicion_id`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`, `hojaRequisicion_total` FROM itemrequisicion INNER JOIN hojasrequisicion ON itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id WHERE itemRequisicion_idHoja = '$idHoja' ORDER BY itemRequisicion_id ASC";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -37,16 +37,28 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "UPDATE `itemrequisicion` INNER JOIN hojasrequisicion ON hojasrequisicion.hojaRequisicion_id = itemrequisicion.itemRequisicion_idHoja SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad', `hojaRequisicion_total`='$total' WHERE itemRequisicion_id ='$id'";
+        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad' WHERE itemRequisicion_id ='$id'";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $totalUpdate = $data[0]['TotalItem'];
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$totalUpdate' WHERE `hojaRequisicion_id` =" . $idHoja;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         break;
     case 4:
-        echo $id . " " . $idReq;
         $consulta = "DELETE FROM itemrequisicion WHERE itemRequisicion_id =" . $id;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$total' WHERE `hojaRequisicion_id` =" . $idHoja;
+        $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $totalDelete = $data[0]['TotalItem'];
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$totalDelete' WHERE `hojaRequisicion_id` =" . $idHoja;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         break;
@@ -60,7 +72,12 @@ switch ($accion) {
         $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`) VALUES (NULL, '$idHoja', '$unidad', '$producto', '$iva', '$retenciones', '$banderaFlete', '$banderaFisica', '$banderaResico', '$precio', '$cantidad', 'N')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$total' WHERE `hojaRequisicion_id` =" . $idHoja;
+        $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $totalInsert = $data[0]['TotalItem'];
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$totalInsert' WHERE `hojaRequisicion_id` =" . $idHoja;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         break;

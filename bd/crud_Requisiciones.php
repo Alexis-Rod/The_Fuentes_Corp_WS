@@ -17,7 +17,7 @@ $Hoja =   (isset($_POST['hoja'])) ? $_POST['hoja'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`";
+        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`, `requisicion_Numero`";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

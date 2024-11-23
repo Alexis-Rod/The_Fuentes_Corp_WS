@@ -68,7 +68,7 @@ const appRequesition = new Vue({
         <div class="col-4">
             <label for="unidad" class="form-label">Unidad</label>
             <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="" selected>Selecciona la Cantidad</option>
+                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
                 <option value="DISEÑO">DISEÑO</option>
                 <option value="PIEZAS">PIEZAS</option>
                 <option value="BULTOS">BULTOS</option>
@@ -135,14 +135,14 @@ const appRequesition = new Vue({
     <div class="row form-group mx-0 my-3">
         <div class="col">
             <label for="producto" class="form-label">Nombre del Producto</label>
-            <input type="text" class="form-control" id="producto" value="`+ productoEdit + `">
+            <textarea class="form-control" id="producto" rows="3">`+ productoEdit + `</textarea>
         </div>
     </div>
     <div class="row form-group mx-0 my-3">
         <div class="col-4">
             <label for="unidad" class="form-label">Unidad</label>
             <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="" selected>Selecciona la Cantidad</option>
+                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
                 <option value="DISEÑO">DISEÑO</option>
                 <option value="PIEZAS">PIEZAS</option>
                 <option value="BULTOS">BULTOS</option>
@@ -183,33 +183,41 @@ const appRequesition = new Vue({
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
                     if (IVAEdit > 0) {
-                        return [
-                            this.producto = document.getElementById("producto").value,
-                            this.unidad = document.getElementById("unidad").value,
-                            this.cantidad = document.getElementById("cantidad").value,
-                            this.precio = document.getElementById("precio").value,
-                            this.bandFlete = document.getElementById("RetFlete").checked,
-                            this.bandeFisica = document.getElementById("RetPersonaFIsica").checked,
-                            this.bandResico = document.getElementById("RetencionRESICO").checked,
-                        ];
+                        this.producto = document.getElementById("producto").value;
+                        this.unidad = document.getElementById("unidad").value;
+                        this.cantidad = document.getElementById("cantidad").value;
+                        this.precio = document.getElementById("precio").value;
+                        this.bandFlete = document.getElementById("RetFlete").checked;
+                        this.bandeFisica = document.getElementById("RetPersonaFIsica").checked;
+                        this.bandResico = document.getElementById("RetencionRESICO").checked;
+                        if (this.producto.length > 200) {
+                            Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
+                            return false;
+                        }
+                        if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
+                            Swal.showValidationMessage('Por favor completa todos los campos');
+                            return false;
+                        }
+                        return true;
                     }
                     else {
-                        return [
-                            this.producto = document.getElementById("producto").value,
-                            this.unidad = document.getElementById("unidad").value,
-                            this.cantidad = document.getElementById("cantidad").value,
-                            this.precio = document.getElementById("precio").value,
-                        ];
+                        this.producto = document.getElementById("producto").value;
+                        this.unidad = document.getElementById("unidad").value;
+                        this.cantidad = document.getElementById("cantidad").value;
+                        this.precio = document.getElementById("precio").value;
+                        if (this.producto.length > 200) {
+                            Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
+                            return false;
+                        }
+                        if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
+                            Swal.showValidationMessage('Por favor completa todos los campos');
+                            return false;
+                        }
+                        return true;
                     }
                 }
             });
-            if (this.producto == '' || this.unidad == "" || this.cantidad == 0 || this.precio == 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No se Edito el Item',
-                });
-            }
-            else {
+            if (formValues) {
                 this.actualizarDatos(IVAEdit, this.bandFlete, this.bandeFisica, this.bandResico);
                 const Toast = Swal.mixin({
                     toast: true,
@@ -220,7 +228,9 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success',
                     title: 'Item Modificado'
-                })
+                }).then(() => {
+                    window.location.href = url2 + "/items_requisicion.php";
+                });
             }
         },
         actualizarDatos: function (IVAEdit, banderaFlete, banderaFisica, banderaResico) {
@@ -249,7 +259,7 @@ const appRequesition = new Vue({
             this.AuxTotal = this.AuxTotal - auxRet;
             this.AuxTotal = this.AuxTotal + auxTotal;
             console.log(this.AuxTotal);
-            axios.post(url, { accion: 3, unidad: this.unidad, producto: this.producto, iva: auxIVA, retenciones: auxRet, banderaFlete: banderaFlete, banderaFisica: banderaFisica, banderaResico: banderaResico, precio: this.precio, cantidad: this.cantidad, total: this.AuxTotal, id: this.id }).then(response => {
+            axios.post(url, { accion: 3, unidad: this.unidad, producto: this.producto, iva: auxIVA, retenciones: auxRet, banderaFlete: banderaFlete, banderaFisica: banderaFisica, banderaResico: banderaResico, precio: this.precio, cantidad: this.cantidad, total: this.AuxTotal, id: this.id , id_Hoja: localStorage.getItem("idHoja")}).then(response => {
                 console.log(response.data);
                 console.log("y el total es " + this.AuxTotal);
             });
@@ -262,7 +272,9 @@ const appRequesition = new Vue({
             }).then((result) => {
                 if (result.isConfirmed) {
                     this.deleteItem(ID, cantidad, precio, localStorage.getItem("idHoja"), iva, retenciones);
-                    Swal.fire("El item fue eliminado con exito", "", "success");
+                    Swal.fire("El item fue eliminado con exito", "", "success").then(()=>{
+                        window.location.href = url2 + "/items_requisicion.php";
+                    });
                 }
             });
         },
@@ -298,14 +310,14 @@ const appRequesition = new Vue({
     <div class="row form-group mx-0 my-3">
         <div class="col">
             <label for="producto" class="form-label">Nombre del Producto</label>
-            <input type="text" class="form-control" id="producto">
+            <textarea class="form-control" id="producto" rows="3"></textarea>
         </div>
     </div>
     <div class="row form-group mx-0 my-3">
         <div class="col-4">
             <label for="unidad" class="form-label">Unidad</label>
             <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="" selected>Selecciona la Cantidad</option>
+                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
                 <option value="DISEÑO">DISEÑO</option>
                 <option value="PIEZAS">PIEZAS</option>
                 <option value="BULTOS">BULTOS</option>
@@ -370,14 +382,14 @@ const appRequesition = new Vue({
         <div class="row form-group mx-0 my-3">
             <div class="col">
                 <label for="producto" class="form-label">Nombre del Producto</label>
-                <input type="text" class="form-control" id="producto">
+                <textarea class="form-control" id="producto" rows="3"></textarea>
             </div>
         </div>
         <div class="row form-group mx-0 my-3">
             <div class="col-4">
                 <label for="unidad" class="form-label">Unidad</label>
                 <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="" selected>Selecciona la Cantidad</option>
+                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
                 <option value="DISEÑO">DISEÑO</option>
                 <option value="PIEZAS">PIEZAS</option>
                 <option value="BULTOS">BULTOS</option>
@@ -422,33 +434,41 @@ const appRequesition = new Vue({
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
                     if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
-                        return [
-                            this.producto = document.getElementById("producto").value,
-                            this.unidad = document.getElementById("unidad").value,
-                            this.cantidad = document.getElementById("cantidad").value,
-                            this.precio = document.getElementById("precio").value,
-                            this.bandFlete = document.getElementById("RetFlete").checked,
-                            this.bandeFisica = document.getElementById("RetPersonaFIsica").checked,
-                            this.bandResico = document.getElementById("RetencionRESICO").checked,
-                        ];
+                        this.producto = document.getElementById("producto").value;
+                        this.unidad = document.getElementById("unidad").value;
+                        this.cantidad = document.getElementById("cantidad").value;
+                        this.precio = document.getElementById("precio").value;
+                        this.bandFlete = document.getElementById("RetFlete").checked;
+                        this.bandeFisica = document.getElementById("RetPersonaFIsica").checked;
+                        this.bandResico = document.getElementById("RetencionRESICO").checked;
+                        if (this.producto.length > 200) {
+                            Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
+                            return false;
+                        }
+                        if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
+                            Swal.showValidationMessage('Por favor completa todos los campos');
+                            return false;
+                        }
+                        return true;
                     }
                     else {
-                        return [
-                            this.producto = document.getElementById("producto").value,
-                            this.unidad = document.getElementById("unidad").value,
-                            this.cantidad = document.getElementById("cantidad").value,
-                            this.precio = document.getElementById("precio").value,
-                        ];
+                        this.producto = document.getElementById("producto").value;
+                        this.unidad = document.getElementById("unidad").value;
+                        this.cantidad = document.getElementById("cantidad").value;
+                        this.precio = document.getElementById("precio").value;
+                        if (this.producto.length > 200) {
+                            Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
+                            return false;
+                        }
+                        if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
+                            Swal.showValidationMessage('Por favor completa todos los campos');
+                            return false;
+                        }
+                        return true;
                     }
                 }
             });
-            if (this.producto == '' || this.unidad == "" || this.cantidad == 0 || this.precio == 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No se Edito el Item',
-                });
-            }
-            else {
+            if (formValues) {
                 this.addItem()
                 const Toast = Swal.mixin({
                     toast: true,
@@ -458,8 +478,10 @@ const appRequesition = new Vue({
                 });
                 Toast.fire({
                     icon: 'success',
-                    title: 'Item Modificado'
-                })
+                    title: 'Item Agregado'
+                }).then(() => {
+                    window.location.href = url2 + "/items_requisicion.php";
+                });
             }
         },
         addItem: function () {
@@ -521,7 +543,7 @@ const appRequesition = new Vue({
             axios.post(url, { accion: 9, id_req: idReq }).then(response => {
                 this.clve = response.data[0].requisicion_Clave;
                 this.Numero_Req = response.data[0].requisicion_Numero;
-                console.log(this.clve + " "+ this.Numero_Req);
+                console.log(this.clve + " " + this.Numero_Req);
             });
         },
         listarObras: function () {

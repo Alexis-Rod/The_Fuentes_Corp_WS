@@ -41,7 +41,7 @@ const appLogin = new Vue({
                         toast: true,
                         position: "top-end",
                         showConfirmButton: false,
-                        timer: 3000,
+                        timer: 1000,
                         timerProgressBar: true,
                         didOpen: (toast) => {
                             toast.onmouseenter = Swal.stopTimer;
@@ -51,15 +51,16 @@ const appLogin = new Vue({
                     Toast.fire({
                         icon: "success",
                         title: "Autenticacion Correcta"
+                    }).then(()=>{
+                        window.location.href = url2+"/index.php";
                     });
-                    window.location.href = url2+"/index.php";
                 }
                 else {
                     const Toast = Swal.mixin({
                         toast: true,
                         position: "top-end",
                         showConfirmButton: false,
-                        timer: 3000,
+                        timer: 1000,
                         timerProgressBar: true,
                         didOpen: (toast) => {
                             toast.onmouseenter = Swal.stopTimer;

@@ -113,11 +113,13 @@ const appRequesition = new Vue({
                         showConfirmButton: false,
                         timer: 3000
                     });
+                    this.newRequisicionAuto;
                     Toast.fire({
                         icon: 'success',
                         title: 'Requisicion Agregada'
+                    }).then(() => {
+                        window.location.href = url2 + "/requisiciones.php";
                     });
-                    this.newRequisicionAuto();
                 }
             }else{
                 const { value: formValues } = await Swal.fire({
@@ -174,7 +176,7 @@ const appRequesition = new Vue({
                         this.fechaGeneracion = document.getElementById("fechaGeneracion").value;
                         this.clave = document.getElementById("Clv").value;
                         this.folioReq = document.getElementById("FolioReq").value;
-                        this.hojaReq = document.getElementById("HojaReq").value;
+                        this.hojaReq = document.getElementById("HojaReq").value - 1;
 
                         if (!this.nombreRequisicion || !this.fechaGeneracion || !this.folioReq || !this.hojaReq || this.clave === "Selecciona Clave") {
                             Swal.showValidationMessage('Por favor completa todos los campos');
@@ -192,11 +194,13 @@ const appRequesition = new Vue({
                         showConfirmButton: false,
                         timer: 3000
                     });
+                    this.newRequisicionManual();
                     Toast.fire({
                         icon: 'success',
                         title: 'Requisicion Agregada'
+                    }).then(() => {
+                        window.location.href = url2 + "/requisiciones.php";
                     });
-                    this.newRequisicionManual();
                 }
             }
         },

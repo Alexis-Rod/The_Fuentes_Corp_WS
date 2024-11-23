@@ -93,7 +93,7 @@ switch ($accion) {
         }
         break;
     case 7:
-        $consulta = "SELECT `requisicion_Numero` FROM `requisiciones` WHERE `requisicion_id` =" . $IdReq;
+        $consulta = "SELECT `requisicion_Numero`,`requisicion_Hojas` FROM `requisiciones` WHERE `requisicion_id` =" . $IdReq;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

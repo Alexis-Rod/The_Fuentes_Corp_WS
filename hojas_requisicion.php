@@ -126,7 +126,7 @@ include_once 'validarSesion.php';
                     </div>
                     <div class="col-4 d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-success ms-auto">
-                            <span class="fw-bold text-white" @click="addHoja" >Agregar Nueva Hoja</span>
+                            <span class="fw-bold text-white" @click="addHoja" >Agregar la Hoja {{this.requisiciones[0].requisicion_Hojas + 1}}</span>
                         </button>
                     </div>
                 </div>
