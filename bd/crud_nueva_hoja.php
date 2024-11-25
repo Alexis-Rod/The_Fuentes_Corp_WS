@@ -12,11 +12,7 @@ $dig3 = random_int(1, 9);
 $dig4 = random_int(1, 9);
 $dig5 = random_int(1, 9);
 $dig6 = random_int(1, 9);
-$dig7 = random_int(1, 9);
-$dig8 = random_int(1, 9);
-$dig9 = random_int(1, 9);
-$dig10 = random_int(1, 9);
-$Folio = "" . $dig1 . $dig2 . $dig3 . $dig4 . $dig5 . $dig6 . $dig7 . $dig8 . $dig9 . $dig10;
+$Folio = "" . $dig1 . $dig2 . $dig3 . $dig4 . $dig5 . $dig6;
 
 //Recepcion de datos por Axios
 $id_hoja = intval($Folio);
