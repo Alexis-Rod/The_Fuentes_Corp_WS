@@ -129,8 +129,8 @@ function datosProveedor(requisicion) {
 
     doc.text('RFC', 22, 85, 'center');
     doc.text(requisicion.proveedor_rfc, 49, 85, 'center');
-    doc.text('REF BANCARIA', 76, 85, 'center');
-    doc.text(formatString(requisicion.proveedor_refBanco), 113, 85, 'center');
+    doc.text('N° DE TARJETA', 76, 85, 'center');
+    doc.text(formatString(requisicion.presiones_tarjetaBanco), 113, 85, 'center');
     doc.text('N° DE CUENTA', 159, 85, 'center');
     doc.text(formatString(requisicion.proveedor_numeroCuenta), 199, 85, 'center');
     doc.text('SUCURSAL', 229, 85, 'center');
