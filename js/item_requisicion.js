@@ -447,158 +447,217 @@ const appRequesition = new Vue({
                 }
             });
         },
+        /**
+             * Elimina un item de la base de datos.
+             * 
+             * Este método recibe como parámetros el ID del item a eliminar, la cantidad y el precio del item.
+             * Utiliza axios para enviar una solicitud al servidor y eliminar el item de la base de datos.
+             * 
+             * @param {number} ID - El ID del item a eliminar.
+             * @param {number} cantidad - La cantidad del item a eliminar.
+             * @param {number} precio - El precio unitario del item a eliminar.
+             * @param {number} id_Hoja - El ID de la hoja de requisición.
+             * @param {number} iva - El IVA del item a eliminar.
+             * @param {number} retenciones - Las retenciones del item a eliminar.
+         */
         deleteItem: function (ID, cantidad, precio, id_Hoja, iva, retenciones) {
-            axios.post(url, { accion: 4, id: ID, total: this.AuxTotal, id_Hoja: id_Hoja }).then(response => {
+            // Realiza una petición POST al servidor para eliminar el item de la base de datos
+            axios.post(url, {
+                // Acción a realizar (4: eliminar item)
+                accion: 4,
+                // ID del item a eliminar
+                id: ID,
+                // Total del item a eliminar
+                total: this.AuxTotal,
+                // ID de la hoja de requisición
+                id_Hoja: id_Hoja
+            }).then(response => {
+                // Procesa la respuesta del servidor
                 console.log(response.data);
-                console.log("y el total es " + this.AuxTotal);
             });
         },
+        /**
+             * Agrega la información de la hoja, como su proveedor, emisor, etc.
+             * Esta función realiza una petición POST a la URL especificada para obtener la información de la hoja con el id proporcionado.
+             * 
+             * @param {number} idHoja - El id de la hoja para la cual se desean obtener los datos.
+         */
         agregarInformacionHoja: function (idHoja) {
-            axios.post(url, { accion: 5, id_Hoja: idHoja }).then(response => {
-                this.hojas = response.data;
-                this.AuxTotal = Number.parseFloat(this.hojas[0].hojaRequisicion_total);
-                console.log(this.hojas);
-                console.log("y el total es " + this.AuxTotal);
-            });
+            // Realiza una petición POST a la URL para obtener la información de la hoja.
+            axios.post(url, { accion: 5, id_Hoja: idHoja })
+                .then(response => {
+                    // Asigna la respuesta de la petición a la variable 'hojas'.
+                    this.hojas = response.data;
+                    // Muestra en la consola la información de la hoja.
+                    console.log(this.hojas);
+                });
         },
+        /**
+         * Función para agregar un nuevo item a la hoja seleccionada.
+         * Esta función despliega una serie de alertas en SweetAlert2 para confirmar y registrar el nuevo item.
+         * La primera alerta de confirmación pregunta si se desea agregar otro item a la hoja seleccionada.
+         * Si la respuesta es positiva, se muestra una segunda alerta con un formulario para agregar la información del nuevo item.
+         * Finalmente, se invoca el método addItem para registrar la información del item en la base de datos.
+        */
         agregarItem: async function () {
+            // Muestra una alerta de confirmación para preguntar si se desea agregar otro item
             const { value: formValues } = await Swal.fire({
+                // Título del modal de confirmación para agregar un nuevo item a la hoja
                 title: "¿Quieres Agregar otro item a esta Requisicion Existente?",
+                // Mostrar botón de cancelar en el modal
                 showCancelButton: true,
+                // Texto del botón de confirmación en el modal
                 confirmButtonText: "Continuar",
-            }).then((result) => {
+            }).then((result) => { // Si se confirma la acción, se muestra el formulario para agregar el item
                 if (result.isConfirmed) {
-                    if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
+                    if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") { // 
                         this.HtmlRet = `
-                    <div class="col">
-    <hr />
-    <div class="row form-group mx-0 my-3">
-        <div class="col">
-            <label for="producto" class="form-label">Nombre del Producto</label>
-            <textarea class="form-control" id="producto" rows="3"></textarea>
-        </div>
-    </div>
-    <div class="row form-group mx-0 my-3">
-        <div class="col-4">
-            <label for="unidad" class="form-label">Unidad</label>
-            <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
-                <option value="DISEÑO">DISEÑO</option>
-                <option value="PIEZAS">PIEZAS</option>
-                <option value="BULTOS">BULTOS</option>
-                <option value="PESOS">PESOS</option>
-                <option value="LITROS">LITROS</option>
-                <option value="SERVICIOS">SERVICIOS</option>
-                <option value="MESUALIDAD">MESUALIDAD</option>
-                <option value="RENTA">RENTA</option>
-                <option value="CUBETAS">CUBETAS</option>
-                <option value="TONELADAS">TONELADAS</option>
-                <option value="METROS">METROS</option>
-                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
-                <option value="METROS CUBICOS">METROS CUBICOS</option>
-                <option value="KILOGRAMOS">KILOGRAMOS</option>
-              </select>
-        </div>
-        <div class="col-4">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" min="0" class="form-control" id="cantidad">
-        </div>
-        <div class="col-4">
-            <label for="precio" class="form-label">Precio Unitario</label>
-            <input type="number" min="0" class="form-control" id="precio">
-        </div>
-    </div>
-    <hr />
-    <div class="row mx-0 my-3">
-        <div class="col">
-            <h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5>
-        </div>
-    </div>
-    <div class="row form-group mx-0 my-3">
-        <div class="col-6">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="RetFlete">
-                <label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica">
-                <label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta Persona Fisica
-                    (10.67%)</label>
-            </div>
-        </div>
-    </div>
-    <div class="row form-group mx-0 my-3">
-        <div class="col-6">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO">
-                <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
-            </div>
-        </div>
-    </div>
-    <hr />
-</div>
-                        `;
+                        <div class="col">
+                            <hr />
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col">
+                                    <label for="producto" class="form-label">Nombre del Producto</label>
+                                    <textarea class="form-control" id="producto" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col-4">
+                                    <label for="unidad" class="form-label">Unidad</label>
+                                    <select class="form-select" id="unidad" aria-label="Default select example">
+                                        <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
+                                        <option value="DISEÑO">DISEÑO</option>
+                                        <option value="PIEZAS">PIEZAS</option>
+                                        <option value="BULTOS">BULTOS</option>
+                                        <option value="PESOS">PESOS</option>
+                                        <option value="LITROS">LITROS</option>
+                                        <option value="SERVICIOS">SERVICIOS</option>
+                                        <option value="MESUALIDAD">MESUALIDAD</option>
+                                        <option value="RENTA">RENTA</option>
+                                        <option value="CUBETAS">CUBETAS</option>
+                                        <option value="TONELADAS">TONELADAS</option>
+                                        <option value="METROS">METROS</option>
+                                        <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                                        <option value="METROS CUBICOS">METROS CUBICOS</option>
+                                        <option value="KILOGRAMOS">KILOGRAMOS</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label for="cantidad" class="form-label">Cantidad</label>
+                                    <input type="number" min="0" class="form-control" id="cantidad">
+                                </div>
+                                <div class="col-4">
+                                    <label for="precio" class="form-label">Precio Unitario</label>
+                                    <input type="number" min="0" class="form-control" id="precio">
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row mx-0 my-3">
+                                <div class="col">
+                                    <h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="RetFlete">
+                                        <label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica">
+                                        <label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta Persona Fisica
+                                            (10.67%)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO">
+                                        <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                            `; // este codigo html es el que se muestra en el formulario de forma de pago por transferencia.
                     } else {
                         this.HtmlRet = `
                         <div class="col">
-        <hr />
-        <div class="row form-group mx-0 my-3">
-            <div class="col">
-                <label for="producto" class="form-label">Nombre del Producto</label>
-                <textarea class="form-control" id="producto" rows="3"></textarea>
-            </div>
-        </div>
-        <div class="row form-group mx-0 my-3">
-            <div class="col-4">
-                <label for="unidad" class="form-label">Unidad</label>
-                <select class="form-select" id="unidad" aria-label="Default select example">
-                <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
-                <option value="DISEÑO">DISEÑO</option>
-                <option value="PIEZAS">PIEZAS</option>
-                <option value="BULTOS">BULTOS</option>
-                <option value="PESOS">PESOS</option>
-                <option value="LITROS">LITROS</option>
-                <option value="SERVICIOS">SERVICIOS</option>
-                <option value="MESUALIDAD">MESUALIDAD</option>
-                <option value="RENTA">RENTA</option>
-                <option value="CUBETAS">CUBETAS</option>
-                <option value="TONELADAS">TONELADAS</option>
-                <option value="METROS">METROS</option>
-                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
-                <option value="METROS CUBICOS">METROS CUBICOS</option>
-                <option value="KILOGRAMOS">KILOGRAMOS</option>
-                  </select>
-            </div>
-            <div class="col-4">
-                <label for="cantidad" class="form-label">Cantidad</label>
-                <input type="number" min="0" class="form-control" id="cantidad">
-            </div>
-            <div class="col-4">
-                <label for="precio" class="form-label">Precio Unitario</label>
-                <input type="number" min="0" class="form-control" id="precio">
-            </div>
-        </div>
-        <hr />
-    </div>
-                        `;
+                            <hr />
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col">
+                                    <label for="producto" class="form-label">Nombre del Producto</label>
+                                    <textarea class="form-control" id="producto" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="row form-group mx-0 my-3">
+                                <div class="col-4">
+                                    <label for="unidad" class="form-label">Unidad</label>
+                                    <select class="form-select" id="unidad" aria-label="Default select example">
+                                    <option value="Selecciona Unidad" selected>Selecciona la Cantidad</option>
+                                    <option value="DISEÑO">DISEÑO</option>
+                                    <option value="PIEZAS">PIEZAS</option>
+                                    <option value="BULTOS">BULTOS</option>
+                                    <option value="PESOS">PESOS</option>
+                                    <option value="LITROS">LITROS</option>
+                                    <option value="SERVICIOS">SERVICIOS</option>
+                                    <option value="MESUALIDAD">MESUALIDAD</option>
+                                    <option value="RENTA">RENTA</option>
+                                    <option value="CUBETAS">CUBETAS</option>
+                                    <option value="TONELADAS">TONELADAS</option>
+                                    <option value="METROS">METROS</option>
+                                    <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                                    <option value="METROS CUBICOS">METROS CUBICOS</option>
+                                    <option value="KILOGRAMOS">KILOGRAMOS</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label for="cantidad" class="form-label">Cantidad</label>
+                                    <input type="number" min="0" class="form-control" id="cantidad">
+                                </div>
+                                <div class="col-4">
+                                    <label for="precio" class="form-label">Precio Unitario</label>
+                                    <input type="number" min="0" class="form-control" id="precio">
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                        `; // este es el codigo html que se muestra en el formulario de forma de pago por efectivo.
                     }
+                    // aqui se invoca el metodo de addItemAlert que muestra las alertas para agregar el item segun sea la forma de pago.
                     this.addItemAlert();
                 }
             });
         },
+        /**
+            * Muestra una alerta en SweetAlert2 con un formulario para agregar un nuevo item a la hoja.
+            * La alerta incluye configuraciones para mostrar un título, un formulario con campos para ingresar la información del item,
+            * y botones para confirmar o cancelar la acción.
+            * La función también captura los datos ingresados en el formulario, los valida y, si son válidos, invoca el método addItem para registrar la información en la base de datos.
+        */
         addItemAlert: async function () {
             const { value: formValues } = await Swal.fire({
+                // Título de la alerta
                 title: "Agregar Item",
+                // Contenido HTML de la alerta, que incluye el formulario para ingresar la información del item
                 html: this.HtmlRet,
+                // Deshabilitar el foco en el botón de confirmación
                 focusConfirm: false,
+                // Mostrar botón de cancelar
                 showCancelButton: true,
+                // Texto del botón de confirmación
                 confirmButtonText: 'Agregar',
+                // Color del botón de confirmación
                 confirmButtonColor: '#0d6efd',
+                // Color del botón de cancelar
                 cancelButtonColor: '#dc3545',
+                // Función de validación antes de confirmar
                 preConfirm: () => {
+                    // Verificar si la forma de pago es transferencia
                     if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
+                        // Obtener los valores de los campos del formulario
                         this.producto = document.getElementById("producto").value;
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
@@ -606,25 +665,31 @@ const appRequesition = new Vue({
                         this.bandFlete = document.getElementById("RetFlete").checked;
                         this.bandeFisica = document.getElementById("RetPersonaFIsica").checked;
                         this.bandResico = document.getElementById("RetencionRESICO").checked;
+                        // Validar si el campo producto no excede los 200 caracteres
                         if (this.producto.length > 200) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
+                        // Validar si todos los campos están completos
                         if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
                             Swal.showValidationMessage('Por favor completa todos los campos');
                             return false;
                         }
                         return true;
                     }
+                    // Si la forma de pago no es transferencia
                     else {
+                        // Obtener los valores de los campos del formulario
                         this.producto = document.getElementById("producto").value;
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
                         this.precio = document.getElementById("precio").value;
+                        // Validar si el campo producto no excede los 200 caracteres
                         if (this.producto.length > 200) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
+                        // Validar si todos los campos están completos
                         if (!this.producto || this.unidad === "Selecciona Unidad" || !this.cantidad || !this.precio) {
                             Swal.showValidationMessage('Por favor completa todos los campos');
                             return false;
@@ -633,87 +698,218 @@ const appRequesition = new Vue({
                     }
                 }
             });
+            // Si se confirma la acción, invoca el método addItem para registrar la información en la base de datos
             if (formValues) {
+                // Invoca el método addItem para registrar la información en la base de datos
                 this.addItem()
+                // Configura un toast de SweetAlert2 para mostrar un mensaje de éxito
                 const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000
+                    toast: true, // mostrar el mensaje como un toast
+                    position: 'top-end', // posición del mensaje
+                    showConfirmButton: false, // no mostrar el botón de confirmación
+                    timer: 3000 // tiempo de duración del mensaje
                 });
+                // Muestra el toast con un mensaje de éxito
                 Toast.fire({
-                    icon: 'success',
-                    title: 'Item Agregado'
+                    icon: 'success', // icono del mensaje
+                    title: 'Item Agregado' // título del mensaje
                 }).then(() => {
+                    // Redirecciona a la página de items de requisición
                     window.location.href = url2 + "/items_requisicion.php";
                 });
             }
         },
+        /**
+             * Agrega un nuevo item a la base de datos.
+             * 
+             * Este método utiliza el método POST de axios para enviar una solicitud al servidor y agregar el item a la base de datos.
+             * La solicitud incluye los datos del item, como la unidad, el producto, el IVA, las retenciones, y la forma de pago.
+             * 
+             * @return {void}
+        */
         addItem: function () {
+            // Calcula el valor total del item
             var aux = this.cantidad * this.precio;
+
+            // Inicializa variables para calcular las retenciones y el IVA
             var auxFlete = 0;
             var auxFisico = 0;
             var auxResico = 0;
             var auxRet = 0;
             var auxIVA = 0;
+
+            // Verifica si la forma de pago es transferencia
             if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
+                // Calcula las retenciones y el IVA para pago por transferencia
                 if (this.bandFlete == true) {
-                    auxFlete = aux * 0.04
+                    auxFlete = aux * 0.04; // Retención por flete (4%)
                 }
                 if (this.bandeFisica == true) {
-                    auxFisico = aux * 0.1067;
+                    auxFisico = aux * 0.1067; // Retención por renta persona física (10.67%)
                 }
                 if (this.bandResico == true) {
-                    auxResico = aux * 0.0125;
+                    auxResico = aux * 0.0125; // Retención por RESICO (1.25%)
                 }
-                auxIVA = aux * 0.16;
-                auxRet = auxFisico + auxFlete + auxResico;
+                auxIVA = aux * 0.16; // IVA (16%)
+                auxRet = auxFisico + auxFlete + auxResico; // Total de retenciones
             }
-            axios.post(url, { accion: 6, unidad: this.unidad, producto: this.producto, iva: auxIVA, retenciones: auxRet, banderaFlete: this.bandFlete, banderaFisica: this.bandeFisica, banderaResico: this.bandResico, precio: this.precio, cantidad: this.cantidad, total: this.AuxTotal, id_Hoja: this.hojas[0].hojaRequisicion_id }).then(response => {
-                console.log(response.data);
+
+            // Envía la solicitud al servidor para agregar el item a la base de datos
+            axios.post(url, {
+                accion: 6, // Acción a realizar (6: agregar item)
+                unidad: this.unidad, // Unidad del item
+                producto: this.producto, // Nombre del producto del item
+                iva: auxIVA, // Valor del IVA del item
+                retenciones: auxRet, // Valor total de las retenciones del item
+                banderaFlete: this.bandFlete, // Indica si el item tiene retención por flete
+                banderaFisica: this.bandeFisica, // Indica si el item tiene retención por renta persona física
+                banderaResico: this.bandResico, // Indica si el item tiene retención por RESICO
+                precio: this.precio, // Precio unitario del item
+                cantidad: this.cantidad, // Cantidad del item
+                total: this.AuxTotal, // Valor total del item
+                id_Hoja: this.hojas[0].hojaRequisicion_id // ID de la hoja de requisición
+            }).then(response => {
+                console.log(response.data); // Muestra la respuesta del servidor en la consola
             });
         },
+        /**
+             * Solicita la validación de la Hoja.
+             * 
+             * Esta función muestra una alerta al usuario para confirmar si quiere enviar la Hoja a revisión.
+             * Si la respuesta es positiva, se invoca el método solicitarRevision para realizar la lógica en el servidor.
+             * 
+             * @return {void}
+        */
         validarRequisicion: async function () {
+            // Configuración de la alerta para solicitar la validación de la Hoja
             const { value: formValues } = await Swal.fire({
-                title: "¿Quieres enviar a validacion la Requisicion?",
+                // Título de la alerta
+                title: "¿Quieres enviar a revisión la Hoja?",
+                // Mostrar botón de cancelar
                 showCancelButton: true,
+                // Texto del botón de confirmación
                 confirmButtonText: "Continuar",
             }).then((result) => {
+                // Verifica si la respuesta del usuario es positiva
                 if (result.isConfirmed) {
+                    // Invoca el método solicitarRevision para realizar la lógica en el servidor
                     this.solicitarRevision(localStorage.getItem("idRequisicion"));
-                    Swal.fire("Requisicion enviada", "", "success");
+                    // Muestra un mensaje de éxito al usuario
+                    Swal.fire("Hoja enviada a revisión", "", "success");
                 }
             });
         },
+        /**
+             * Solicita la revisión de una requisición.
+             * 
+             * Este método realiza una petición POST a la URL especificada para solicitar la revisión de una requisición.
+             * La petición incluye el ID de la requisición a revisar.
+             * 
+             * @param {number} idReq - El ID de la requisición a revisar.
+        */
         solicitarRevision: function (idReq) {
-            axios.post(url, { accion: 7, id_req: idReq }).then(response => {
+            // Realiza una petición POST a la URL para solicitar la revisión de la requisición.
+            axios.post(url, {
+                // Acción a realizar (7: solicitar revisión)
+                accion: 7,
+                // ID de la requisición a revisar
+                id_req: idReq
+            }).then(response => {
+                // Procesa la respuesta del servidor
                 console.log(response.data);
             });
         },
+        /**
+             * Imprime la requisición generando un PDF.
+             * 
+             * Este método realiza la vinculación del front con el método de generarPDFRequisicion, 
+             * que se encarga de generar el PDF de la Hoja correspondiente.
+             * 
+             * @return {void}
+        */
         imprimirReq: function () {
-            generarPDFRequisicion(this.Numero_Req, this.clve, this.hojas[0], this.NameUser, this.itemsHoja, this.obras[0]);
+            // Llama al método generarPDFRequisicion para generar el PDF de la Hoja
+            // Pasando como parámetros los datos necesarios para la generación del PDF
+            generarPDFRequisicion(
+                this.Numero_Req, // Número de la requisición
+                this.clve, // Clave de la requisición
+                this.hojas[0], // Información de la Hoja
+                this.NameUser, // Nombre del usuario
+                this.itemsHoja, // Items de la Hoja
+                this.obras[0] // Información de la obra
+            );
         },
+        /**
+             * Obtiene la información de la obra que le pertenece a la requisición y hoja respectivamente.
+             * 
+             * Este método utiliza el método POST de axios para solicitar a la base de datos la información de la obra correspondiente.
+             * 
+             * @param {number} idObras - El ID de la obra para la cual se desea obtener la información.
+        */
         obtnerInfoObras: function (idObras) {
-            axios.post(url, { accion: 8, obra: idObras }).then(response => {
+            // Realiza una petición POST a la URL para obtener la información de la obra.
+            axios.post(url, {
+                // Acción a realizar (8: obtener información de la obra)
+                accion: 8,
+                // ID de la obra para la cual se desea obtener la información
+                obra: idObras
+            }).then(response => {
+                // Asigna la respuesta de la petición a la variable 'obras'.
                 this.obras = response.data;
+                // Muestra en la consola la información de la obra.
                 console.log(this.obras);
             });
         },
+        /**
+             * Obtiene la información de la requisición que le pertenece a la obra.
+             * 
+             * Este método utiliza el método POST de axios para solicitar a la base de datos la información de la requisición correspondiente.
+             * La información se utiliza para mostrar al usuario la clave y el número de la requisición.
+             * 
+             * @param {number} idReq - El ID de la requisición para la cual se desea obtener la información.
+        */
         obtenerInfoRequisicion: function (idReq) {
-            axios.post(url, { accion: 9, id_req: idReq }).then(response => {
+            // Realiza una petición POST a la URL para obtener la información de la requisición.
+            axios.post(url, {
+                accion: 9, // Acción a realizar (9: obtener información de la requisición)
+                id_req: idReq // ID de la requisición para la cual se desea obtener la información
+            }
+            ).then(response => {
+                // Asigna la clave y el número de la requisición a las variables correspondientes.
                 this.clve = response.data[0].requisicion_Clave;
                 this.Numero_Req = response.data[0].requisicion_Numero;
-                console.log(this.clve + " " + this.Numero_Req);
             });
         },
+        /**
+             * Obtiene todas las obras activas de la base de datos.
+             * 
+             * Este método utiliza el método POST de axios para solicitar a la base de datos la información de las obras activas.
+             * La información se almacena en la variable 'obrasLista' para su posterior uso.
+             * 
+             * @return {void}
+        */
         listarObras: function () {
-            axios.post(url, { accion: 10 }).then(response => {
+            // Realiza una petición POST a la URL para obtener la información de las obras activas.
+            axios.post(url, {
+                // Acción a realizar (10: obtener obras activas)
+                accion: 10
+            }).then(response => {
+                // Asigna la respuesta de la petición a la variable 'obrasLista'.
                 this.obrasLista = response.data;
+                // Muestra en la consola la información de las obras activas.
                 console.log(this.obrasLista);
             });
         },
+        /**
+             * Redirecciona a la página de obras después de establecer la obra activa en el almacenamiento local.
+             * 
+             * @param {number} idObra - El ID de la obra a establecer como activa.
+        */
         irObra(idObra) {
+            // Establece la obra activa en el almacenamiento local
             localStorage.setItem("obraActiva", idObra);
+
+            // Redirecciona a la página de obras
             window.location.href = url2 + "/obras.php";
         }
     },
