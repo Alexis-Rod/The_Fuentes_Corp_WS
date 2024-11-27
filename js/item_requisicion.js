@@ -3,29 +3,53 @@ var url2 = ".";
 
 const appRequesition = new Vue({
     el: "#AppPresion",
+    // Se define la estructura de datos para la aplicación
     data: {
+        // Lista de items de la hoja
         itemsHoja: [],
+        // Información de la hoja
         hojas: [],
+        // Información de la obra
         obras: [],
+        // Lista de obras activas
         obrasLista: [],
+        // Nombre del usuario
         NameUser: "",
+        // Nombre del producto
         producto: "",
+        // Unidad del producto
         unidad: 0,
+        // Cantidad del producto
         cantidad: 0,
+        // Precio unitario del producto
         precio: 0,
+        // IVA del producto
         IVA: 0,
+        // Subtotal del producto
         subTotal: 0,
+        // Total auxiliar del producto
         AuxTotal: 0,
+        // Retenciones del producto
         Retenciones: 0,
+        // Bandera para indicar si el producto tiene retención por flete
         bandFlete: false,
+        // Bandera para indicar si el producto tiene retención por renta persona física
         bandeFisica: false,
+        // Bandera para indicar si el producto tiene retención por RESICO
         bandResico: false,
+        // HTML para mostrar las retenciones
         HtmlRet: "",
+        // Cadena para mostrar la retención por flete
         strFlete: "",
+        // Cadena para mostrar la retención por renta persona física
         strFisca: "",
+        // Cadena para mostrar la retención por RESICO
         strResico: "",
+        // ID del producto
         id: 0,
+        // Clave de la requisición
         clve: "",
+        // Número de la requisición
         Numero_Req: "",
     },
     methods: {
@@ -913,34 +937,46 @@ const appRequesition = new Vue({
             window.location.href = url2 + "/obras.php";
         }
     },
+    /**
+         * Función que se ejecuta cuando se crea el componente.
+         * Inicializa la tabla de datos y realiza varias peticiones a la base de datos para obtener información.
+    */
     created: function () {
+        /**
+         * Inicializa la tabla de datos con la configuración especificada.
+         * La configuración incluye el idioma y las opciones de paginación.
+         */
         $('#example').DataTable({
-            "order": [],
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "Primero",
-                    "sLast": "Último",
-                    "sNext": "Siguiente",
-                    "sPrevious": "Anterior"
+            "order": [], // No ordenar la tabla por defecto
+            "language": { // Configuración del idioma
+                "sProcessing": "Procesando...", // Mensaje de procesamiento
+                "sLengthMenu": "Mostrar _MENU_ registros", // Menú de longitud
+                "sZeroRecords": "No se encontraron resultados", // Mensaje de cero registros
+                "sEmptyTable": "Ningún dato disponible en esta tabla", // Mensaje de tabla vacía
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros", // Información de registros
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros", // Información de registros vacía
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)", // Información de registros filtrados
+                "sInfoPostFix": "", // Postfijo de información
+                "sSearch": "Buscar:", // Etiqueta de búsqueda
+                "sUrl": "", // URL de la tabla
+                "sInfoThousands": ",", // Separador de miles
+                "sLoadingRecords": "Cargando...", // Mensaje de carga
+                "oPaginate": { // Configuración de paginación
+                    "sFirst": "Primero", // Etiqueta de primer página
+                    "sLast": "Último", // Etiqueta de última página
+                    "sNext": "Siguiente", // Etiqueta de página siguiente
+                    "sPrevious": "Anterior" // Etiqueta de página anterior
                 },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                "oAria": { // Configuración de accesibilidad
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente", // Etiqueta de orden ascendente
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente" // Etiqueta de orden descendente
                 }
             }
         });
+        /**
+         * Realiza varias peticiones a la base de datos para obtener información.
+         * Las peticiones incluyen la lista de obras, la información de la requisición y la información de la obra.
+         */
         this.listarObras();
         this.obtenerInfoRequisicion(localStorage.getItem("idRequisicion"));
         this.obtnerInfoObras(localStorage.getItem("obraActiva"));
