@@ -22,6 +22,7 @@ const appRequesition = new Vue({
         },
         infoObraActiva: function (obrasId) {
             axios.post(url, { accion: 3, obra: obrasId }).then(response => {
+                this.obras = response.data;
                 $('#example').DataTable({
                     "order": [],
                     "language": {
@@ -49,7 +50,6 @@ const appRequesition = new Vue({
                         }
                     }
                 });
-                this.obras = response.data;
                 console.log(this.obras);
             });
         },
