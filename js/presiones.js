@@ -111,6 +111,7 @@ const appRequesition = new Vue({
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
+                this.listarPresiones(localStorage.getItem("obraActiva"));
             });
         },
         agregarPresion: function () {
@@ -170,6 +171,9 @@ const appRequesition = new Vue({
         },
         cargarDataTable: function () {
 
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     mounted: function () {
@@ -202,9 +206,8 @@ const appRequesition = new Vue({
                 }
             });
             this.listarObras();
-            this.infoObraActiva(localStorage.getItem("obraActiva"));
-            this.listarPresiones(localStorage.getItem("obraActiva"));
             this.consultarUsuario(localStorage.getItem("NameUser"));
+            this.infoObraActiva(localStorage.getItem("obraActiva"));
 
         });
     },

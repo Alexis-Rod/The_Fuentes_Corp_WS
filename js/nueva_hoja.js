@@ -55,7 +55,8 @@ const appRequesition = new Vue({
         NameUser: "",
         htmlWinRet: "",
         observaciones: "",
-        timeNow: ""
+        timeNow: "",
+        idHoja: ""
     },
     methods: {
         pagoTransaccionActivado: async function () {
@@ -75,22 +76,23 @@ const appRequesition = new Vue({
                 title: "¿Quieres guardar la Requisicion?",
                 showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "Guardar y Salir",
-                denyButtonText: `Guardar`
+                confirmButtonText: "Guardar y Continuar",
+                denyButtonText: "Guardar y Salir"
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                     this.guardarRequisicion(localStorage.getItem("idRequisicion"));
                     Swal.fire("La requisición fue guardada con éxito", "", "success").then(() => {
-                        // Redirigir a otra página
-                        window.location.href = url2 + "/hojas_requisicion.php"; // Cambia esto por la URL de tu página
-                    });
+                        localStorage.setItem("idHoja", this.idHoja);
+                        localStorage.setItem("validate", false);
+                        window.location.href = url2 + "/items_requisicion.php"; // Cambia esto por la URL de tu página
+                    });                   
                 } else if (result.isDenied) {
                     // Acción para "Guardar"
                     this.guardarRequisicion(localStorage.getItem("idRequisicion"));
                     Swal.fire("La requisición fue guardada con éxito", "", "success").then(() => {
-                        // Se recarga la pagian
-                        window.location.href = url2 + "/nueva_hoja.php"; // Cambia esto por la URL de tu página
+                        // Redirigir a otra página
+                        window.location.href = url2 + "/hojas_requisicion.php"; // Cambia esto por la URL de tu página
                     });
                 }
             });
@@ -255,6 +257,7 @@ const appRequesition = new Vue({
             FechaReq = year + "-" + mes + "-" + dia;
             console.log(this.Items + " Forma de Pago " + this.FormaPago);
             axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones }).then(response => {
+                this.idHoja = response.data;
                 console.log(response.data);
             });
         },
@@ -284,6 +287,9 @@ const appRequesition = new Vue({
         irObra(idObra) {
             localStorage.setItem("obraActiva", idObra);
             window.location.href = url2 + "/obras.php";
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {

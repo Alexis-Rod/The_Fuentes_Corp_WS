@@ -17,7 +17,7 @@ $idHoja =   (isset($_POST['idHoja'])) ? $_POST['idHoja'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `hojaRequisicion_id`, `hojaRequisicion_numero`, `hojaRequisicion_estatus`,`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre` FROM `hojasrequisicion` INNER JOIN requisiciones ON requisiciones.requisicion_id = hojasrequisicion.hojaRequisicion_idReq WHERE requisiciones.requisicion_Obra = '$obra' AND (hojasrequisicion.hojaRequisicion_estatus = 'PENDIENTE' OR hojasrequisicion.hojaRequisicion_estatus = 'RECHAZADA' AND requisiciones.requisicion_estatus = 'ABIERTO') ORDER BY `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_numero`;";
+        $consulta = "SELECT `hojaRequisicion_id`, `hojaRequisicion_numero`, `hojaRequisicion_total`,`requisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `requisicion_Nombre` FROM `hojasrequisicion` INNER JOIN requisiciones ON requisiciones.requisicion_id = hojasrequisicion.hojaRequisicion_idReq WHERE requisiciones.requisicion_Obra = '$obra' AND (hojasrequisicion.hojaRequisicion_estatus = 'REVISION') ORDER BY `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_numero`;";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -45,14 +45,6 @@ switch ($accion) {
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        break;
-    case  7:
-        $consulta = "INSERT INTO `requisicionesligadas` (`requisicionesLigada_id`, `requisicionesLigada_presionID`, `requisicionesLigadas_requisicionID`, `requisicionesLigadas_hojaID`) VALUES (NULL, '$idPresion', '$idReq', '$idHoja')";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
         break;
 }
 

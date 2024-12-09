@@ -45,6 +45,12 @@ include_once 'validarSesion.php';
             <hr>
             <div id="sideBarItem" class="mb-auto overflow-auto">
                 <ul class="nav nav-pills flex-column f-5" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <li v-if="this.users[0].user_directionAcess == 1">
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false" @click="irDireecion">
+                            <img class="me-2" src="images/icons/ceo.svg" alt="user-icon" height="24" width="24">
+                            DIRECCION
+                        </a>
+                    </li>
                     <li>
                         <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-obras-tab" data-bs-toggle="pill" data-bs-target="#v-pills-obras" type="button" role="tab" aria-controls="v-pills-obras" aria-selected="true">
                             <img class="me-2" src="images/icons/obras.svg" alt="user-icon" height="24" width="24">
@@ -57,12 +63,6 @@ include_once 'validarSesion.php';
                                 </li>
                             </ul>
                         </div>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
@@ -129,7 +129,7 @@ include_once 'validarSesion.php';
                     </div>
                 </div>
                 <div class="row">
-                <div class="col-4 d-grid">
+                    <div class="col-4 d-grid">
                         <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterPresiones">
                             <img class="me-2" src="images/icons/requisiciones.svg" alt="user-icon" height="100" width="100">
                             <span class="h3 d-block mt-2 mb-0"><strong>Presiones</strong></span>

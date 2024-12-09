@@ -24,7 +24,10 @@ const appRequesition = new Vue({
         },
         irObra(idObra) {
             localStorage.setItem("obraActiva", idObra);
-            window.location.href = url2 + "/obras.php";
+            window.location.href = url2 + "/obras,.php";
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {

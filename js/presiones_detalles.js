@@ -14,7 +14,8 @@ const appRequesition = new Vue({
         PagoParcial: "",
         FechaPago: "",
         BancoPago: "",
-        timeNow: ""
+        timeNow: "",
+        estatus: ""
     },
     methods: {
         consultarUsuario: function (user_id) {
@@ -123,7 +124,7 @@ const appRequesition = new Vue({
 
             return formattedTime;
         },
-        AplicarItem: async function (idHoja, fecha, banco) {
+        pagarItem: async function (idHoja, fecha, banco) {
             const swalWithBootstrapButtons = await Swal.mixin({
                 customClass: {
                     confirmButton: "btn btn-success",
@@ -141,41 +142,36 @@ const appRequesition = new Vue({
                 reverseButtons: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.autorizado(idHoja, fecha, banco);
+                    this.marcarpagado(idHoja, fecha, banco);
                     swalWithBootstrapButtons.fire({
                         title: "Pagado",
-                        text: "El articulo fue Aprovado.",
+                        text: "El articulo se marco como pagado",
                         icon: "success"
                     });
-                } else if (
-                    /* Read more about handling dismissals below */
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    this.rechazado(idHoja, fecha, banco);
-                    swalWithBootstrapButtons.fire({
-                        title: "No autorizado",
-                        text: "El articulo no se aprobo para pago.",
-                        icon: "error"
-                    });
-                }
+                } 
             });
         },
-        autorizado: function(idHoja, fecha, banco){
+        marcarpagado: function(idHoja, fecha, banco){
               //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
-              var estatus = "LIQUIDADO";
-              this.timeNow = this.getTime();
-              axios.post(url, { accion: 5, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: true }).then(response => {
+              var estatus = "PAGADO";
+              axios.post(url, { accion: 5, idHoja:idHoja , fechaPago: fecha, bancoPago: banco, status: estatus}).then(response => {
                   console.log(response.data);
               });
         },
-        rechazado: function( idHoja, fecha, banco){
-             //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
-             var estatus = "RECHAZADO";
-             this.timeNow = this.getTime();
-             axios.post(url, { accion: 5, idHoja:idHoja ,time: this.timeNow, parcial: "0", fechaPago: fecha, bancoPago: banco, status: estatus, autorizado: false }).then(response => {
+        imprimirReq: function(NumReq,clave,id_hoja){
+             axios.post(url, { accion: 8, idHoja: id_hoja}).then(response => {
                  console.log(response.data);
+                  generarPDFRequisicion(
+                    NumReq, // Número de la requisición
+                    clave, // Clave de la requisición
+                    response.data[0]['infoHoja'], // Información de la Hoja
+                    this.NameUser, // Nombre del usuario
+                    response.data[0]['items'], // Items de la Hoja
+                    this.obras[0] // Información de la obra
+                ); 
              });
         },
+        
         exportarExcel: function () {
             axios.post(url, { accion: 6, datos: JSON.stringify(this.presiones), namePres: this.obraActiva[0].obras_nombre ,export: "" }, { responseType: 'blob' })
                 .then(response => {
@@ -219,6 +215,8 @@ const appRequesition = new Vue({
                         title: "CARRADA",
                         text: "La presion a sido cerrada con exito.",
                         icon: "success"
+                    }).then(() => {
+                        window.location.reload();
                     });
                 } 
             });
@@ -226,6 +224,15 @@ const appRequesition = new Vue({
         closePresion: function (idPresion) {
             axios.post(url, { accion: 7, idPresion: idPresion}).then(response => {
                 console.log(response.data);
+            });
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
+        },
+        consultarEstatus: function(idPresion){
+            axios.post(url, { accion: 9, idPresion: idPresion}).then(response => {
+                this.estatus = response.data[0]['presiones_estatus'];
+                console.log(response.data[0]['presiones_estatus']);
             });
         }
     },
@@ -235,6 +242,7 @@ const appRequesition = new Vue({
         this.infoObraActiva(localStorage.getItem("obraActiva"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
         this.cargarDatosPresion(localStorage.getItem("IdPresion"));
+        this.consultarEstatus(localStorage.getItem("IdPresion"));
         this.cargarDataTable();
     },
     computed: {

@@ -40,8 +40,10 @@ const appRequesition = new Vue({
         enterPresiones: function()
         {
             window.location.href = url2 + "/presiones.php";
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
-        
     },
     created: function () {
         this.listarObras();

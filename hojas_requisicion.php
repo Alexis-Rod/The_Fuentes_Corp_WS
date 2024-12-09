@@ -45,6 +45,12 @@ include_once 'validarSesion.php';
             <hr>
             <div id="sideBarItem" class="mb-auto overflow-auto">
                 <ul class="nav nav-pills flex-column f-5" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <li v-if="this.users[0].user_directionAcess == 1">
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false" @click="irDireecion">
+                            <img class="me-2" src="images/icons/ceo.svg" alt="user-icon" height="24" width="24">
+                            DIRECCION
+                        </a>
+                    </li>
                     <li>
                         <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-obras-tab" data-bs-toggle="pill" data-bs-target="#v-pills-obras" type="button" role="tab" aria-controls="v-pills-obras" aria-selected="true">
                             <img class="me-2" src="images/icons/obras.svg" alt="user-icon" height="24" width="24">
@@ -57,12 +63,6 @@ include_once 'validarSesion.php';
                                 </li>
                             </ul>
                         </div>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
@@ -124,9 +124,9 @@ include_once 'validarSesion.php';
                     <div class="col-8">
                         <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">HOJAS DE LA REQUISICION {{this.requisiciones[0].requisicion_Numero}}</h2>
                     </div>
-                    <div class="col-4 d-flex align-items-end mb-3">
+                    <div class="col-4 d-flex align-items-end mb-3" v-if="this.users[0].user_editReq == 1">
                         <button type="button" class="btn btn-success ms-auto">
-                            <span class="fw-bold text-white" @click="addHoja" >Agregar la Hoja {{this.requisiciones[0].requisicion_Hojas + 1}}</span>
+                            <span class="fw-bold text-white" @click="addHoja">Agregar la Hoja {{this.requisiciones[0].requisicion_Hojas + 1}}</span>
                         </button>
                     </div>
                 </div>
@@ -153,9 +153,12 @@ include_once 'validarSesion.php';
                                     <td>{{hoja.hojaRequisicion_formaPago}}</td>
                                     <td>$ {{hoja.hojaRequisicion_total}}</td>
                                     <td>
-                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'PENDIENTE'">PENDIENTE A PAGO</span>
-                                        <span class="badge bg-warning" v-if="hoja.hojaRequisicion_estatus == 'LIGADA'">LIGADA A PRESION</span>
-                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'RECHAZADA'">PENDIENTE A PAGO</span>
+                                        <span class="badge bg-primary" v-if="hoja.hojaRequisicion_estatus == 'NUEVO'">NUEVO</span>
+                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'PENDIENTE'">NO APROVADO</span>
+                                        <span class="badge bg-warning" v-if="hoja.hojaRequisicion_estatus == 'REVISION'">REVISION</span>
+                                        <span class="badge bg-primary" v-if="hoja.hojaRequisicion_estatus == 'LIGADA'">LIGADA A PRESION</span>
+                                        <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'RECHAZADA'">RECHAZADA</span>
+                                        <span class="badge bg-primary" v-if="hoja.hojaRequisicion_estatus == 'AUTORIZADA'">AUTORIZADA</span>
                                         <span class="badge bg-success" v-if="hoja.hojaRequisicion_estatus == 'PAGADA'">PAGADA</span>
                                     </td>
                                     <td>

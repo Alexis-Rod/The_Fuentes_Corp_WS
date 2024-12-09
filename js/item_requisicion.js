@@ -2,7 +2,7 @@ var url = "bd/crud_items_requisiciones.php";
 var url2 = ".";
 
 const appRequesition = new Vue({
-    el: "#AppPresion",
+    el: "#AppItems",
     // Se define la estructura de datos para la aplicación
     data: {
         // Lista de items de la hoja
@@ -51,6 +51,7 @@ const appRequesition = new Vue({
         clve: "",
         // Número de la requisición
         Numero_Req: "",
+        validate: ""
     },
     methods: {
         /**
@@ -804,7 +805,7 @@ const appRequesition = new Vue({
              * 
              * @return {void}
         */
-        validarRequisicion: async function () {
+        validarRequisicion: async function (comentarios) {
             // Configuración de la alerta para solicitar la validación de la Hoja
             const { value: formValues } = await Swal.fire({
                 // Título de la alerta
@@ -817,9 +818,12 @@ const appRequesition = new Vue({
                 // Verifica si la respuesta del usuario es positiva
                 if (result.isConfirmed) {
                     // Invoca el método solicitarRevision para realizar la lógica en el servidor
-                    this.solicitarRevision(localStorage.getItem("idRequisicion"));
+                    this.solicitarRevision(localStorage.getItem("idHoja"),comentarios);
                     // Muestra un mensaje de éxito al usuario
-                    Swal.fire("Hoja enviada a revisión", "", "success");
+                    Swal.fire("Hoja enviada a revisión", "", "success").then(() => {
+                        // Redirecciona a la página de inicio
+                        window.location.href = url2 + "/hojas_requisicion.php";
+                    });
                 }
             });
         },
@@ -831,13 +835,14 @@ const appRequesition = new Vue({
              * 
              * @param {number} idReq - El ID de la requisición a revisar.
         */
-        solicitarRevision: function (idReq) {
+        solicitarRevision: function (idReq, comentarios) {
             // Realiza una petición POST a la URL para solicitar la revisión de la requisición.
             axios.post(url, {
                 // Acción a realizar (7: solicitar revisión)
                 accion: 7,
                 // ID de la requisición a revisar
-                id_req: idReq
+                id_req: idReq,
+                comentarios: comentarios
             }).then(response => {
                 // Procesa la respuesta del servidor
                 console.log(response.data);
@@ -935,44 +940,67 @@ const appRequesition = new Vue({
 
             // Redirecciona a la página de obras
             window.location.href = url2 + "/obras.php";
+        },
+        asignarAPresion: async function (coments) {
+            const swalWithBootstrapButtons = await Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: true
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Validaras esta Hoja para Asignarla a la Presion?",
+                text: "Esta operacion no se puede revertir",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "SI",
+                cancelButtonText: "NO",
+                reverseButtons: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.enlazarAPresion(localStorage.getItem("IdPresion"), localStorage.getItem("idRequisicion"), localStorage.getItem("idHoja"),coments);
+                    swalWithBootstrapButtons.fire({
+                        title: "Asiganada",
+                        text: "El articulo fue Validado y Asignado.",
+                        icon: "success"
+                    }).then(() => {
+                        window.location.href = url2 + "/enlazar_requisiciones.php";
+                    });
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    this.noAprobada(localStorage.getItem("idHoja"),coments);
+                    swalWithBootstrapButtons.fire({
+                        title: "Rechazada",
+                        text: "El articulo no se valido.",
+                        icon: "error"
+                    }).then(() => {
+                        window.location.href = url2 + "/enlazar_requisiciones.php";
+                    });
+                }
+            });
+        },
+        enlazarAPresion: function(idPresion, idReq, idHoja,coments){
+            axios.post(url, { accion: 11, idPresion: idPresion , id_req: idReq, id_Hoja: idHoja, comentarios: coments}).then(response => {
+                console.log(response.data);
+            });
+        },
+        noAprobada: function(idHoja,coments){
+            axios.post(url, { accion: 12, id_Hoja: idHoja, comentarios: coments}).then(response => {
+                console.log(response.data);
+            });
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     /**
          * Función que se ejecuta cuando se crea el componente.
          * Inicializa la tabla de datos y realiza varias peticiones a la base de datos para obtener información.
     */
-    created: function () {
-        /**
-         * Inicializa la tabla de datos con la configuración especificada.
-         * La configuración incluye el idioma y las opciones de paginación.
-         */
-        $('#example').DataTable({
-            "order": [], // No ordenar la tabla por defecto
-            "language": { // Configuración del idioma
-                "sProcessing": "Procesando...", // Mensaje de procesamiento
-                "sLengthMenu": "Mostrar _MENU_ registros", // Menú de longitud
-                "sZeroRecords": "No se encontraron resultados", // Mensaje de cero registros
-                "sEmptyTable": "Ningún dato disponible en esta tabla", // Mensaje de tabla vacía
-                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros", // Información de registros
-                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros", // Información de registros vacía
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)", // Información de registros filtrados
-                "sInfoPostFix": "", // Postfijo de información
-                "sSearch": "Buscar:", // Etiqueta de búsqueda
-                "sUrl": "", // URL de la tabla
-                "sInfoThousands": ",", // Separador de miles
-                "sLoadingRecords": "Cargando...", // Mensaje de carga
-                "oPaginate": { // Configuración de paginación
-                    "sFirst": "Primero", // Etiqueta de primer página
-                    "sLast": "Último", // Etiqueta de última página
-                    "sNext": "Siguiente", // Etiqueta de página siguiente
-                    "sPrevious": "Anterior" // Etiqueta de página anterior
-                },
-                "oAria": { // Configuración de accesibilidad
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente", // Etiqueta de orden ascendente
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente" // Etiqueta de orden descendente
-                }
-            }
-        });
+    mounted: function () {
         /**
          * Realiza varias peticiones a la base de datos para obtener información.
          * Las peticiones incluyen la lista de obras, la información de la requisición y la información de la obra.
@@ -983,6 +1011,42 @@ const appRequesition = new Vue({
         this.agregarInformacionHoja(localStorage.getItem("idHoja"));
         this.listarItems(localStorage.getItem("idHoja"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
+        this.validate = localStorage.getItem("validate");
+        /**
+         * Inicializa la tabla de datos con la configuración especificada.
+         * La configuración incluye el idioma y las opciones de paginación.
+         */
+        this.$nextTick(() => {
+            $('#example').DataTable({
+                "searching": true,
+                "paging": true,
+                "order": [], // No ordenar la tabla por defecto
+                "language": { // Configuración del idioma
+                    "sProcessing": "Procesando...", // Mensaje de procesamiento
+                    "sLengthMenu": "Mostrar _MENU_ registros", // Menú de longitud
+                    "sZeroRecords": "No se encontraron resultados", // Mensaje de cero registros
+                    "sEmptyTable": "Ningún dato disponible en esta tabla", // Mensaje de tabla vacía
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros", // Información de registros
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros", // Información de registros vacía
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)", // Información de registros filtrados
+                    "sInfoPostFix": "", // Postfijo de información
+                    "sSearch": "Buscar:", // Etiqueta de búsqueda
+                    "sUrl": "", // URL de la tabla
+                    "sInfoThousands": ",", // Separador de miles
+                    "sLoadingRecords": "Cargando...", // Mensaje de carga
+                    "oPaginate": { // Configuración de paginación
+                        "sFirst": "Primero", // Etiqueta de primer página
+                        "sLast": "Último", // Etiqueta de última página
+                        "sNext": "Siguiente", // Etiqueta de página siguiente
+                        "sPrevious": "Anterior" // Etiqueta de página anterior
+                    },
+                    "oAria": { // Configuración de accesibilidad
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente", // Etiqueta de orden ascendente
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente" // Etiqueta de orden descendente
+                    }
+                }
+            });
+        });
     },
     computed: {
 

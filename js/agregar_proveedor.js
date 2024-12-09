@@ -63,6 +63,9 @@ const appRequesition = new Vue({
                     Swal.fire("No se guardo el proveedor", "", "info");
                 }
             });
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {

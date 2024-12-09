@@ -39,13 +39,12 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         $hoja = $data[0]['requisicion_Hojas'];
         $hoja++;
-        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', '$formaPago',NULL, NULL, '$totalPagar','PENDIENTE')";
+        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$formaPago',NULL, NULL, '$totalPagar',0,'NUEVO')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "UPDATE `requisiciones` SET `requisicion_Hojas` = '$hoja' WHERE `requisiciones`.`requisicion_id` =" . $id_Req;
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        var_dump($datos);
         foreach ($datos as $item) {
             $Unidad = $item->Unidad;
             $Producto =  $item->Nombre;
@@ -60,7 +59,7 @@ switch ($accion) {
             $resultado = $conexion->prepare($consulta);
             $resultado->execute([$id_hoja, $Unidad, $Producto, $IVA, $Ret, $banderaFlete, $banderaFisica, $banderaResico, $Precio, $cantidad]);
         }
-        unset($item);
+        $data = $id_hoja;
         break;
     case 2:
         $consulta = "SELECT `emisor_id`,`emisor_nombre`,`emisor_rfc`,`emisor_direccion`,`emisor_telefono`,`emisor_fax`,`emisor_zipCode` FROM `emisores`;";

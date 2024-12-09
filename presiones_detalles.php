@@ -45,6 +45,12 @@ include_once 'validarSesion.php';
             <hr>
             <div id="sideBarItem" class="mb-auto overflow-auto">
                 <ul class="nav nav-pills flex-column f-5" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <li v-if="this.users[0].user_directionAcess == 1">
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false" @click="irDireecion">
+                            <img class="me-2" src="images/icons/ceo.svg" alt="user-icon" height="24" width="24">
+                            DIRECCION
+                        </a>
+                    </li>
                     <li>
                         <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-obras-tab" data-bs-toggle="pill" data-bs-target="#v-pills-obras" type="button" role="tab" aria-controls="v-pills-obras" aria-selected="true">
                             <img class="me-2" src="images/icons/obras.svg" alt="user-icon" height="24" width="24">
@@ -57,12 +63,6 @@ include_once 'validarSesion.php';
                                 </li>
                             </ul>
                         </div>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
@@ -143,7 +143,6 @@ include_once 'validarSesion.php';
                                     <th scope="col">PROVEEDOR</th>
                                     <th scope="col">CONCEPTO</th>
                                     <th scope="col">ADEUDO</th>
-                                    <th scope="col">PAGO PROGRAMADO</th>
                                     <th scope="col">NETO A PAGAR</th>
                                     <th scope="col">OBSERVACIONES</th>
                                     <th scope="col">FORMA DE PAGO</th>
@@ -154,14 +153,13 @@ include_once 'validarSesion.php';
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
-                                <tr class="my-3" v-for="(presion,indice) of presiones">
+                                <tr class="my-3" v-for="(presion,indice) of presiones" v-if="presion.HojaEstatus == 'LIGADA' || presion.HojaEstatus == 'AUTORIZADA' || presion.HojaEstatus == 'PAGADA'">
                                     <td scope="row">{{presion.clave}}</td>
                                     <td>{{presion.NumReq}}</td>
                                     <td>{{presion.proveedor}}</td>
                                     <td>{{presion.concepto}}</td>
                                     <td>{{presion.total}}</td>
-                                    <td></td>
-                                    <td>{{presion.total}}</td>
+                                    <td>{{presion.adeudo}}</td>
                                     <td>{{presion.Observaciones}}</td>
                                     <td>{{presion.formaPago}}</td>
                                     <td>
@@ -171,17 +169,34 @@ include_once 'validarSesion.php';
                                         <input type="text" class="form-control" id="BancoPago" v-model="presion.Banco" placeholder="Ingresa Banco">
                                     </td>
                                     <td>
-                                        <span class="badge bg-warning" v-if="presion.HojaEstatus == 'PENDIENTE'">PENDIENTE</span>
                                         <span class="badge bg-warning" v-if="presion.HojaEstatus == 'LIGADA'">PENDIENTE</span>
-                                        <span class="badge bg-danger" v-if="presion.HojaEstatus == 'RECHAZADA'">RECHAZADO</span>
+                                        <span class="badge bg-success" v-if="presion.HojaEstatus == 'AUTORIZADA'">AUTORIZADO</span>
                                         <span class="badge bg-success" v-if="presion.HojaEstatus == 'PAGADA'">PAGADA</span>
                                     </td>
                                     <td>
-                                        <div v-if="presion.PresionEstatus == 'PENDIENTE'">
-                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja, presion.Fecha, presion.Banco)">Autorizar</button>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'AUTORIZADA'">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="pagarItem(presion.id_hoja, presion.Fecha, presion.Banco)">
+                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
+                                                <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
+                                            </button>
                                         </div>
-                                        <div v-if="presion.PresionEstatus == 'AUTORIZADO'">
-                                            <button type="button" class="btn btn-primary" @click="AplicarItem(presion.id_hoja, presion.Fecha, presion.Banco)" disabled>Autorizar</button>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'LIGADA'">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="" disabled>
+                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="" disabled>
+                                                <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                        </div>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'PAGADA'">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="" disabled>
+                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
+                                                <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -191,7 +206,7 @@ include_once 'validarSesion.php';
                         </table>
                     </div>
                 </div>
-                <div class="row w-100 mt-0 mb-3 mx-auto">
+                <div class="row w-100 mt-0 mb-3 mx-auto" v-if="this.estatus == 'PENDIENTE'">
                     <div class="col px-0 d-flex justify-content-center">
                         <button class="btn btn-primary" @click="cerrarPresion" title="Cerrar Presion">
                             <span class="text-center">CERRAR PRESION</span>
@@ -218,6 +233,11 @@ include_once 'validarSesion.php';
     <!--esta es la llamada cdn de datatable-->
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+
+    <!--CDN de la bibloteca JsPDF-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+
+    <script src="./js/pdfGenerate.js"></script>
 
     <!-- scripts constume-->
     <script src="./js/presiones_detalles.js"></script>

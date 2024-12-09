@@ -25,13 +25,13 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>Presiones de Todas las Obras</title>
 </head>
 
 <body style="display: flex;">
-    <div id="AppNewProv">
+    <div id="AppIndex">
         <!--sidebar-->
-        <<div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <div class="d-flex flex-row">
                     <div class="d-flex align-items-center me-3">
@@ -98,103 +98,89 @@ include_once 'validarSesion.php';
                     <span>CERRAR SESION</span>
                 </a>
             </div>
-    </div>
-    <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 75%;">
-        <nav class="navbar" style="background-color: #4468C1;">
-            <div class="container-fluid">
-                <span class="navbar-brand text-light text-center w-100 fw-bolder">The Fuentes Corporation Workspace</span>
-            </div>
-        </nav>
-        <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
-            <ol class="breadcrumb py-2 px-3 my-0">
-                <li class="breadcrumb-item">
-                    <a href="./index.php">
-                        <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
-                        <span>Inicio</span>
-                    </a>
-                </li>
-                <li class="breadcrumb-item"><a href="./presiones.php"><span>Catalagos</span></a></li>
-                <li class="breadcrumb-item active" aria-current="page"><span>Agregar Proveedor</span></li>
-            </ol>
-        </nav>
-        <div class="container px-5 overflow-auto">
-            <div class="row mb-4">
-                <div class="col">
-                    <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">AGREGAR UN NUEVO PROVEEDOR</h2>
+        </div>
+        <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 75%;">
+            <!--Navbar-->
+            <nav class="navbar" style="background-color: #4468C1;">
+                <div class="container-fluid">
+                    <span class="navbar-brand text-light text-center w-100 fw-bolder">The Fuentes Corporation Workspace</span>
                 </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="nameProv" class="form-label">Nombre del Proveedor</label>
-                    <input type="text" class="form-control" id="nameProv" placeholder="Ingresa informacion..." v-model="nombre_prov">
+            </nav>
+            <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
+                <ol class="breadcrumb py-2 px-3 my-0">
+                    <li class="breadcrumb-item">
+                        <a href="./index.php">
+                            <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="./direccion.php"><span>Menu Direccion</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>Presiones de todas la Obras</span></li>
+                </ol>
+            </nav>
+            <div class="container px-5  overflow-auto">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">PRESIONES PENDIENTES DE TODAS LAS OBRAS ACTIVAS</h2>
+                    </div>
                 </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="adressProv" class="form-label">Direccion del Proveedor</label>
-                    <input type="text" class="form-control" id="adressProv" placeholder="Ingresa informacion..." v-model="direccion_prov">
+                <div class="row">
+                    <div class="col">
+                        <p class="text-dark m-2 mt-3 mb-3">Aqui aparecen todas las presiones de las obras que estan pendientes a autorizacion y pago</p>
+                    </div>
                 </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="rfcProv" class="form-label">RFC del Proveedor</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="rfc_prov">
-                </div>
-                <div class="col">
-                    <label for="clabeProv" class="form-label">Clave Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="clabeProv" placeholder="Ingresa informacion..." v-model="clabe_prov">
-                </div>
-                <div class="col">
-                    <label for="cuentaProv" class="form-label">Cuenta Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="cuentaProv" placeholder="Ingresa informacion..." v-model="cuenta_prov">
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="rfcProv" class="form-label">Numero de Tarjeta</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="tarjeta_prov">
-                </div>
-                <div class="col">
-                    <label for="clabeProv" class="form-label">Numero de Referencia del Proveedor</label>
-                    <input type="text" class="form-control" id="clabeProv" placeholder="Ingresa informacion..." v-model="referencia_prov">
-                </div>
-                <div class="col">
-                    <label for="cuentaProv" class="form-label">Tipo de Proveedor</label>
-                    <input type="text" class="form-control" id="cuentaProv" placeholder="Ingresa informacion..." v-model="tipo_prov">
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="bankProv" class="form-label">Banco del Proveedor</label>
-                    <select class="form-select" aria-label="Default select example" v-model="selected_Banco">
-                        <option value="">Selecciona Banco</option>
-                        <option v-for="(banco,indice) of bancos" :value="banco.banco_nombreComercial">{{banco.banco_id}}- {{banco.banco_nombreComercial}}</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="sucursalProv" class="form-label">Sucursal Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="sucursalProv" placeholder="Ingresa informacion..." v-model="suc_prov">
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="rfcProv" class="form-label">Telefono del Proveedor</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="tel_prov">
-                </div>
-                <div class="col">
-                    <label for="clabeProv" class="form-label">Correo Electronico del Proveedor</label>
-                    <input type="email" class="form-control" id="clabeProv" placeholder="Ingresa la Clabe Bancaria del Proveedor" v-model="email_prov">
-                </div>
-            </div>
-            <div class="row w-100 mt-5 mb-5 mx-auto">
-                <div class="col px-0 d-flex justify-content-center">
-                    <button class="btn btn-success" @click="agregarProveedor" title="Agregar Proveedor">
-                        <span class="text-center">Crear Requiscion</span>
-                    </button>
+                <div class="row mb-5">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item" v-for="(obra, index) in presiones" :key="index">
+                            <h2 class="accordion-header">
+                                <button v-bind:class="'accordion-button fw-bold '+ obra.colapse_Atr" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#' + 'collapse' + quitarEspacios(obra.Nombre_Obra)" v-bind:aria-expanded="obra.colapse_band" v-bind:aria-controls="'collapse' + quitarEspacios(obra.Nombre_Obra)">
+                                    Obra: {{obra.Nombre_Obra}}
+                                </button>
+                            </h2>
+                            <div v-bind:id="'collapse'+ quitarEspacios(obra.Nombre_Obra)" class="'accordion-collapse collapse ' + obra.colapse_show" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="col table-responsive">
+                                        <table id="example" class="table align-middle table-hover w-100">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th scope="col">CLAVE</th>
+                                                    <th scope="col">N° DE REQUISICION</th>
+                                                    <th scope="col">PROVEEDOR</th>
+                                                    <th scope="col">CONCEPTO</th>
+                                                    <th scope="col">ADEUDO</th>
+                                                    <th scope="col">OBSERVACIONES</th>
+                                                    <th scope="col">FORMA DE PAGO</th>
+                                                    <th scope="col">APLICAR ACCIONES</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-light" id="Tabla_Items">
+                                                <tr class="my-3" v-for="(presionObra,indice) of obra.Presion_Obra">
+                                                    <td>{{presionObra.clave}}</td>
+                                                    <td>{{presionObra.NumReq}}</td>
+                                                    <td>{{presionObra.proveedor}}</td>
+                                                    <td>{{presionObra.concepto}}</td>
+                                                    <td>{{presionObra.total}}</td>
+                                                    <td>{{presionObra.Observaciones}}</td>
+                                                    <td>{{presionObra.formaPago}}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary" @click="autoriar(presionObra.id_hoja, convertirADecimal(presionObra.total))" v-if="presionObra.HojaEstatus == 'LIGADA'">Autorizar</button>
+                                                        <span class="badge bg-success" v-if="presionObra.HojaEstatus == 'AUTORIZADA'">AUTORIZADA</span>
+                                                        <span class="badge bg-danger" v-if="presionObra.HojaEstatus == 'RECHAZADA'">RECHAZADA</span>
+                                                        <span class="badge bg-success" v-if="presionObra.HojaEstatus == 'PAGADA'">PAGADA</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-dark">
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <!--scripts de bootstrap, poppers y jquery-->
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -215,7 +201,7 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!-- scripts constume-->
-    <script src="./js/agregar_proveedor.js"></script>
+    <script src="./js/all_presiones.js"></script>
 </body>
 
 </html>

@@ -55,36 +55,22 @@ const appRequesition = new Vue({
                 console.log(this.presiones);
             });
         },
-        enlazarConPresion: async function (idHoja, idReq, NameReq, NumHoja) {
-            const { value: formValues } = await Swal.fire({
-                title: "¿Seguro que quieres Continuar?",
-                text: 'Se enlazara la Presion "'+this.presiones[0].presiones_nombre+'" con la Requisicion  "'+NameReq+' Hoja N° '+NumHoja+ '" El cambio ya no se podra revertir',
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, Enlazarlo"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.linkPresionToRequisicion(localStorage.getItem("IdPresion"), idHoja, idReq);
-                    Swal.fire({
-                        title: "Enlazado",
-                        text: "la presion se enlazo correctamente",
-                        icon: "success"
-                    }).then(() => {
-                        // Se recarga la pagian
-                        window.location.href = url2 + "/enlazar_requisiciones.php"; // Cambia esto por la URL de tu página
-                    });
-                }
-            });
+        enlazarConPresion: async function (idHoja, idReq) {
+            localStorage.setItem("idRequisicion", idReq);
+            localStorage.setItem("idHoja", idHoja);
+            localStorage.setItem("validate", true);
+            window.location.href = url2 + "/items_requisicion.php";
         },
-        linkPresionToRequisicion: function(idPresion, idHoja, idReq){
-            axios.post(url, { accion: 7, idPresion: idPresion , idReq: idReq, idHoja: idHoja}).then(response => {
-                console.log(response.data);
-            });
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {
+        this.listarObras();
+        this.listarRequisiciones(localStorage.getItem("obraActiva"));
+        this.consultarUsuario(localStorage.getItem("NameUser"));
+        this.infoObraActiva(localStorage.getItem("obraActiva"));
+        this.consultarInfoPresion(localStorage.getItem("IdPresion"));
         $('#example').DataTable({
             "order": [],
             "language": {
@@ -112,11 +98,6 @@ const appRequesition = new Vue({
                 }
             }
         });
-        this.listarObras();
-        this.listarRequisiciones(localStorage.getItem("obraActiva"));
-        this.consultarUsuario(localStorage.getItem("NameUser"));
-        this.infoObraActiva(localStorage.getItem("obraActiva"));
-        this.consultarInfoPresion(localStorage.getItem("IdPresion"));
     },
     computed: {
 

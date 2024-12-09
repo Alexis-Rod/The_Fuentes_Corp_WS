@@ -1,11 +1,12 @@
-var url = "bd/crud_index.php";
+var url = "bd/crud_direccion.php";
 var url2 = ".";
 
 const appRequesition = new Vue({
-    el: "#AppIndex",
+    el: "#AppDireccion",
     data: {
         users: [],
         obras: [],
+        obrasLista: [],
         NameUser: ""
     },
     methods: {
@@ -16,15 +17,29 @@ const appRequesition = new Vue({
                 console.log(this.users);
             });
         },
-        listarObras: function () {
-            axios.post(url, { accion: 2 }).then(response => {
+        infoObraActiva: function (obrasId) {
+            axios.post(url, { accion: 3, obra: obrasId }).then(response => {
                 this.obras = response.data;
                 console.log(this.obras);
+            });
+        },
+        listarObras: function () {
+            axios.post(url, { accion: 2 }).then(response => {
+                this.obrasLista = response.data;
+                console.log(this.obrasLista);
             });
         },
         irObra(idObra) {
             localStorage.setItem("obraActiva", idObra);
             window.location.href = url2 + "/obras.php";
+        },
+        enterRequisiciones: function()
+        {
+            window.location.href = url2 + "/requisiciones.php";
+        },
+        enterAllPresiones: function()
+        {
+            window.location.href = url2 + "/all_presiones.php";
         },
         irDireecion: function(){
             window.location.href = url2 + "/direccion.php";
@@ -32,6 +47,7 @@ const appRequesition = new Vue({
     },
     created: function () {
         this.listarObras();
+        this.infoObraActiva(localStorage.getItem("obraActiva"));
         this.consultarUsuario(localStorage.getItem("NameUser"));
     },
     computed: {

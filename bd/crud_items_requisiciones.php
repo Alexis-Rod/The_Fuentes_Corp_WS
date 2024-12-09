@@ -22,6 +22,8 @@ $cantidad = (isset($_POST['cantidad'])) ? $_POST['cantidad'] : '';
 $total = (isset($_POST['total'])) ? $_POST['total'] : '';
 $id = (isset($_POST['id'])) ? $_POST['id'] : '';
 $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
+$idPresion = (isset($_POST['idPresion'])) ? $_POST['idPresion'] : '';
+$comentarios = (isset($_POST['comentarios'])) ? $_POST['comentarios'] : '';
 
 switch ($accion) {
     case 1:
@@ -82,7 +84,7 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 7:
-        $consulta = "UPDATE `requisiciones` SET `requisicion_estatus` = 'REVISION' WHERE `requisiciones`.`requisicion_id` = '$idReq'";
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'REVISION', `hojaRequisicion_observaciones` = '$comentarios' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idReq'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         break;
@@ -103,7 +105,20 @@ switch ($accion) {
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        break;    
+        break;
+    case 11:
+        $consulta = "INSERT INTO `requisicionesligadas` (`requisicionesLigada_id`, `requisicionesLigada_presionID`, `requisicionesLigadas_requisicionID`, `requisicionesLigadas_hojaID`) VALUES (NULL, '$idPresion', '$idReq', '$idHoja')";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA', `hojarequisicion_comentariosValidacion` = 'OK' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        break;
+    case 12:
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PENDIENTE', `hojarequisicion_comentariosValidacion` = '$comentarios' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        break;
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);

@@ -19,6 +19,7 @@ const appRequesition = new Vue({
     methods: {
         ConsultarItemHoja: async function (idHoja) {
             localStorage.setItem("idHoja", idHoja);
+            localStorage.setItem("validate", false);
             window.location.href = url2 + "/items_requisicion.php";
         },
         infoObraActiva: function (obrasId) {
@@ -58,6 +59,9 @@ const appRequesition = new Vue({
                 this.requisiciones = response.data;
                 console.log(this.requisiciones);
             });
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {

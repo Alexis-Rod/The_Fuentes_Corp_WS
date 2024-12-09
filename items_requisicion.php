@@ -29,7 +29,7 @@ include_once 'validarSesion.php';
 </head>
 
 <body style="display: flex;">
-    <div id="AppPresion">
+    <div id="AppItems">
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -45,6 +45,12 @@ include_once 'validarSesion.php';
             <hr>
             <div id="sideBarItem" class="mb-auto overflow-auto">
                 <ul class="nav nav-pills flex-column f-5" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <li v-if="this.users[0].user_directionAcess == 1">
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false" @click="irDireecion">
+                            <img class="me-2" src="images/icons/ceo.svg" alt="user-icon" height="24" width="24">
+                            DIRECCION
+                        </a>
+                    </li>
                     <li>
                         <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-obras-tab" data-bs-toggle="pill" data-bs-target="#v-pills-obras" type="button" role="tab" aria-controls="v-pills-obras" aria-selected="true">
                             <img class="me-2" src="images/icons/obras.svg" alt="user-icon" height="24" width="24">
@@ -57,12 +63,6 @@ include_once 'validarSesion.php';
                                 </li>
                             </ul>
                         </div>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
@@ -107,7 +107,7 @@ include_once 'validarSesion.php';
                 </div>
             </nav>
             <nav class="nav shadow-sm d-flex align-items-center" id="navtab" aria-label="breadcrumb" aria-current="page">
-                <ol class="breadcrumb py-2 px-3 my-0">
+                <ol class="breadcrumb py-2 px-3 my-0" v-if="this.validate == 'false'">
                     <li class="breadcrumb-item">
                         <a href="./index.php">
                             <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
@@ -117,13 +117,25 @@ include_once 'validarSesion.php';
                     <li class="breadcrumb-item"><a href="./obras.php"><span>Menu Obras</span></a></li>
                     <li class="breadcrumb-item"><a href="./requisiciones.php"><span>Requisiciones de la Obra</span></a></li>
                     <li class="breadcrumb-item"><a href="./hojas_requisicion.php"><span>Hojas de la Requisicion</span></a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><span>{{this.Numero_Req}} HOJA N° {{hojas[0].hojaRequisicion_numero}} </span></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>{{this.Numero_Req}} HOJA N° {{this.hojas[0].hojaRequisicion_numero}} </span></li>
+                </ol>
+                <ol class="breadcrumb py-2 px-3 my-0" v-if="this.validate == 'true'">
+                    <li class="breadcrumb-item">
+                        <a href="./index.php">
+                            <img class="" src="images/icons/home.svg" alt="user-icon" height="24" width="24">
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="./obras.php"><span>Menu de Obra: {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item"><a href="./presiones.php"><span>Presiones de {{this.obras[0].obras_nombre}}</span></a></li>
+                    <li class="breadcrumb-item"><a href="./enlazar_requisiciones.php"><span>Enlazar Requisiciones a la Presion</span></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><span>{{this.Numero_Req}} HOJA N° {{this.hojas[0].hojaRequisicion_numero}} </span></li>
                 </ol>
             </nav>
             <div class="container px-5 overflow-auto">
                 <div class="row">
                     <div class="col-6">
-                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">DETALLES DE LA REQUISICION {{this.Numero_Req}} HOJA NUMERO {{hojas[0].hojaRequisicion_numero}}</h2>
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">DETALLES DE LA REQUISICION {{this.Numero_Req}} HOJA NUMERO {{this.hojas[0].hojaRequisicion_numero}}</h2>
                     </div>
                     <div class="col-6 d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-danger ms-auto" @click="imprimirReq">
@@ -131,7 +143,7 @@ include_once 'validarSesion.php';
                         </button>
                     </div>
                 </div>
-                <div class="row card border-primary">
+                <div class="row card border-primary mb-3">
                     <div class="card-header">
                         <h5 class="card-title">Encabezado de la Requisicion {{this.Numero_Req}} Hoja Numero {{hojas[0].hojaRequisicion_numero}}</h5>
                     </div>
@@ -206,7 +218,7 @@ include_once 'validarSesion.php';
                         </div>
                         <div class="row">
                             <div class="col">
-                                <p class="card-subtitle mb-2 text-muted">Referencia Bancaria: <span class="text-primary">{{hojas[0].proveedor_refBanco}} </span></p>
+                                <p class="card-subtitle mb-2 text-muted">Referencia Bancaria: <span class="text-primary">{{hojas[0].presiones_tarjetaBanco}} </span></p>
                             </div>
                             <div class="col">
                                 <p class="card-subtitle mb-2 text-muted">Correo electronico: <span class="text-primary">{{hojas[0].proveedor_email}}</span></p>
@@ -220,7 +232,7 @@ include_once 'validarSesion.php';
                         </div>
                     </div>
                 </div>
-                <div class="row mt-3">
+                <div class="row" v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
                     <div class="col d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-primary ms-auto" @click="agregarItem" id="btnAddItem">
                             <span class="fw-bold text-white">Agregar item a esta requisicion</span>
@@ -238,6 +250,7 @@ include_once 'validarSesion.php';
                                     <th scope="col">Precio Unitario</th>
                                     <th scope="col">IVA</th>
                                     <th scope="col">Retenciones</th>
+                                    <th scope="col">Subtotal</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -246,12 +259,13 @@ include_once 'validarSesion.php';
                                     <td>{{item.itemRequisicion_unidad}}</td>
                                     <td>{{item.itemRequisicion_producto}}</td>
                                     <td>{{item.itemRequisicion_cantidad}}</td>
-                                    <td>{{item.itemRequisicion_precio}}</td>
-                                    <td>{{item.itemRequisicion_iva}}</td>
-                                    <td>{{item.itemRequisicion_retenciones}}</td>
+                                    <td>$ {{item.itemRequisicion_precio}}</td>
+                                    <td>$ {{item.itemRequisicion_iva}}</td>
+                                    <td>$ {{item.itemRequisicion_retenciones}}</td>
+                                    <td>$ {{(((item.itemRequisicion_cantidad * item.itemRequisicion_precio) + parseFloat(item.itemRequisicion_iva)) - item.itemRequisicion_retenciones).toFixed(2)}}</td>
                                     <!--<td><span class="badge bg-danger">Pendiente</span></td>-->
                                     <td>
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA'|| hojas[0].hojaRequisicion_estatus == 'RECHAZADA'">
                                             <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar item" @click="editItem(item.itemRequisicion_producto,item.itemRequisicion_cantidad,item.itemRequisicion_precio,item.itemRequisicion_iva,item.itemRequisicion_banderaFlete,item.itemRequisicion_banderaFisica,item.itemRequisicion_banderaResico,item.itemRequisicion_id)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
@@ -268,14 +282,96 @@ include_once 'validarSesion.php';
                                 </tr>
                             </tbody>
                             <tfoot class="table-dark">
+                                <tr>
+                                    <td colspan="6" class="text-end fw-bold">Total:</td>
+                                    <td class="text-end fw-bold">$ {{(hojas[0].hojaRequisicion_total).toFixed(2)}}</td>
+                                    <td></td>
+                                </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
-                <div class="row w-100 mt-3 mb-5 mx-auto">
+                <div class="row card border-primary mb-5">
+                    <div class="card-header">
+                        <h5 class="card-title">Comentarios de la Requisicion {{this.Numero_Req}} Hoja Numero {{hojas[0].hojaRequisicion_numero}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div v-if="hojas[0].hojaRequisicion_estatus == 'LIGADA' || hojas[0].hojaRequisicion_estatus == 'AUTORIZADA' || hojas[0].hojaRequisicion_estatus == 'REVISION' || hojas[0].hojaRequisicion_estatus == 'PAGADA' || this.users[0].user_editReq == 0 ">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comentarios de la Operacion</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-subtitle mb-2 text-muted">{{hojas[0].hojaRequisicion_observaciones}}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comentarios de la Operacion</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <textarea class="form-control" id="comentsValidacion" v-model="hojas[0].hojaRequisicion_observaciones" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="hojas[0].hojaRequisicion_estatus == 'REVISION' && this.validate == 'true'">
+                            <hr class="my-2">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comentarios de Validacion</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <textarea class="form-control" id="comentsValidacion" v-model="hojas[0].hojarequisicion_comentariosValidacion" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="hojas[0].hojaRequisicion_estatus == 'PENDIENTE'">
+                            <hr class="my-2">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comentarios de Validacion</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-subtitle mb-2 text-muted">{{hojas[0].hojarequisicion_comentariosValidacion }}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="hojas[0].hojaRequisicion_estatus == 'PAGADA' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA'">
+                            <hr class="my-2">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comentarios de Autorizacion</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-subtitle mb-2 text-muted">{{hojas[0].hojarequisicion_comentariosAutorizacion}}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row w-100 mt-3 mb-5 mx-auto" v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
                     <div class="col px-0 d-flex justify-content-center">
-                        <button class="btn btn-success" @click="validarRequisicion" title="Solicitud de Revision" hidden>
+                        <button class="btn btn-success" @click="validarRequisicion(hojas[0].hojaRequisicion_observaciones)" title="Solicitud de Revision">
                             <span class="text-center">Solicitar Revision de la Requisicion</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row w-100 mt-3 mb-5 mx-auto" v-if="hojas[0].hojaRequisicion_estatus == 'REVISION' && this.validate == 'true'">
+                    <div class="col px-0 d-flex justify-content-center">
+                        <button class="btn btn-success" @click="asignarAPresion(hojas[0].hojarequisicion_comentariosValidacion)" title="Solicitud de Revision">
+                            <span class="text-center">Validar Requisicion</span>
                         </button>
                     </div>
                 </div>
@@ -287,6 +383,10 @@ include_once 'validarSesion.php';
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
+    <!--esta es la llamada cdn de datatable-->
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+
     <!-- scripts de vue.js-->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 
@@ -295,10 +395,6 @@ include_once 'validarSesion.php';
 
     <!--scripts de sweetalert-->
     <script src="plugins/sweetalert/sweetalert2.min.js"></script>
-
-    <!--esta es la llamada cdn de datatable-->
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!--CDN de la bibloteca JsPDF-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>

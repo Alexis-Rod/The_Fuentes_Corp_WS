@@ -213,6 +213,9 @@ const appRequesition = new Vue({
             axios.post(url, { accion: 7, nombreReq: this.nombreRequisicion, fechaReq: this.fechaGeneracion, clave: this.clave, folio: this.folioReq, hoja: this.hojaReq, obra: localStorage.getItem("obraActiva") }).then(response => {
                 console.log(response.data);
             });
+        },
+        irDireecion: function(){
+            window.location.href = url2 + "/direccion.php";
         }
     },
     created: function () {
