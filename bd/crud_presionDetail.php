@@ -74,7 +74,7 @@ switch ($accion) {
                 "Fecha" => $hoja['hojaRequisicion_fechaPago'],
                 "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
                 "PresionEstatus" => $hoja['presiones_estatus'],
-                "adeudo" => $hoja['hojarequisicion_adeudo'],
+                "adeudo" => formatearMoneda($hoja['hojarequisicion_adeudo']),
                 "NumRequi" => $hoja['requisicion_Numero']
             ));
         };
@@ -133,7 +133,7 @@ switch ($accion) {
                             <th>' . $datosExcel['concepto'] . '</th>
                             <th>' . $datosExcel['total'] . '</th>
                             <th>  </th>
-                            <th>' . $datosExcel['total'] . '</th>
+                            <th>' . $datosExcel['adeudo'] . '</th>
                             <th>' . $datosExcel['Observaciones'] . '</th>
                             <th>' . $datosExcel['formaPago'] . '</th>
                             <th>' . $datosExcel['Fecha'] . '</th>
@@ -149,7 +149,7 @@ switch ($accion) {
                             <th>" . $datosExcel['concepto'] . "</th>
                             <th>" . $datosExcel['total'] . "</th>
                             <th>  </th>
-                            <th>" . $datosExcel['total'] . "</th>
+                            <th>" . $datosExcel['adeudo'] . "</th>
                             <th>" . $datosExcel['Observaciones'] . "</th>
                             <th>" . $datosExcel['formaPago'] . "</th>
                             <th>" . $datosExcel['Fecha'] . "</th>
