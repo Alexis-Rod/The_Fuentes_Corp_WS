@@ -15,7 +15,9 @@ const appRequesition = new Vue({
         FechaPago: "",
         BancoPago: "",
         timeNow: "",
-        estatus: ""
+        estatus: "",
+        infoHojaPression: "",
+        itemsPresion: []
     },
     methods: {
         consultarUsuario: function (user_id) {
@@ -160,13 +162,15 @@ const appRequesition = new Vue({
         },
         imprimirReq: function(NumReq,clave,id_hoja){
              axios.post(url, { accion: 8, idHoja: id_hoja}).then(response => {
+                this.infoHojaPression = response.data[0]['infoHoja'];
+                this.itemsPresion = response.data[0]['items'];
                  console.log(response.data);
                   generarPDFRequisicion(
                     NumReq, // Número de la requisición
                     clave, // Clave de la requisición
-                    response.data[0]['infoHoja'], // Información de la Hoja
+                    this.infoHojaPression, // Información de la Hoja
                     this.NameUser, // Nombre del usuario
-                    response.data[0]['items'], // Items de la Hoja
+                    this.itemsPresion, // Items de la Hoja
                     this.obras[0] // Información de la obra
                 ); 
              });
