@@ -16,7 +16,7 @@ const appRequesition = new Vue({
         BancoPago: "",
         timeNow: "",
         estatus: "",
-        infoHojaPression: "",
+        infoHojaPression: [],
         itemsPresion: []
     },
     methods: {
