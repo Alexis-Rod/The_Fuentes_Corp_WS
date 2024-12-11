@@ -186,7 +186,7 @@ include_once 'validarSesion.php';
                                             <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="" disabled>
                                                 <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
                                             </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="" disabled>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
                                                 <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
                                             </button>
                                         </div>
