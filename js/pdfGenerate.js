@@ -1,4 +1,3 @@
-var doc = new jsPDF('l', 'mm', 'a4', true);
 var image = new Image();
 var watermark = new Image();
 image.src = "./images/LogoFuentes.png";
@@ -6,6 +5,7 @@ watermark.src = "./images/watermark.jpg"
 var ultimapagina = false;
 
 function generarPDFRequisicion(Numero_Req, clave, requisicion, NameUser, itemsOrdenArray, obras) {
+    var doc = new jsPDF('l', 'mm', 'a4', true);
     console.log('primera llamada');
 
     var pages = createPages(convertToArrayStrings(itemsOrdenArray));
