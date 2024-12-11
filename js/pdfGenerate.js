@@ -15,24 +15,24 @@ function generarPDFRequisicion(Numero_Req, clave, requisicion, NameUser, itemsOr
             ultimapagina = true
         }
         //crea el encabezado de la pagina
-        creaEncabezadoOrden();
+        creaEncabezadoOrden(doc);
         //datos de la empresa
-        datosEmpresa(Numero_Req, clave, requisicion);
+        datosEmpresa(doc,Numero_Req, clave, requisicion);
         //datos del proveedor
-        datosProveedor(requisicion);
+        datosProveedor(doc,requisicion);
         //datos complementarios
-        complementarios(requisicion, obras);
+        complementarios(doc,requisicion, obras);
         //se crea la tabla de los items
-        itemDeOrden(ArrayItems, requisicion, ultimapagina);
+        itemDeOrden(doc,ArrayItems, requisicion, ultimapagina);
         //Crea el pie de pagina de la orden
-        creaPieDeOrden(NameUser, requisicion, index + 1, pages.length);
+        creaPieDeOrden(doc, NameUser, requisicion, index + 1, pages.length);
         if (index < pages.length - 1) {
             doc.addPage('a4', 'l');
         }
     });
     doc.save(Numero_Req+" "+'HOJA N°' + requisicion.hojaRequisicion_numero);
 }
-function creaEncabezadoOrden() {
+function creaEncabezadoOrden(doc) {
     doc.setFontSize(12);
     doc.setFontStyle('bold');
     doc.addImage(watermark, 'JPG', 0, 0, 297, 210,);
@@ -44,7 +44,7 @@ function creaEncabezadoOrden() {
     doc.line(92, 29, 92 + textWidth, 29);
     doc.text('AREA DE RECURSOS MATERIALES Y SERVICIOS GENERALES', 145, 28, 'center');
 }
-function datosEmpresa(Numero_Req, clave, requisicion) {
+function datosEmpresa(doc, Numero_Req, clave, requisicion) {
     console.log('segunda llamada');
     console.log(requisicion);
     doc.setFontSize(8);
@@ -88,7 +88,7 @@ function datosEmpresa(Numero_Req, clave, requisicion) {
     doc.text(requisicion.emisor_zipCode, 257, 65, 'center');
 }
 
-function datosProveedor(requisicion) {
+function datosProveedor(doc, requisicion) {
     console.log('Tercera llamada');
     doc.setFontSize(8);
     doc.setFillColor(177, 223, 200);
@@ -147,7 +147,7 @@ function datosProveedor(requisicion) {
     doc.text('', 167, 96, 'center');
 }
 
-function complementarios(requisicion, obras) {
+function complementarios(doc, requisicion, obras) {
     console.log('cuarta llamada');
     doc.setFontSize(8);
     doc.setFillColor(155, 168, 162);
@@ -170,7 +170,7 @@ function complementarios(requisicion, obras) {
     doc.text('', 257, 116, 'center');
 }
 
-function itemDeOrden(ArrayString, requisicion, ultimapagina) {
+function itemDeOrden(doc, ArrayString, requisicion, ultimapagina) {
     console.log('quinta llamada');
     console.log(ArrayString);
     var x = 10;
@@ -238,7 +238,7 @@ function itemDeOrden(ArrayString, requisicion, ultimapagina) {
     }
 }
 
-function creaPieDeOrden(NameUser, requisicion, pagina, paginas) {
+function creaPieDeOrden(doc, NameUser, requisicion, pagina, paginas) {
    /*  console.log('sexta llamada');
     doc.text('ELABORO', 55, 180, 'center');
     doc.line(20, 190, 100, 190);
