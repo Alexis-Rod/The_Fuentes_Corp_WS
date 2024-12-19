@@ -29,6 +29,7 @@ const appRequesition = new Vue({
         Prov_SucBank: "",
         Prov_RefBank: "",
         Prov_Bank: "",
+        Prov_BankCard: "",
         //Datos del Item;
         Item_Nombre: "",
         Item_Unidad: "",
@@ -39,9 +40,11 @@ const appRequesition = new Vue({
         RetFlete: false,
         RetFisica: false,
         RetResico: false,
+        RetISR: false,
         indexFlete: 0,
         indexFisica: 0,
         indexResico: 0,
+        indexISR: 0,
         retenciones: 0,
         //Datos Generales
         PagoTrans: true,
@@ -63,12 +66,126 @@ const appRequesition = new Vue({
             if (this.PagoTrans == false) {
                 this.PagoTrans = true;
                 this.FormaPago = "Transferencia";
-                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option value = "Selecciona Unidad">SELECCIONA UNIDAD</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';
+                this.htmlWinRet = `
+                <div class="col">
+                    <hr />
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label>
+                            <textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label>
+                            <select class="form-select" aria-label="Default select example" id="Unidad">
+                                <option value="Selecciona Unidad">SELECCIONA UNIDAD</option>
+                                <option value="DISEÑO">DISEÑO</option>
+                                <option value="PIEZAS">PIEZAS</option>
+                                <option value="BULTOS">BULTOS</option>
+                                <option value="PESOS">PESOS</option>
+                                <option value="LITROS">LITROS</option>
+                                <option value="SERVICIOS">SERVICIO</option>
+                                <option value="MENSUALIDAD">MENSUALIDAD</option>
+                                <option value="RENTA">RENTA</option>
+                                <option value="CUBETAS">CUBETAS</option>
+                                <option value="TONELADAS">TONELADAS</option>
+                                <option value="METROS">METROS</option>
+                                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                                <option value="KILOGRAMOS">KILOGRAMOS</option>
+                                <option value="VIAJES">VIAJES</option>
+                            </select>
+                        </div>
+                        <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label>
+                            <input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad">
+                        </div>
+                        <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label>
+                            <input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice">
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row mx-0 my-3">
+                        <div class="col">
+                            <h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5>
+                        </div>
+                    </div>
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="RetFlete">
+                                <label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica">
+                                <label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO">
+                                <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="RetencionISR">
+                                <label class="form-check-label" for="RetencionISR">Retencion por ISR (10%)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             }
             else {
                 this.PagoTrans = false;
                 this.FormaPago = "Efectivo";
-                this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option value = "Selecciona Unidad">SELECCIONA UNIDAD</option><option> Selecciona Clave</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /></div>';
+                this.htmlWinRet = `
+                <div class="col">
+                    <hr />
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col d-flex flex-column">
+                            <label class="text-start py-2" for="Producto">Producto</label>
+                            <textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group mx-0 my-3">
+                        <div class="col-4 d-flex flex-column">
+                            <label class="text-start py-2" for="Unidad">Unidad</label>
+                            <select class="form-select" aria-label="Default select example" id="Unidad">
+                                <option value="Selecciona Unidad">SELECCIONA UNIDAD</option>
+                                <option> Selecciona Clave</option>
+                                <option value="DISEÑO">DISEÑO</option>
+                                <option value="PIEZAS">PIEZAS</option>
+                                <option value="BULTOS">BULTOS</option>
+                                <option value="PESOS">PESOS</option>
+                                <option value="LITROS">LITROS</option>
+                                <option value="SERVICIOS">SERVICIO</option>
+                                <option value="MENSUALIDAD">MENSUALIDAD</option>
+                                <option value="RENTA">RENTA</option>
+                                <option value="CUBETAS">CUBETAS</option>
+                                <option value="TONELADAS">TONELADAS</option>
+                                <option value="METROS">METROS</option>
+                                <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                                <option value="METROS CUBICOS">METROS CUBICOS</option>
+                                <option value="KILOGRAMOS">KILOGRAMOS</option>
+                                <option value="VIAJES">VIAJES</option>
+                            </select>
+                        </div>
+                        <div class="col-4 d-flex flex-column">
+                            <label class="text-start py-2" for="Cantidad">Cantidad</label>
+                            <input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad">
+                        </div>
+                        <div class="col-4 d-flex flex-column">
+                            <label class="text-start py-2" for="UnitedPrice">Precio Unitario</label>
+                            <input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice">
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+                `;
             }
         },
         agregarRequisicion: async function () {
@@ -86,7 +203,7 @@ const appRequesition = new Vue({
                         localStorage.setItem("idHoja", this.idHoja);
                         localStorage.setItem("validate", false);
                         window.location.href = url2 + "/items_requisicion.php"; // Cambia esto por la URL de tu página
-                    });                   
+                    });
                 } else if (result.isDenied) {
                     // Acción para "Guardar"
                     this.guardarRequisicion(localStorage.getItem("idRequisicion"));
@@ -108,19 +225,23 @@ const appRequesition = new Vue({
                 'bandFlete': false,
                 'bandFisico': false,
                 'bandResico': false,
+                'bandISR' : false,
                 'STotal': "",
                 'Lote': ""
             };
             const { value: formValues } = await Swal.fire({
                 title: "Nuevo Item",
                 html: this.htmlWinRet,
+                customClass: {
+                    popup: 'custom-popup' // Clase personalizada
+                },
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonText: 'Agregar',
                 confirmButtonColor: '#0d6efd',
                 cancelButtonColor: '#dc3545',
                 preConfirm: () => {
-                    const productoValue = document.getElementById("Producto").value;
+                    const productoValue = this.eliminarSaltosDeLinea(document.getElementById("Producto").value);
                     if (this.PagoTrans == true) {
                         ItemElement['Nombre'] = productoValue;
                         ItemElement['Unidad'] = document.getElementById("Unidad").value;
@@ -129,7 +250,8 @@ const appRequesition = new Vue({
                         this.RetFlete = document.getElementById("RetFlete").checked;
                         this.RetFisica = document.getElementById("RetPersonaFIsica").checked;
                         this.RetResico = document.getElementById("RetencionRESICO").checked;
-                        if (productoValue.length > 200) {
+                        this.RetISR = document.getElementById("RetencionISR").checked;
+                        if (productoValue.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -143,7 +265,7 @@ const appRequesition = new Vue({
                         ItemElement['Unidad'] = document.getElementById("Unidad").value;
                         ItemElement['Cantidad'] = document.getElementById("Cantidad").value;
                         ItemElement['UnitedPrice'] = document.getElementById("UnitedPrice").value;
-                        if (productoValue.length > 200) {
+                        if (productoValue.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -188,8 +310,12 @@ const appRequesition = new Vue({
                     this.indexResico = aux * 0.0125;
                     ItemElement['bandResico'] = true;
                 }
+                if(this.RetISR == true){
+                    this.indexISR = aux * 0.1;
+                    ItemElement['bandISR'] = true;
+                }
                 this.IVA = aux * 0.16;
-                this.retenciones = this.indexFisica + this.indexFlete + this.indexResico;
+                this.retenciones = this.indexFisica + this.indexFlete + this.indexResico + this.indexISR;
                 ItemElement['IVA'] = this.IVA;
                 ItemElement['Retenciones'] = this.retenciones;
                 ItemElement['STotal'] = aux - this.retenciones + this.IVA;
@@ -202,7 +328,7 @@ const appRequesition = new Vue({
             this.SubTotal = this.SubTotal + Number.parseFloat(ItemElement['STotal']);
             this.Subtotal_Mostrar = Number.parseFloat(this.SubTotal).toFixed(2);
             this.Item_Lote++;
-            var HtmlTableRow = '<tr><th scope="row" class="py-3 celda_Item">' + this.Item_Lote + '</th><td class="py-3 celda_Item">' + ItemElement['Unidad'] + '</td><td class="py-3 celda_Item text-break">' + ItemElement['Nombre'] + '</td><td class="py-3 celda_Item">' + ItemElement['Cantidad'] + '</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['UnitedPrice']).toFixed(2) + '</td><td class="py-3 celda_Item">+ $' + Number.parseFloat(this.IVA).toFixed(2) + '</td><td class="py-3 celda_Item">- $' + Number.parseFloat(this.retenciones).toFixed(2) + '</td><td class="py-3 celda_Item">$' + Number.parseFloat(ItemElement['STotal']).toFixed(2) + '</td></tr>';
+            var HtmlTableRow = '<tr><th scope="row" class="py-3 celda_Item text-center align-middle">' + this.Item_Lote + '</th><td class="py-3 celda_Item text-center align-middle">' + ItemElement['Unidad'] + '</td><td class="py-3 celda_Item text-break" style="max-width: 200px">' + ItemElement['Nombre'] + '</td><td class="py-3 celda_Item text-center align-middle">' + ItemElement['Cantidad'] + '</td><td class="py-3 celda_Item text-center align-middle">' + this.formatearMoneda(Number.parseFloat(ItemElement['UnitedPrice'])) + '</td><td class="py-3 celda_Item text-center align-middle">+ ' + this.formatearMoneda(Number.parseFloat(this.IVA)) + '</td><td class="py-3 celda_Item text-center align-middle">- ' + this.formatearMoneda(Number.parseFloat(this.retenciones)) + '</td><td class="py-3 celda_Item text-center align-middle">' + this.formatearMoneda(Number.parseFloat(ItemElement['STotal'])) + '</td></tr>';
             $('#Tabla_Items').append(HtmlTableRow);
             ItemElement['Lote'] = this.Item_Lote;
             this.Items.unshift(ItemElement);
@@ -213,19 +339,20 @@ const appRequesition = new Vue({
             console.log(this.Items);
         },
         validarProv: async function (selected_Provedor) {
-            axios.post(url, { accion: 4, id_prov: selected_Provedor }).then(response => {
-                this.provedores = response.data;
-                this.Prov_Id = this.provedores[0].proveedor_id;
-                this.Prov_RFC = this.provedores[0].proveedor_rfc;
-                this.Prov_Clabe = this.provedores[0].proveedor_clabe;
-                this.Prov_Cuenta = this.provedores[0].proveedor_numeroCuenta;
-                this.Prov_Email = this.provedores[0].proveedor_email;
-                this.Prov_Phone = this.provedores[0].proveedor_telefono;
-                this.Prov_SucBank = this.provedores[0].proveedor_sucursal;
-                this.Prov_RefBank = this.provedores[0].proveedor_refBanco;
-                this.Prov_Bank = this.provedores[0].proveedor_banco;
-                console.log(this.provedores);
-            });
+            axios.post(url, { accion: 4, id_prov:this.obtenerNumeroAntesDelGuion(selected_Provedor)}).then(response => {
+                 this.provedores = response.data;
+                 this.Prov_Id = this.provedores[0].proveedor_id;
+                 this.Prov_RFC = this.provedores[0].proveedor_rfc;
+                 this.Prov_Clabe = this.provedores[0].proveedor_clabe;
+                 this.Prov_Cuenta = this.provedores[0].proveedor_numeroCuenta;
+                 this.Prov_Email = this.provedores[0].proveedor_email;
+                 this.Prov_Phone = this.provedores[0].proveedor_telefono;
+                 this.Prov_SucBank = this.provedores[0].proveedor_sucursal;
+                 this.Prov_RefBank = this.provedores[0].proveedor_refBanco;
+                 this.Prov_Bank = this.provedores[0].proveedor_banco;
+                 this.Prov_BankCard = this.provedores[0].presiones_tarjetaBanco;
+                 console.log(this.provedores);
+             });
         },
         agregarEmisor: function () {
             axios.post(url, { accion: 2 }).then(response => {
@@ -255,11 +382,11 @@ const appRequesition = new Vue({
             mes = mes < 10 ? '0' + mes : mes;
             dia = dia < 10 ? '0' + dia : dia;
             FechaReq = year + "-" + mes + "-" + dia;
-            console.log(this.Items + " Forma de Pago " + this.FormaPago);
+            console.log(this.Items);
             axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones }).then(response => {
                 this.idHoja = response.data;
                 console.log(response.data);
-            });
+            }); 
         },
         consultarUsuario: function (user_id) {
             axios.post(url, { accion: 5, id_user: user_id }).then(response => {
@@ -288,8 +415,40 @@ const appRequesition = new Vue({
             localStorage.setItem("obraActiva", idObra);
             window.location.href = url2 + "/obras.php";
         },
-        irDireecion: function(){
+        irDireecion: function () {
             window.location.href = url2 + "/direccion.php";
+        },
+        formatearMoneda: function (cadena) {
+            // Convertir la cadena a un número
+            let numero = parseFloat(cadena);
+            // Verificar si la conversión fue exitosa
+            if (isNaN(numero)) {
+                return null; // O puedes lanzar un error si prefieres
+            }
+            // Formatear el número como moneda en pesos mexicanos
+            return "$ " + numero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        obtenerNumeroAntesDelGuion: function (cadena) {
+            // Buscar el índice del primer guion
+            const indiceGuion = cadena.indexOf('-');
+
+            // Si no se encuentra un guion, retornar null o un mensaje
+            if (indiceGuion === -1) {
+                return null; // O puedes retornar un mensaje como "No se encontró un guion"
+            }
+
+            // Obtener la parte de la cadena antes del guion
+            const parteAntesDelGuion = cadena.substring(0, indiceGuion).trim();
+
+            // Verificar si la parte antes del guion es un número
+            const numero = parseInt(parteAntesDelGuion, 10);
+
+            // Retornar el número si es válido, de lo contrario retornar null
+            return isNaN(numero) ? null : numero;
+        },
+        eliminarSaltosDeLinea: function(cadena) {
+            // Utiliza el método replace para eliminar los saltos de línea
+            return cadena.replace(/(\r\n|\n|\r)/g, "");
         }
     },
     created: function () {
@@ -297,7 +456,78 @@ const appRequesition = new Vue({
         this.agregarEmisor();
         this.consultarUsuario(localStorage.getItem("NameUser"));
         this.mostrarProvedores();
-        this.htmlWinRet = '<div class="col"><hr /><div class="row form-group mx-0 my-3"><div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label><textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto"rows="3"></textarea></div></div><div class="row form-group mx-0 my-3"><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label><select class="form-select" aria-label="Default select example" id="Unidad"><option value = "Selecciona Unidad">SELECCIONA UNIDAD</option><option value="DISEÑO">DISEÑO</option><option value="PIEZAS">PIEZAS</option><option value="BULTOS">BULTOS</option><option value="PESOS">PESOS</option><option value="LITROS">LITROS</option><option value="SERVICIOS">SERVICIO</option><option value="MENSUALIDAD">MENSUALIDAD</option><option value="RENTA">RENTA</option><option value="CUBETAS">CUBETAS</option><option value="TONELADAS">TONELADAS</option><option value="METROS">METROS</option><option value="METROS CUADRADOS">METROS CUADRADOS</option><option value="METROS CUBICOS">METROS CUBICOS</option><option value="KILOGRAMOS">KILOGRAMOS</option><option value="VIAJES">VIAJES</option></select></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label><input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad"></div><div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label><input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice"></div></div><hr /><div class="row mx-0 my-3"><div class="col"><h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetFlete"><label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label></div></div><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica"><label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label></div></div></div><div class="row form-group mx-0 my-3"><div class="col-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO"><label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label></div></div></div></div>';;
+        this.htmlWinRet = `
+            <div class="col">
+                <hr />
+                <div class="row form-group mx-0 my-3">
+                    <div class="col d-flex flex-column"><label class="text-start py-2" for="Producto">Producto</label>
+                        <textarea class="form-control" placeholder="Ingresa los datos de tu Producto" id="Producto" name="Producto" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="row form-group mx-0 my-3">
+                    <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Unidad">Unidad</label>
+                        <select class="form-select" aria-label="Default select example" id="Unidad">
+                            <option value="Selecciona Unidad">SELECCIONA UNIDAD</option>
+                            <option value="DISEÑO">DISEÑO</option>
+                            <option value="PIEZAS">PIEZAS</option>
+                            <option value="BULTOS">BULTOS</option>
+                            <option value="PESOS">PESOS</option>
+                            <option value="LITROS">LITROS</option>
+                            <option value="SERVICIOS">SERVICIO</option>
+                            <option value="MENSUALIDAD">MENSUALIDAD</option>
+                            <option value="RENTA">RENTA</option>
+                            <option value="CUBETAS">CUBETAS</option>
+                            <option value="TONELADAS">TONELADAS</option>
+                            <option value="METROS">METROS</option>
+                            <option value="METROS CUADRADOS">METROS CUADRADOS</option>
+                            <option value="METROS CUBICOS">METROS CUBICOS</option>
+                            <option value="KILOGRAMOS">KILOGRAMOS</option>
+                            <option value="VIAJES">VIAJES</option>
+                        </select>
+                    </div>
+                    <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="Cantidad">Cantidad</label>
+                        <input type="number" min="0" placeholder="0" class="form-control" id="Cantidad" name="Cantidad">
+                    </div>
+                    <div class="col-4 d-flex flex-column"><label class="text-start py-2" for="UnitedPrice">Precio Unitario</label>
+                        <input type="number" min="0" placeholder="0" class="form-control" id="UnitedPrice" name="UnitedPrice">
+                    </div>
+                </div>
+                <hr />
+                <div class="row mx-0 my-3">
+                    <div class="col">
+                        <h5 class="text-start fw-bold">Activa las Requisiciones Necesarias</h5>
+                    </div>
+                </div>
+                <div class="row form-group mx-0 my-3">
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="RetFlete">
+                            <label class="form-check-label" for="RetFlete">Retencion por Flete (4%)</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="RetPersonaFIsica">
+                            <label class="form-check-label" for="RetPersonaFIsica">Retencion por Renta PersonaFisica(10.67%)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group mx-0 my-3">
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="RetencionRESICO">
+                            <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="RetencionISR">
+                            <label class="form-check-label" for="RetencionISR">Retencion por ISR (10%)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
 
     },
     computed: {

@@ -38,6 +38,7 @@ const appRequesition = new Vue({
         // Bandera para indicar si el producto tiene retención por RESICO
         bandResico: false,
         // HTML para mostrar las retenciones
+        bandISR: false,
         HtmlRet: "",
         // Cadena para mostrar la retención por flete
         strFlete: "",
@@ -45,6 +46,7 @@ const appRequesition = new Vue({
         strFisca: "",
         // Cadena para mostrar la retención por RESICO
         strResico: "",
+        strISR: "",
         // ID del producto
         id: 0,
         // Clave de la requisición
@@ -130,7 +132,7 @@ const appRequesition = new Vue({
              * @param {boolean} banderaResico - Indica si el item tiene retención por RESICO.
              * @param {number} ID - El ID del item a editar.
          */
-        editItem: async function (productoEdit, cantidadEdit, precioEdit, IVAEdit, banderaFlete, banderaFisica, banderaResico, ID) {
+        editItem: async function (productoEdit, cantidadEdit, precioEdit, IVAEdit, banderaFlete, banderaFisica, banderaResico, banderaISR, ID) {
             this.id = ID;
             this.subTotal = cantidadEdit * precioEdit;
             /**
@@ -153,6 +155,9 @@ const appRequesition = new Vue({
                 }
                 if (banderaResico == true) {
                     this.strResico = "checked";
+                }
+                if (banderaISR == true) {
+                    this.strISR = "checked";
                 }
                 this.HtmlRet = `
                     <div class="col">
@@ -187,11 +192,11 @@ const appRequesition = new Vue({
                             </div>
                             <div class="col-4">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ cantidadEdit + `">
+                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit,false).toFixed(2) + `">
                             </div>
                             <div class="col-4">
                                 <label for="precio" class="form-label">Precio Unitario</label>
-                                <input type="number" min="0" class="form-control" id="precio" value="`+ precioEdit + `">
+                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit,false).toFixed(2) + `">
                             </div>
                         </div>
                         <hr />
@@ -222,6 +227,12 @@ const appRequesition = new Vue({
                                     <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
                                 </div>
                             </div>
+                            <div class="col-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="RetencionISR" `+ this.strISR + `>
+                                <label class="form-check-label" for="RetencionISR">Retencion por ISR (10%)</label>
+                            </div>
+                        </div>
                         </div>
                         <hr />
                     </div>
@@ -261,11 +272,11 @@ const appRequesition = new Vue({
                             </div>
                             <div class="col-4">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ cantidadEdit + `">
+                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit,false).toFixed(2) + `">
                             </div>
                             <div class="col-4">
                                 <label for="precio" class="form-label">Precio Unitario</label>
-                                <input type="number" min="0" class="form-control" id="precio" value="`+ precioEdit + `">
+                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit,false).toFixed(2) + `">
                             </div>
                         </div>
                         <hr />
@@ -278,6 +289,9 @@ const appRequesition = new Vue({
                 title: "Editar Item",
                 // Contenido HTML del modal
                 html: this.HtmlRet,
+                customClass: {
+                    popup: 'custom-popup' // Clase personalizada
+                },
                 // Deshabilitar el foco en el botón de confirmación
                 focusConfirm: false,
                 // Mostrar botón de cancelar
@@ -293,15 +307,16 @@ const appRequesition = new Vue({
                     // Verificar si el IVA es mayor a 0, indica si es pago por transferenci o efectivo
                     if (IVAEdit > 0) {
                         // Obtener los valores de los campos del modal
-                        this.producto = document.getElementById("producto").value;
+                        this.producto = this.eliminarSaltosDeLinea(document.getElementById("producto").value);
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
                         this.precio = document.getElementById("precio").value;
                         this.bandFlete = document.getElementById("RetFlete").checked;
                         this.bandeFisica = document.getElementById("RetPersonaFIsica").checked;
                         this.bandResico = document.getElementById("RetencionRESICO").checked;
+                        this.bandISR = document.getElementById("RetencionISR").checked;
                         // Validar si el campo producto no excede los 200 caracteres
-                        if (this.producto.length > 200) {
+                        if (this.producto.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -314,12 +329,12 @@ const appRequesition = new Vue({
                     }
                     else {
                         // Obtener los valores de los campos del modal
-                        this.producto = document.getElementById("producto").value;
+                        this.producto = this.eliminarSaltosDeLinea(document.getElementById("producto").value);
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
                         this.precio = document.getElementById("precio").value;
                         // Validar si el campo producto no excede los 200 caracteres
-                        if (this.producto.length > 200) {
+                        if (this.producto.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -338,7 +353,8 @@ const appRequesition = new Vue({
                  * Si es así, se invoca el método actualizarDatos para registrar los cambios en la base de datos.
                  * Luego, se genera un toast de SweetAlert2 para notificar al usuario que las correcciones fueron exitosas.
                  */
-                this.actualizarDatos(IVAEdit, this.bandFlete, this.bandeFisica, this.bandResico);
+                //console.log(this.cantidad * this.precio);
+                this.actualizarDatos(IVAEdit, this.bandFlete, this.bandeFisica, this.bandResico, this.bandISR);
                 /**
                  * Configura el toast de SweetAlert2 para mostrar un mensaje de éxito.
                  * El toast se mostrará en la esquina superior derecha de la pantalla y permanecerá visible durante 3 segundos.
@@ -351,7 +367,7 @@ const appRequesition = new Vue({
                     // Deshabilitar el botón de confirmación
                     showConfirmButton: false,
                     // Tiempo de duración del toast en milisegundos
-                    timer: 3000
+                    timer: 1500
                 });
                 /**
                  * Muestra el toast de SweetAlert2 con un mensaje de éxito.
@@ -360,11 +376,6 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success',
                     title: 'Item Modificado'
-                }).then(() => {
-                    /**
-                     * Redirecciona al usuario a la página de items de requisición después de mostrar el toast.
-                     */
-                    window.location.href = url2 + "/items_requisicion.php";
                 });
             }
         },
@@ -380,7 +391,7 @@ const appRequesition = new Vue({
              * @param {boolean} banderaFisica - Indica si el item tiene retención por renta persona física.
              * @param {boolean} banderaResico - Indica si el item tiene retención por RESICO.
         */
-        actualizarDatos: function (IVAEdit, banderaFlete, banderaFisica, banderaResico) {
+        actualizarDatos: function (IVAEdit, banderaFlete, banderaFisica, banderaResico, banderaISR) {
             // Auxiliar para calcular el valor del item
             var aux = this.cantidad * this.precio;
             // Auxiliar para calcular el valor de la retención por flete
@@ -389,6 +400,7 @@ const appRequesition = new Vue({
             var auxFisico = 0;
             // Auxiliar para calcular el valor de la retención por RESICO
             var auxResico = 0;
+            var auxISR = 0;
             // Auxiliar para calcular el valor total de las retenciones
             var auxRet = 0;
             // Auxiliar para calcular el valor del IVA
@@ -406,8 +418,11 @@ const appRequesition = new Vue({
                 if (banderaResico == true) {
                     auxResico = aux * 0.0125;
                 }
+                if (banderaISR == true) {
+                    auxISR = aux * 0.1;
+                }
                 auxIVA = aux * 0.16;
-                auxRet = auxFisico + auxFlete + auxResico;
+                auxRet = auxFisico + auxFlete + auxResico + auxISR;
             }
             // Registra los datos en la base de datos utilizando axios
             axios.post(url, {
@@ -427,6 +442,7 @@ const appRequesition = new Vue({
                 banderaFisica: banderaFisica,
                 // Indica si el item tiene retención por RESICO
                 banderaResico: banderaResico,
+                banderaISR: banderaISR,
                 // Precio unitario del item
                 precio: this.precio,
                 // Cantidad del item
@@ -438,6 +454,8 @@ const appRequesition = new Vue({
                 // ID de la hoja de requisición
                 id_Hoja: localStorage.getItem("idHoja")
             }).then(response => {
+                this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                this.listarItems(localStorage.getItem("idHoja"));
                 console.log(response.data);
             });
         },
@@ -465,10 +483,7 @@ const appRequesition = new Vue({
                     // Llama al método deleteItem para eliminar el item de la base de datos
                     this.deleteItem(ID, cantidad, precio, localStorage.getItem("idHoja"), iva, retenciones);
                     // Muestra un mensaje de éxito al usuario
-                    Swal.fire("El item fue eliminado con exito", "", "success").then(() => {
-                        // Redirecciona al usuario a la página de items de requisición
-                        window.location.href = url2 + "/items_requisicion.php";
-                    });
+                    Swal.fire("El item fue eliminado con exito", "", "success");
                 }
             });
         },
@@ -498,6 +513,8 @@ const appRequesition = new Vue({
                 id_Hoja: id_Hoja
             }).then(response => {
                 // Procesa la respuesta del servidor
+                this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                this.listarItems(localStorage.getItem("idHoja"));
                 console.log(response.data);
             });
         },
@@ -603,6 +620,12 @@ const appRequesition = new Vue({
                                         <label class="form-check-label" for="RetencionRESICO">Retencion por RESICO (1.25%)</label>
                                     </div>
                                 </div>
+                                <div class="col-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="RetencionISR">
+                                        <label class="form-check-label" for="RetencionISR">Retencion por ISR (10%)</label>
+                                    </div>
+                            </div>
                             </div>
                             <hr />
                         </div>
@@ -668,6 +691,9 @@ const appRequesition = new Vue({
                 title: "Agregar Item",
                 // Contenido HTML de la alerta, que incluye el formulario para ingresar la información del item
                 html: this.HtmlRet,
+                customClass: {
+                    popup: 'custom-popup' // Clase personalizada
+                },
                 // Deshabilitar el foco en el botón de confirmación
                 focusConfirm: false,
                 // Mostrar botón de cancelar
@@ -683,15 +709,16 @@ const appRequesition = new Vue({
                     // Verificar si la forma de pago es transferencia
                     if (this.hojas[0].hojaRequisicion_formaPago == "Transferencia") {
                         // Obtener los valores de los campos del formulario
-                        this.producto = document.getElementById("producto").value;
+                        this.producto = this.eliminarSaltosDeLinea(document.getElementById("producto").value);
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
                         this.precio = document.getElementById("precio").value;
                         this.bandFlete = document.getElementById("RetFlete").checked;
                         this.bandeFisica = document.getElementById("RetPersonaFIsica").checked;
                         this.bandResico = document.getElementById("RetencionRESICO").checked;
+                        this.bandISR = document.getElementById("RetencionISR").checked;
                         // Validar si el campo producto no excede los 200 caracteres
-                        if (this.producto.length > 200) {
+                        if (this.producto.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -705,12 +732,12 @@ const appRequesition = new Vue({
                     // Si la forma de pago no es transferencia
                     else {
                         // Obtener los valores de los campos del formulario
-                        this.producto = document.getElementById("producto").value;
+                        this.producto = this.eliminarSaltosDeLinea(document.getElementById("producto").value);
                         this.unidad = document.getElementById("unidad").value;
                         this.cantidad = document.getElementById("cantidad").value;
                         this.precio = document.getElementById("precio").value;
                         // Validar si el campo producto no excede los 200 caracteres
-                        if (this.producto.length > 200) {
+                        if (this.producto.length > 272) {
                             Swal.showValidationMessage('El campo Producto no puede exceder los 200 caracteres.');
                             return false;
                         }
@@ -738,9 +765,6 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success', // icono del mensaje
                     title: 'Item Agregado' // título del mensaje
-                }).then(() => {
-                    // Redirecciona a la página de items de requisición
-                    window.location.href = url2 + "/items_requisicion.php";
                 });
             }
         },
@@ -760,6 +784,7 @@ const appRequesition = new Vue({
             var auxFlete = 0;
             var auxFisico = 0;
             var auxResico = 0;
+            var auxISR = 0;
             var auxRet = 0;
             var auxIVA = 0;
 
@@ -775,8 +800,11 @@ const appRequesition = new Vue({
                 if (this.bandResico == true) {
                     auxResico = aux * 0.0125; // Retención por RESICO (1.25%)
                 }
+                if (this.bandISR == true) {
+                    auxISR = aux * 0.1; // Retención por ISR (10%)
+                }
                 auxIVA = aux * 0.16; // IVA (16%)
-                auxRet = auxFisico + auxFlete + auxResico; // Total de retenciones
+                auxRet = auxFisico + auxFlete + auxResico + auxISR; // Total de retenciones 
             }
 
             // Envía la solicitud al servidor para agregar el item a la base de datos
@@ -789,11 +817,14 @@ const appRequesition = new Vue({
                 banderaFlete: this.bandFlete, // Indica si el item tiene retención por flete
                 banderaFisica: this.bandeFisica, // Indica si el item tiene retención por renta persona física
                 banderaResico: this.bandResico, // Indica si el item tiene retención por RESICO
+                banderaISR: this.bandISR, // Indica si el item tiene retención por ISR
                 precio: this.precio, // Precio unitario del item
                 cantidad: this.cantidad, // Cantidad del item
                 total: this.AuxTotal, // Valor total del item
                 id_Hoja: this.hojas[0].hojaRequisicion_id // ID de la hoja de requisición
             }).then(response => {
+                this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                this.listarItems(localStorage.getItem("idHoja"));
                 console.log(response.data); // Muestra la respuesta del servidor en la consola
             });
         },
@@ -818,7 +849,7 @@ const appRequesition = new Vue({
                 // Verifica si la respuesta del usuario es positiva
                 if (result.isConfirmed) {
                     // Invoca el método solicitarRevision para realizar la lógica en el servidor
-                    this.solicitarRevision(localStorage.getItem("idHoja"),comentarios);
+                    this.solicitarRevision(localStorage.getItem("idHoja"), comentarios);
                     // Muestra un mensaje de éxito al usuario
                     Swal.fire("Hoja enviada a revisión", "", "success").then(() => {
                         // Redirecciona a la página de inicio
@@ -959,7 +990,7 @@ const appRequesition = new Vue({
                 reverseButtons: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.enlazarAPresion(localStorage.getItem("IdPresion"), localStorage.getItem("idRequisicion"), localStorage.getItem("idHoja"),coments);
+                    this.enlazarAPresion(localStorage.getItem("IdPresion"), localStorage.getItem("idRequisicion"), localStorage.getItem("idHoja"), coments);
                     swalWithBootstrapButtons.fire({
                         title: "Asiganada",
                         text: "El articulo fue Validado y Asignado.",
@@ -971,7 +1002,7 @@ const appRequesition = new Vue({
                     /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
-                    this.noAprobada(localStorage.getItem("idHoja"),coments);
+                    this.noAprobada(localStorage.getItem("idHoja"), coments);
                     swalWithBootstrapButtons.fire({
                         title: "Rechazada",
                         text: "El articulo no se valido.",
@@ -982,18 +1013,35 @@ const appRequesition = new Vue({
                 }
             });
         },
-        enlazarAPresion: function(idPresion, idReq, idHoja,coments){
-            axios.post(url, { accion: 11, idPresion: idPresion , id_req: idReq, id_Hoja: idHoja, comentarios: coments}).then(response => {
+        enlazarAPresion: function (idPresion, idReq, idHoja, coments) {
+            axios.post(url, { accion: 11, idPresion: idPresion, id_req: idReq, id_Hoja: idHoja, comentarios: coments }).then(response => {
                 console.log(response.data);
             });
         },
-        noAprobada: function(idHoja,coments){
-            axios.post(url, { accion: 12, id_Hoja: idHoja, comentarios: coments}).then(response => {
+        noAprobada: function (idHoja, coments) {
+            axios.post(url, { accion: 12, id_Hoja: idHoja, comentarios: coments }).then(response => {
                 console.log(response.data);
             });
         },
-        irDireecion: function(){
+        irDireecion: function () {
             window.location.href = url2 + "/direccion.php";
+        },
+        formatearMoneda: function (cadena, incluirSimbolo) {
+            // Convertir la cadena a un número
+            let numero = parseFloat(cadena);
+            // Verificar si la conversión fue exitosa
+            if (isNaN(numero)) {
+                return null; // O puedes lanzar un error si prefieres
+            }
+            // Formatear el número como moneda en pesos mexicanos
+            let formato = numero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            // Retornar el formato con o sin el símbolo de pesos
+            return incluirSimbolo ? "$ " + formato : formato;
+        },
+        eliminarSaltosDeLinea: function(cadena) {
+            // Utiliza el método replace para eliminar los saltos de línea
+            return cadena.replace(/(\r\n|\n|\r)/g, "");
         }
     },
     /**

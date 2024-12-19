@@ -55,7 +55,7 @@ const appRequesition = new Vue({
                         <div class="row form-group mx-0 my-3">
                             <div class="col">
                                 <label for="adeudo" class="form-label">Adeudo a Pagar</label>
-                                <input type="number" min="0" class="form-control" id="adeudo" value=`+adeudo+`>
+                                <input type="number" min="0" class="form-control" id="adeudo" value=`+ adeudo + `>
                                 
                             </div>
                         </div>
@@ -88,26 +88,26 @@ const appRequesition = new Vue({
             });
             if (isConfirmed) {
                 // Acción para el botón "Autorizar"
-                this.autorizado(idHoja,this.adeudo);
+                this.autorizado(idHoja, this.adeudo);
                 Swal.fire({
                     title: "Autorizado",
                     text: "El articulo fue Aprovado.",
                     icon: "success"
                 }).then(() => {
-                    window.location.reload();
+                    this.listarObras();
                 });
                 // Aquí puedes agregar la lógica para manejar la autorización
             } else if (isDenied) {
                 // Acción para el botón "Rechazar"
                 this.comentarios = document.getElementById("comentarios").value;
-                this.rechazado(idHoja,this.comentarios);
+                this.rechazado(idHoja, this.comentarios);
                 console.log(this.comentarios);
                 Swal.fire({
                     title: "No autorizado",
                     text: "El articulo no se aprobo para pago.",
                     icon: "error"
                 }).then(() => {
-                    window.location.reload();
+                    this.listarObras();
                 });
                 // Aquí puedes agregar la lógica para manejar el rechazo
             }
@@ -128,6 +128,28 @@ const appRequesition = new Vue({
                 console.log(response.data);
             });
         },
+        formatearMoneda: function (cadena) {
+            // Convertir la cadena a un número
+            let numero = parseFloat(cadena);
+            // Verificar si la conversión fue exitosa
+            if (isNaN(numero)) {
+                return null; // O puedes lanzar un error si prefieres
+            }
+            // Formatear el número como moneda en pesos mexicanos
+            return "$ " + numero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        cambiarBooleano: function (valor, indice, index) {
+            this.presiones[index].Presion_Obra[indice].showDetail = !valor; // Devuelve el valor opuesto
+            if (!valor) {
+                this.presiones[index].Presion_Obra[indice].atrClass = "inline-block fs-6";
+                this.presiones[index].Presion_Obra[indice].strStyle = "max-width: 150px;";
+            }
+            else {
+                this.presiones[index].Presion_Obra[indice].atrClass = "inline-block text-truncate fs-6";
+                this.presiones[index].Presion_Obra[indice].strStyle = "max-width: 100px;";
+            }
+
+        }
     },
     created: function () {
         this.listarObras();

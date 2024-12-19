@@ -95,24 +95,59 @@ const appRequesition = new Vue({
                 Toast.fire({
                     icon: 'success',
                     title: 'Presion Agregada'
-                }).then(()=>{
-                    window.location.href = url2 + "/presiones.php";
-                });
+                })
             }
         },
-        listarPresiones: function (obrasId) {
-            axios.post(url, { accion: 1, obra: obrasId }).then(response => {
+        listarPresiones: async function (obrasId) {
+            try {
+                const response = await axios.post(url, { accion: 1, obra: obrasId });
                 this.presiones = response.data;
                 console.log(this.presiones);
-            });
+
+                this.$nextTick(() => {
+                    $(document).ready(function () {
+                        $('#example').DataTable({
+                            "order": [],
+                            "language": {
+                                "sProcessing": "Procesando...",
+                                "sLengthMenu": "Mostrar _MENU_ registros",
+                                "sZeroRecords": "No se encontraron resultados",
+                                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                                "sInfoPostFix": "",
+                                "sSearch": "Buscar:",
+                                "sUrl": "",
+                                "sInfoThousands": ",",
+                                "sLoadingRecords": "Cargando...",
+                                "oPaginate": {
+                                    "sFirst": "Primero",
+                                    "sLast": "Último",
+                                    "sNext": "Siguiente",
+                                    "sPrevious": "Anterior"
+                                },
+                                "oAria": {
+                                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                                }
+                            }
+                        });
+                    });
+                });
+            } catch (error) {
+                console.error("Error al Listar las Presiones:", error);
+            }
         },
-        consultarUsuario: function (user_id) {
-            axios.post(url, { accion: 2, id_user: user_id }).then(response => {
+        consultarUsuario: async function (user_id) {
+            try {
+                const response = await axios.post(url, { accion: 2, id_user: user_id });
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
-                this.listarPresiones(localStorage.getItem("obraActiva"));
-            });
+            } catch (error) {
+                console.error("Error al consultar usuario:", error);
+            }
         },
         agregarPresion: function () {
             const fecha = new Date();
@@ -124,20 +159,30 @@ const appRequesition = new Vue({
             var fechaActual = fecha.getFullYear() + "-" + mes + "-" + dia;
             console.log("Name user es " + localStorage.getItem("NameUser"));
             axios.post(url, { accion: 3, alias: this.alias, semana: this.semana, dia: this.dia, time: this.timeNow, fecha: fechaActual, user_creado: 0, obra: localStorage.getItem("obraActiva") }).then(response => {
+                var table = $('#example').DataTable();
+                // Para reinicializarlo, primero destrúyelo
+                table.destroy();
                 console.log(response.data);
+                this.listarPresiones(localStorage.getItem("obraActiva"));
             });
         },
-        infoObraActiva: function (obrasId) {
-            axios.post(url, { accion: 4, obra: obrasId }).then(response => {
+        infoObraActiva: async function (obrasId) {
+            try {
+                const response = await axios.post(url, { accion: 4, obra: obrasId });
                 this.obras = response.data;
                 console.log(this.obras);
-            });
+            } catch (error) {
+                console.error("Error al consultar la informacion de la Obra", error);
+            }
         },
-        listarObras: function () {
-            axios.post(url, { accion: 5 }).then(response => {
+        listarObras: async function () {
+            try {
+                const response = await axios.post(url, { accion: 5 });
                 this.obrasLista = response.data;
                 console.log(this.obrasLista);
-            });
+            } catch (error) {
+                console.error("Error al Listar las Obras:", error);
+            }
         },
         irObra(idObra) {
             localStorage.setItem("obraActiva", idObra);
@@ -176,40 +221,11 @@ const appRequesition = new Vue({
             window.location.href = url2 + "/direccion.php";
         }
     },
-    mounted: function () {
-        this.$nextTick(function () {
-            var table = $('#example').DataTable({
-                "order": [],
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-            this.listarObras();
-            this.consultarUsuario(localStorage.getItem("NameUser"));
-            this.infoObraActiva(localStorage.getItem("obraActiva"));
-
-        });
+    mounted: async function () {
+           await this.listarObras();
+           await this.consultarUsuario(localStorage.getItem("NameUser"));
+           await this.infoObraActiva(localStorage.getItem("obraActiva"));
+           await this.listarPresiones(localStorage.getItem("obraActiva"));
     },
     computed: {
 

@@ -15,42 +15,84 @@ const appRequesition = new Vue({
         FechaPago: "",
         BancoPago: "",
         timeNow: "",
-        estatus: "",
-        infoHojaPression: [],
-        itemsPresion: []
+        estatus: ""
     },
     methods: {
-        consultarUsuario: function (user_id) {
-            axios.post(url, { accion: 1, id_user: user_id }).then(response => {
+        consultarUsuario: async function (user_id) {
+            try {
+                const response = await axios.post(url, { accion: 1, id_user: user_id });
                 this.users = response.data;
                 this.NameUser = this.users[0].user_name;
                 console.log(this.users);
-            });
+            } catch (error) {
+                console.error("Error al consultar usuario", error);
+            }
         },
-        listarObras: function () {
-            axios.post(url, { accion: 2 }).then(response => {
+        listarObras: async function () {
+            try {
+                const response = await axios.post(url, { accion: 2 });
                 this.obras = response.data;
                 console.log(this.obras);
-            });
+            } catch (error) {
+                console.error("Error al listar las Obras:",error);
+            }
         },
-        cargarDatosPresion: function (IdPresion) {
-            axios.post(url, { accion: 3, idPresion: IdPresion, dia: this.dia, semana: this.semana }).then(response => {
-                console.log(response.data);
+        cargarDatosPresion: async function (IdPresion) {
+            try {
+                const response = await axios.post(url, { accion: 3, idPresion: IdPresion, dia: this.dia, semana: this.semana });
                 this.presiones = response.data;
                 console.log(this.presiones);
-            });
+
+                this.$nextTick(() => {
+                    $(document).ready(function(){
+                        $('[data-toggle="tooltip"]').tooltip(); // Inicializa los tooltips
+                        $('#example').DataTable({
+                            "order": [],
+                            "language": {
+                                "sProcessing": "Procesando...",
+                                "sLengthMenu": "Mostrar _MENU_ registros",
+                                "sZeroRecords": "No se encontraron resultados",
+                                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                                "sInfoPostFix": "",
+                                "sSearch": "Buscar:",
+                                "sUrl": "",
+                                "sInfoThousands": ",",
+                                "sLoadingRecords": "Cargando...",
+                                "oPaginate": {
+                                    "sFirst": "Primero",
+                                    "sLast": "Último",
+                                    "sNext": "Siguiente",
+                                    "sPrevious": "Anterior"
+                                },
+                                "oAria": {
+                                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                                }
+                            }
+                        });
+                    });
+                });
+            } catch (error) {
+                console.error("Error al cargar las Presiones:",error);
+            }
         },
-        infoObraActiva: function (obrasId) {
-            axios.post(url, { accion: 4, obra: obrasId }).then(response => {
+        infoObraActiva: async function (obrasId) {
+            try {
+                const response = await axios.post(url, { accion: 4, obra: obrasId });
                 this.obraActiva = response.data;
                 console.log(this.obraActiva);
-            });
+            } catch (error) {
+                console.error("Error al cargar la Obra Activa:", error);
+            }
         },
         irObra(idObra) {
             localStorage.setItem("obraActiva", idObra);
             window.location.href = url2 + "/obras.php";
         },
-        asignarDiaySamana() {
+        asignarDiaySamana: async function () {
             this.semana = localStorage.getItem("Semana");
             this.dia = localStorage.getItem("Dia");
         },
@@ -70,35 +112,6 @@ const appRequesition = new Vue({
             for (var i = 0; i < dataArray.length; i++) {
 
             }
-        },
-        cargarDataTable: function () {
-            let table = new DataTable('#example', {
-                "order": [],
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
         },
         getWeekNumber: function (date) {
             const onejan = new Date(date.getFullYear(), 0, 1);
@@ -162,22 +175,23 @@ const appRequesition = new Vue({
         },
         imprimirReq: function(NumReq,clave,id_hoja){
              axios.post(url, { accion: 8, idHoja: id_hoja}).then(response => {
-                this.infoHojaPression = response.data[0]['infoHoja'];
-                this.itemsPresion = response.data[0]['items'];
                  console.log(response.data);
                   generarPDFRequisicion(
                     NumReq, // Número de la requisición
                     clave, // Clave de la requisición
-                    this.infoHojaPression, // Información de la Hoja
+                    response.data[0]['infoHoja'], // Información de la Hoja
                     this.NameUser, // Nombre del usuario
-                    this.itemsPresion, // Items de la Hoja
+                    response.data[0]['items'], // Items de la Hoja
                     this.obras[0] // Información de la obra
                 ); 
              });
         },
         
         exportarExcel: function () {
-            axios.post(url, { accion: 6, datos: JSON.stringify(this.presiones), namePres: this.obraActiva[0].obras_nombre ,export: "" }, { responseType: 'blob' })
+            var total = this.sumatoria(this.presiones,"total");
+            var adeudo = this.sumatoria(this.presiones,"adeudo");
+
+            axios.post(url, { accion: 6, datos: JSON.stringify(this.presiones), namePres: this.obraActiva[0].obras_nombre ,export: "", total: total, adeudo: adeudo }, { responseType: 'blob' })
                 .then(response => {
                     // Crear un objeto URL para el blob
                     const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -233,21 +247,54 @@ const appRequesition = new Vue({
         irDireecion: function(){
             window.location.href = url2 + "/direccion.php";
         },
-        consultarEstatus: function(idPresion){
-            axios.post(url, { accion: 9, idPresion: idPresion}).then(response => {
+        consultarEstatus: async function(idPresion){
+            try {
+                const response = await   axios.post(url, { accion: 9, idPresion: idPresion});
                 this.estatus = response.data[0]['presiones_estatus'];
                 console.log(response.data[0]['presiones_estatus']);
+            } catch (error) {
+                console.error("Error al consultar el estatus de la presion:", error);
+            }
+        },
+        cambiarBooleano: function (valor, indice) {
+            this.presiones[indice].showDetail = !valor; // Devuelve el valor opuesto
+            if (!valor) {
+                this.presiones[indice].atrClass = "text-left align-middle inline-block fs-6";
+                this.presiones[indice].strStyle = "max-width: auto;";
+            }
+            else {
+                this.presiones[indice].atrClass = "text-left align-middle inline-block text-truncate fs-6";
+                this.presiones[indice].strStyle = "max-width: 100px;";
+            } 
+        },
+        formatearMoneda: function (cadena, incluirSimbolo) {
+            // Convertir la cadena a un número
+            let numero = parseFloat(cadena);
+            // Verificar si la conversión fue exitosa
+            if (isNaN(numero)) {
+                return null; // O puedes lanzar un error si prefieres
+            }
+            // Formatear el número como moneda en pesos mexicanos
+            let formato = numero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            // Retornar el formato con o sin el símbolo de pesos
+            return incluirSimbolo ? "$" + formato : formato;
+        },
+        sumatoria: function(arreglo, indice){
+            var totalRetunr = 0;
+            arreglo.forEach(function(elemento) {
+                totalRetunr += elemento[indice];
             });
+            return totalRetunr;
         }
     },
-    created: function () {
-        this.listarObras();
-        this.asignarDiaySamana();
-        this.infoObraActiva(localStorage.getItem("obraActiva"));
-        this.consultarUsuario(localStorage.getItem("NameUser"));
-        this.cargarDatosPresion(localStorage.getItem("IdPresion"));
-        this.consultarEstatus(localStorage.getItem("IdPresion"));
-        this.cargarDataTable();
+    mounted: async function () {
+        await this.listarObras();
+        await this.asignarDiaySamana();
+        await this.infoObraActiva(localStorage.getItem("obraActiva"));
+        await this.consultarUsuario(localStorage.getItem("NameUser"));
+        await this.consultarEstatus(localStorage.getItem("IdPresion"));
+        await this.cargarDatosPresion(localStorage.getItem("IdPresion"));
     },
     computed: {
 

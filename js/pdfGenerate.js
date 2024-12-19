@@ -5,9 +5,8 @@ watermark.src = "./images/watermark.jpg"
 var ultimapagina = false;
 
 function generarPDFRequisicion(Numero_Req, clave, requisicion, NameUser, itemsOrdenArray, obras) {
-    var doc = new jsPDF('l', 'mm', 'a4', true);
     console.log('primera llamada');
-
+    var doc = new jsPDF('l', 'mm', 'a4', true);
     var pages = createPages(convertToArrayStrings(itemsOrdenArray));
     
     pages.forEach((ArrayItems, index) => {
@@ -25,7 +24,7 @@ function generarPDFRequisicion(Numero_Req, clave, requisicion, NameUser, itemsOr
         //se crea la tabla de los items
         itemDeOrden(doc,ArrayItems, requisicion, ultimapagina);
         //Crea el pie de pagina de la orden
-        creaPieDeOrden(doc, NameUser, requisicion, index + 1, pages.length);
+        creaPieDeOrden(doc,NameUser, requisicion, index + 1, pages.length);
         if (index < pages.length - 1) {
             doc.addPage('a4', 'l');
         }
@@ -44,7 +43,7 @@ function creaEncabezadoOrden(doc) {
     doc.line(92, 29, 92 + textWidth, 29);
     doc.text('AREA DE RECURSOS MATERIALES Y SERVICIOS GENERALES', 145, 28, 'center');
 }
-function datosEmpresa(doc, Numero_Req, clave, requisicion) {
+function datosEmpresa(doc,Numero_Req, clave, requisicion) {
     console.log('segunda llamada');
     console.log(requisicion);
     doc.setFontSize(8);
@@ -214,8 +213,8 @@ function itemDeOrden(doc, ArrayString, requisicion, ultimapagina) {
         doc.text(element.producto, (x + 40) + 45, yt, 'center');
         doc.text(element.cantidad.toString(), (x + 130) + 15, yt, 'center');
         doc.text("$ " + addCommas(element.precio), (x + 160) + 15, yt, 'center');
-        doc.text("+$ " + addCommas(element.iva), (x + 190) + 17, yt, 'center');
-        doc.text("-$ " + addCommas(element.retenciones), (x + 215) + 17, yt, 'center')
+        doc.text("+$ " + addCommas(element.iva), (x + 190) + 15, yt, 'center');
+        doc.text("-$ " + addCommas(element.retenciones), (x + 215) + 15, yt, 'center')
         doc.text("$ " + addCommas(element.total), (x + 240) + 15, yt, 'center')
 
         y = y + element.tamaño;
@@ -257,9 +256,17 @@ function convertToArrayStrings(itemsOrdenArray) {
     var tamano = 0;
 
     for (var i = 0; i < itemsOrdenArray.length; i++) {
-        if (itemsOrdenArray[i].itemRequisicion_producto.length > 50) {
-            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto,51);
-            tamano = 20;
+        if (itemsOrdenArray[i].itemRequisicion_producto.length > 204) {
+            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto,69);
+            tamano = 17;
+        }
+        else if(itemsOrdenArray[i].itemRequisicion_producto.length > 136){
+            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto,69);
+            tamano = 13;
+        }
+        else if(itemsOrdenArray[i].itemRequisicion_producto.length > 68){
+            itemsOrdenArray[i].itemRequisicion_producto = convertToMultilines(itemsOrdenArray[i].itemRequisicion_producto,69);
+            tamano = 9;
         }
         else {
             tamano = 6;
@@ -268,10 +275,10 @@ function convertToArrayStrings(itemsOrdenArray) {
             'lote': (i + 1),
             'unidad': itemsOrdenArray[i].itemRequisicion_unidad,
             'producto': itemsOrdenArray[i].itemRequisicion_producto,
-            'cantidad': itemsOrdenArray[i].itemRequisicion_cantidad,
-            'precio': itemsOrdenArray[i].itemRequisicion_precio,
-            'iva': itemsOrdenArray[i].itemRequisicion_iva,
-            'retenciones': itemsOrdenArray[i].itemRequisicion_retenciones,
+            'cantidad': Number.parseFloat(itemsOrdenArray[i].itemRequisicion_cantidad).toFixed(2),
+            'precio': Number.parseFloat(itemsOrdenArray[i].itemRequisicion_precio).toFixed(2),
+            'iva': Number.parseFloat(itemsOrdenArray[i].itemRequisicion_iva).toFixed(2),
+            'retenciones': Number.parseFloat(itemsOrdenArray[i].itemRequisicion_retenciones).toFixed(2),
             'total': Number.parseFloat((((Number.parseFloat(itemsOrdenArray[i].itemRequisicion_cantidad) * Number.parseFloat(itemsOrdenArray[i].itemRequisicion_precio)) + Number.parseFloat(itemsOrdenArray[i].itemRequisicion_iva)) - Number.parseFloat(itemsOrdenArray[i].itemRequisicion_retenciones))).toFixed(2),
             'tamaño': tamano
         }
