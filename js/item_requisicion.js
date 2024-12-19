@@ -345,6 +345,9 @@ const appRequesition = new Vue({
                         }
                         return true;
                     }
+                },
+                willClose: () => {
+                   this.vaciarChecks();
                 }
             });
             if (formValues) {
@@ -454,6 +457,7 @@ const appRequesition = new Vue({
                 // ID de la hoja de requisición
                 id_Hoja: localStorage.getItem("idHoja")
             }).then(response => {
+                this.vaciarChecks();
                 this.agregarInformacionHoja(localStorage.getItem("idHoja"));
                 this.listarItems(localStorage.getItem("idHoja"));
                 console.log(response.data);
@@ -1042,6 +1046,12 @@ const appRequesition = new Vue({
         eliminarSaltosDeLinea: function(cadena) {
             // Utiliza el método replace para eliminar los saltos de línea
             return cadena.replace(/(\r\n|\n|\r)/g, "");
+        },
+        vaciarChecks: function(){
+            this.strFisca = "";
+            this.strFlete = "";
+            this.strResico = "";
+            this.strISR = "";
         }
     },
     /**
