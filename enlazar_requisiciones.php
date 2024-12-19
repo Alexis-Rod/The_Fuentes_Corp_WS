@@ -135,24 +135,24 @@ include_once 'validarSesion.php';
                         <table id="example" class="table table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">Numero de Requisicion</th>
-                                    <th scope="col">Numero de Hoja</th>
-                                    <th scope="col">Nombre de la Requisicion</th>
-                                    <th scope="col">Clave</th>
-                                    <th scope="col">Total</th>
+                                    <th scope="col" class="text-center align-middle">Numero de Requisicion</th>
+                                    <th scope="col" class="text-center align-middle">Numero de Hoja</th>
+                                    <th scope="col" class="text-center align-middle">Nombre de la Requisicion</th>
+                                    <th scope="col" class="text-center align-middle">Clave</th>
+                                    <th scope="col" class="text-center align-middle">Total</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(req,indice) of requisiciones">
-                                    <td scope="row">{{req.requisicion_Numero}}</td>
-                                    <td>Hoja N° {{req.hojaRequisicion_numero}}</td>
-                                    <td>{{req.requisicion_Nombre}}</td>
-                                    <td>{{req.requisicion_Clave}}</td>
-                                    <td>$ {{req.hojaRequisicion_total}}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-primary" @click="enlazarConPresion(req.hojaRequisicion_id, req.requisicion_id)">
-                                            Revisar Hoja
+                                    <td scope="row" class="text-center align-middle">{{req.requisicion_Numero}}</td>
+                                    <td class="text-center align-middle">Hoja N° {{req.hojaRequisicion_numero}}</td>
+                                    <td class="text-left align-middle">{{req.requisicion_Nombre}}</td>
+                                    <td class="text-center align-middle">{{req.requisicion_Clave}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(req.hojaRequisicion_total,true)}}</td>
+                                    <td class="text-center align-middle">
+                                        <button type="button" class="btn btn-primary" @click="enlazarConPresion(req.hojaRequisicion_id, req.requisicion_id)" data-toggle="tooltip" :title="'Revisar Hoja N°'+ req.hojaRequisicion_numero + ' de la Requisicion ' + req.requisicion_Numero">
+                                            <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
                                         </button>
                                     </td>
                                 </tr>

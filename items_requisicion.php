@@ -134,10 +134,12 @@ include_once 'validarSesion.php';
             </nav>
             <div class="container px-5 overflow-auto">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col">
                         <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">DETALLES DE LA REQUISICION {{this.Numero_Req}} HOJA NUMERO {{this.hojas[0].hojaRequisicion_numero}}</h2>
                     </div>
-                    <div class="col-6 d-flex align-items-end mb-3">
+                </div>
+                <div class="row">
+                    <div class="col d-flex align-items-end mb-3">
                         <button type="button" class="btn btn-danger ms-auto" @click="imprimirReq">
                             <span class="fw-bold text-white">Imprimir Requisicion</span>
                         </button>
@@ -244,29 +246,29 @@ include_once 'validarSesion.php';
                         <table id="example" class="table table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">Unidad</th>
-                                    <th scope="col">Producto</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Precio Unitario</th>
-                                    <th scope="col">IVA</th>
-                                    <th scope="col">Retenciones</th>
-                                    <th scope="col">Subtotal</th>
+                                    <th scope="col" class="text-center">Unidad</th>
+                                    <th scope="col" class="text-center">Producto</th>
+                                    <th scope="col" class="text-center">Cantidad</th>
+                                    <th scope="col" class="text-center">Precio Unitario</th>
+                                    <th scope="col" class="text-center">IVA</th>
+                                    <th scope="col" class="text-center">Retenciones</th>
+                                    <th scope="col" class="text-center">Subtotal</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(item,indice) of itemsHoja">
-                                    <td>{{item.itemRequisicion_unidad}}</td>
-                                    <td>{{item.itemRequisicion_producto}}</td>
-                                    <td>{{item.itemRequisicion_cantidad}}</td>
-                                    <td>$ {{item.itemRequisicion_precio}}</td>
-                                    <td>$ {{item.itemRequisicion_iva}}</td>
-                                    <td>$ {{item.itemRequisicion_retenciones}}</td>
-                                    <td>$ {{(((item.itemRequisicion_cantidad * item.itemRequisicion_precio) + parseFloat(item.itemRequisicion_iva)) - item.itemRequisicion_retenciones).toFixed(2)}}</td>
+                                    <td class="text-center align-middle">{{item.itemRequisicion_unidad}}</td>
+                                    <td style="max-width: 150px;;">{{item.itemRequisicion_producto}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_cantidad,false)}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_precio,true)}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_iva,true)}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_retenciones,true)}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda((((item.itemRequisicion_cantidad * item.itemRequisicion_precio) + parseFloat(item.itemRequisicion_iva)) - item.itemRequisicion_retenciones).toFixed(2),true)}}</td>
                                     <!--<td><span class="badge bg-danger">Pendiente</span></td>-->
-                                    <td>
+                                    <td class="align-middle">
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA'|| hojas[0].hojaRequisicion_estatus == 'RECHAZADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar item" @click="editItem(item.itemRequisicion_producto,item.itemRequisicion_cantidad,item.itemRequisicion_precio,item.itemRequisicion_iva,item.itemRequisicion_banderaFlete,item.itemRequisicion_banderaFisica,item.itemRequisicion_banderaResico,item.itemRequisicion_id)">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar item" @click="editItem(item.itemRequisicion_producto,item.itemRequisicion_cantidad,item.itemRequisicion_precio,item.itemRequisicion_iva,item.itemRequisicion_banderaFlete,item.itemRequisicion_banderaFisica,item.itemRequisicion_banderaResico,item.itemRequisicion_banderaISR,item.itemRequisicion_id)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
@@ -284,7 +286,7 @@ include_once 'validarSesion.php';
                             <tfoot class="table-dark">
                                 <tr>
                                     <td colspan="6" class="text-end fw-bold">Total:</td>
-                                    <td class="text-end fw-bold">$ {{(hojas[0].hojaRequisicion_total).toFixed(2)}}</td>
+                                    <td class="fw-bold text-center">{{formatearMoneda((hojas[0].hojaRequisicion_total).toFixed(2),true)}}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>

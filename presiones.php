@@ -120,10 +120,12 @@ include_once 'validarSesion.php';
             </nav>
             <div class="container px-5 overflow-auto">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col">
                         <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">PRESIONES DE {{this.obras[0].obras_nombre}}</h2>
                     </div>
-                    <div class="col-6 d-flex align-items-end mb-3" v-if="this.users[0].user_createPresion == 1">
+                </div>
+                <div class="row">
+                    <div class="col d-flex align-items-end mb-3" v-if="this.users[0].user_createPresion == 1">
                         <button type="button" class="btn btn-success ms-auto" @click="NewPression">
                             <span class="fw-bold">Agregar Nueva Presion</span>
                         </button>

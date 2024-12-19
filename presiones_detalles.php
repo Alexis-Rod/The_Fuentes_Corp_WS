@@ -25,7 +25,7 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>PRESION DE LA SEMANA</title>
 </head>
 
 <body style="display: flex;">
@@ -122,7 +122,7 @@ include_once 'validarSesion.php';
             <div class="container px-5 overflow-auto">
                 <div class="row">
                     <div class="col">
-                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">PRESIONES DE LA SEMANA "{{this.semana}}" Y DIA "{{this.dia}}" DE LA OBRA "{{this.obraActiva[0].obras_nombre}}"</h2>
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">PRESION DE LA SEMANA "{{this.semana}}" Y DIA "{{this.dia}}" DE LA OBRA "{{this.obraActiva[0].obras_nombre}}"</h2>
                     </div>
                 </div>
                 <div class="row">
@@ -138,70 +138,81 @@ include_once 'validarSesion.php';
                         <table id="example" class="table align-middle table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">CLAVE</th>
-                                    <th scope="col">N° DE REQUISICION</th>
-                                    <th scope="col">PROVEEDOR</th>
-                                    <th scope="col">CONCEPTO</th>
-                                    <th scope="col">ADEUDO</th>
-                                    <th scope="col">NETO A PAGAR</th>
-                                    <th scope="col">OBSERVACIONES</th>
-                                    <th scope="col">FORMA DE PAGO</th>
-                                    <th scope="col">FECHA DE PAGO</th>
-                                    <th scope="col">BANCO DE PAGO</th>
-                                    <th scope="col">ESTATUS</th>
-                                    <th scope="col">APLICAR ACCIONES</th>
+                                    <th scope="col" class="text-center align-middle">CLAVE</th>
+                                    <th scope="col" class="text-center align-middle">N° DE REQUISICION</th>
+                                    <th scope="col" class="text-center align-middle">PROVEEDOR</th>
+                                    <th scope="col" class="text-center align-middle">CONCEPTO</th>
+                                    <th scope="col" class="text-center align-middle">ADEUDO</th>
+                                    <th scope="col" class="text-center align-middle">NETO A PAGAR</th>
+                                    <th scope="col" class="text-center align-middle">OBSERVACIONES</th>
+                                    <th scope="col" class="text-center align-middle">FORMA DE PAGO</th>
+                                    <th scope="col" class="text-center align-middle">FECHA DE PAGO</th>
+                                    <th scope="col" class="text-center align-middle">BANCO DE PAGO</th>
+                                    <th scope="col" class="text-center align-middle">ESTATUS</th>
+                                    <th scope="col" class="text-center align-middle">APLICAR ACCIONES</th>
+                                    <th class="text-center align-middle"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(presion,indice) of presiones" v-if="presion.HojaEstatus == 'LIGADA' || presion.HojaEstatus == 'AUTORIZADA' || presion.HojaEstatus == 'PAGADA'">
-                                    <td scope="row">{{presion.clave}}</td>
-                                    <td>{{presion.NumReq}}</td>
-                                    <td>{{presion.proveedor}}</td>
-                                    <td>{{presion.concepto}}</td>
-                                    <td>{{presion.total}}</td>
-                                    <td>{{presion.adeudo}}</td>
-                                    <td>{{presion.Observaciones}}</td>
-                                    <td>{{presion.formaPago}}</td>
-                                    <td>
+                                    <td scope="row" class="text-center align-middle inline-block fs-6">{{presion.clave}}</td>
+                                    <td :class="presion.atrClass" :style="presion.strStyle">{{presion.NumReq}}</td>
+                                    <td :class="presion.atrClass" :style="presion.strStyle">{{presion.proveedor}}</td>
+                                    <td :class="presion.atrClass" :style="presion.strStyle">{{presion.concepto}}</td>
+                                    <td class="text-center align-middle fs-6">{{formatearMoneda(presion.total, true)}}</td>
+                                    <td class="text-center align-middle fs-6">{{formatearMoneda(presion.adeudo, true)}}</td>
+                                    <td :class="presion.atrClass" :style="presion.strStyle">{{presion.Observaciones}}</td>
+                                    <td class="text-center align-middle fs-6">{{presion.formaPago}}</td>
+                                    <td class="text-center align-middle fs-6">
                                         <input type="date" class="form-control" id="FechaPago" v-model="presion.Fecha">
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle fs-6">
                                         <input type="text" class="form-control" id="BancoPago" v-model="presion.Banco" placeholder="Ingresa Banco">
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle fs-6">
                                         <span class="badge bg-warning" v-if="presion.HojaEstatus == 'LIGADA'">PENDIENTE</span>
                                         <span class="badge bg-success" v-if="presion.HojaEstatus == 'AUTORIZADA'">AUTORIZADO</span>
                                         <span class="badge bg-success" v-if="presion.HojaEstatus == 'PAGADA'">PAGADA</span>
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle inline-block fs-6">
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'AUTORIZADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="pagarItem(presion.id_hoja, presion.Fecha, presion.Banco)">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="pagarItem(presion.id_hoja, presion.Fecha, presion.Banco)">
                                                 <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
                                             </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
                                                 <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
                                             </button>
                                         </div>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'LIGADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="" disabled>
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="" disabled>
                                                 <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
                                             </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
                                                 <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
                                             </button>
                                         </div>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'PAGADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pagar Concepto" @click="" disabled>
+                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="" disabled>
                                                 <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
                                             </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Descargar Requisicion" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
                                                 <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
                                             </button>
                                         </div>
                                     </td>
+                                    <td>
+                                        <img class="me-2" v-if="presion.showDetail == false" src="images/icons/arrow_down.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presion.showDetail,indice)">
+                                        <img class="me-2" v-if="presion.showDetail == true" src="images/icons/arrow_up.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presion.showDetail,indice)">
+                                    </td>
                                 </tr>
                             </tbody>
                             <tfoot class="table-dark">
+                                <tr class="my-3">
+                                    <td colspan="4" class="text-end">Total: </td>
+                                    <td class="text-center align-middle fs-6">{{formatearMoneda(sumatoria(presiones,"total"),true)}}</td>
+                                    <td class="text-center align-middle fs-6">{{formatearMoneda(sumatoria(presiones,"adeudo"),true)}}</td>
+                                    <td colspan="7"></td>
+                                </tr>
                             </tfoot>
                         </table>
                     </div>

@@ -139,25 +139,25 @@ include_once 'validarSesion.php';
                         <table id="example" class="table table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">Numero de Requisicion</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Clave</th>
-                                    <th scope="col">Estatus</th>
-                                    <th scope="col"></th>
+                                    <th scope="col" class="text-center align-middle">Numero de Requisicion</th>
+                                    <th scope="col" class="text-center align-middle">Nombre</th>
+                                    <th scope="col" class="text-center align-middle">Clave</th>
+                                    <th scope="col" class="text-center align-middle">Estatus</th>
+                                    <th scope="col" class="text-center align-middle"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(req,indice) of requisiciones">
-                                    <td scope="row">{{req.requisicion_Numero}}</td>
-                                    <td>{{req.requisicion_Nombre}}</td>
-                                    <td>{{req.requisicion_Clave}}</td>
-                                    <td>
+                                    <td scope="row" class="text-center align-middle">{{req.requisicion_Numero}}</td>
+                                    <td class="text-left align-middle">{{req.requisicion_Nombre}}</td>
+                                    <td class="text-center align-middle">{{req.requisicion_Clave}}</td>
+                                    <td class="text-center align-middle">
                                         <span class="badge bg-danger" v-if="req.requisicion_estatus == 'ABIERTO'">ABIERTO</span>
                                         <span class="badge bg-success" v-if="req.requisicion_estatus == 'CERRADO'">CERRADO</span>
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <button type="button" class="btn btn-success" @click="ConsultarItemRq(req.requisicion_id)">
+                                            <button type="button" class="btn btn-success" @click="ConsultarItemRq(req.requisicion_id)" data-toggle="tooltip" title="Consultar Requisicion">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />

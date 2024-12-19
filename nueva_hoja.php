@@ -165,27 +165,33 @@ include_once 'validarSesion.php';
                     </div>
                 </div>
                 <div class="row form-group mx-0 mt-0 mb-3">
-                    <div class="col-7">
+                    <div class="col-11">
                         <label for="NombreProv">Nombre del Proveedor</label>
-                        <select class="form-select" aria-label="Default select example" v-model="selected_Provedor">
+                        <input class="form-control" list="datalistOptions" id="exampleDataList" v-model="selected_Provedor" placeholder="Escribe tu Proveedor">
+                        <datalist id="datalistOptions">
+                            <option v-for="proveedor in proveedores" :key="proveedor.proveedor_id" :value="proveedor.proveedor_id + '-' +  proveedor.proveedor_nombre">
+                        </datalist>
+                        <!--<select class="form-select" aria-label="Default select example" v-model="selected_Provedor">
                             <option v-for="(proveedor,indice) of proveedores" :value="proveedor.proveedor_id">{{proveedor.proveedor_id}}- {{proveedor.proveedor_nombre}}</option>
-                        </select>
+                        </select>-->
                     </div>
                     <div class="col-1 d-flex align-items-end justify-content-center">
                         <button class="btn btn-danger" title="Validar Proveedor" @click="validarProv(selected_Provedor)">
                             <span>Validar</span>
                         </button>
                     </div>
-                    <div class="col-4">
+                </div>
+                <div class="row form-group mx-0 mt-0 mb-3">
+                    <div class="col-6">
                         <label for="RFCProv">RFC del Proveedor</label>
                         <input type="text" class="form-control" id="RFCProv" name="RFCProv" v-model="Prov_RFC" readonly>
                     </div>
-                </div>
-                <div class="row form-group mx-0 mt-0 mb-3">
-                    <div class="col-3">
+                    <div class="col-6">
                         <label for="CLABE">CLABE Bancaria</label>
                         <input type="text" class="form-control" id="CLABE" name="CLABE" v-model="Prov_Clabe" readonly>
                     </div>
+                </div>
+                <div class="row form-group mx-0 mt-0 mb-3">
                     <div class="col-3">
                         <label for="CuentaBank">Cuenta Bancaria</label>
                         <input type="text" class="form-control" id="CuentaBank" name="CuentaBank" v-model="Prov_Cuenta" readonly>
@@ -193,6 +199,10 @@ include_once 'validarSesion.php';
                     <div class="col-3">
                         <label for="ReferenciaBank">Referencia Bancaria</label>
                         <input type="text" class="form-control" id="ReferenciaBank" name="ReferenciaBank" v-model="Prov_RefBank" readonly>
+                    </div>
+                    <div class="col-3">
+                        <label for="CardBank">Tarjeta Bancaria</label>
+                        <input type="text" class="form-control" id="CardBank" name="CardBank" v-model="Prov_BankCard" readonly>
                     </div>
                     <div class="col-3">
                         <label for="Bank">Banco</label>
@@ -242,21 +252,11 @@ include_once 'validarSesion.php';
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
-                                <!-- Formato HTML de la tabla
-                                <tr class="my-3">
-                                    <th scope="row">1</th>
-                                    <td>Diseño</td>
-                                    <td>Servicio de Control de Calidad</td>
-                                    <td>1</td>
-                                    <td>$80,000.00</td>
-                                    <td>$1.16</td>
-                                    <td>$62,800.00</td>
-                                </tr>-->
                             </tbody>
                             <tfoot class="table-dark">
                                 <tr>
                                     <th colspan="7" class="table-active text-end">Total: </th>
-                                    <td>${{Total_Pagar_Mostrar}}</td>
+                                    <td>{{formatearMoneda(Total_Pagar_Mostrar)}}</td>
                                 </tr>
                             </tfoot>
                         </table>

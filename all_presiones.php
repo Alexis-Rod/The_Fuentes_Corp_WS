@@ -143,30 +143,37 @@ include_once 'validarSesion.php';
                                         <table id="example" class="table align-middle table-hover w-100">
                                             <thead class="table-dark">
                                                 <tr>
-                                                    <th scope="col">CLAVE</th>
-                                                    <th scope="col">N° DE REQUISICION</th>
-                                                    <th scope="col">PROVEEDOR</th>
-                                                    <th scope="col">CONCEPTO</th>
-                                                    <th scope="col">ADEUDO</th>
-                                                    <th scope="col">OBSERVACIONES</th>
-                                                    <th scope="col">FORMA DE PAGO</th>
-                                                    <th scope="col">APLICAR ACCIONES</th>
+                                                    <th scope="col" class="fs-6">CLAVE</th>
+                                                    <th scope="col" class="fs-6">N° DE REQUISICION</th>
+                                                    <th scope="col" class="fs-6">PROVEEDOR</th>
+                                                    <th scope="col" class="fs-6">CONCEPTO</th>
+                                                    <th scope="col" class="fs-6">ADEUDO</th>
+                                                    <th scope="col" class="fs-6">PAGO AUTORIZADO</th>
+                                                    <th scope="col" class="fs-6">OBSERVACIONES</th>
+                                                    <th scope="col" class="fs-6">FORMA DE PAGO</th>
+                                                    <th scope="col" class="fs-6">APLICAR ACCIONES</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody class="table-light" id="Tabla_Items">
                                                 <tr class="my-3" v-for="(presionObra,indice) of obra.Presion_Obra">
                                                     <td>{{presionObra.clave}}</td>
-                                                    <td>{{presionObra.NumReq}}</td>
-                                                    <td>{{presionObra.proveedor}}</td>
-                                                    <td>{{presionObra.concepto}}</td>
-                                                    <td>{{presionObra.total}}</td>
-                                                    <td>{{presionObra.Observaciones}}</td>
+                                                    <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.NumReq}}</td>
+                                                    <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.proveedor}}</td>
+                                                    <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.concepto}}</td>
+                                                    <td class="fs-6">{{formatearMoneda(presionObra.total)}}</td>
+                                                    <td class="fs-6">{{formatearMoneda(presionObra.adeudo)}}</td>
+                                                    <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.Observaciones}}</td>
                                                     <td>{{presionObra.formaPago}}</td>
                                                     <td>
-                                                        <button type="button" class="btn btn-primary" @click="autoriar(presionObra.id_hoja, convertirADecimal(presionObra.total))" v-if="presionObra.HojaEstatus == 'LIGADA'">Autorizar</button>
-                                                        <span class="badge bg-success" v-if="presionObra.HojaEstatus == 'AUTORIZADA'">AUTORIZADA</span>
-                                                        <span class="badge bg-danger" v-if="presionObra.HojaEstatus == 'RECHAZADA'">RECHAZADA</span>
-                                                        <span class="badge bg-success" v-if="presionObra.HojaEstatus == 'PAGADA'">PAGADA</span>
+                                                        <button type="button" class="btn btn-primary fs-6" @click="autoriar(presionObra.id_hoja, convertirADecimal(presionObra.total))" v-if="presionObra.HojaEstatus == 'LIGADA'">Autorizar</button>
+                                                        <span class="badge bg-success fs-6" v-if="presionObra.HojaEstatus == 'AUTORIZADA'">AUTORIZADA</span>
+                                                        <span class="badge bg-danger fs-6" v-if="presionObra.HojaEstatus == 'RECHAZADA'">RECHAZADA</span>
+                                                        <span class="badge bg-success fs-6" v-if="presionObra.HojaEstatus == 'PAGADA'">PAGADA</span>
+                                                    </td>
+                                                    <td>
+                                                        <img class="me-2" v-if="presionObra.showDetail == false" src="images/icons/arrow_down.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
+                                                        <img class="me-2" v-if="presionObra.showDetail == true" src="images/icons/arrow_up.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -106,3 +106,8 @@ input::placeholder {
     height: 200px;
     width: 100%;
 }
+
+.custom-popup {
+    width: 700px; /* Ajusta el ancho según tus necesidades */
+    max-width: 90%; /* Para que sea responsivo en pantallas pequeñas */
+}

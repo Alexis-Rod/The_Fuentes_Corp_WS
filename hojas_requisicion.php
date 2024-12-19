@@ -140,19 +140,19 @@ include_once 'validarSesion.php';
                         <table id="example" class="table table-hover w-100">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">Numero de Hoja</th>
-                                    <th scope="col">Forma de Pago</th>
-                                    <th scope="col">Total de Pagar</th>
-                                    <th scope="col">Estatus</th>
+                                    <th scope="col" class="text-center align-middle">Numero de Hoja</th>
+                                    <th scope="col" class="text-center align-middle">Forma de Pago</th>
+                                    <th scope="col" class="text-center align-middle">Total de Pagar</th>
+                                    <th scope="col" class="text-center align-middle">Estatus</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(hoja,indice) of hojas">
-                                    <td scope="row">Hoja N° {{hoja.hojaRequisicion_numero}}</td>
-                                    <td>{{hoja.hojaRequisicion_formaPago}}</td>
-                                    <td>$ {{hoja.hojaRequisicion_total}}</td>
-                                    <td>
+                                    <td scope="row" class="text-center align-middle">Hoja N° {{hoja.hojaRequisicion_numero}}</td>
+                                    <td class="text-center align-middle">{{hoja.hojaRequisicion_formaPago}}</td>
+                                    <td class="text-center align-middle">{{formatearMoneda(hoja.hojaRequisicion_total,true)}}</td>
+                                    <td class="text-center align-middle">
                                         <span class="badge bg-primary" v-if="hoja.hojaRequisicion_estatus == 'NUEVO'">NUEVO</span>
                                         <span class="badge bg-danger" v-if="hoja.hojaRequisicion_estatus == 'PENDIENTE'">NO APROVADO</span>
                                         <span class="badge bg-warning" v-if="hoja.hojaRequisicion_estatus == 'REVISION'">REVISION</span>
@@ -161,9 +161,9 @@ include_once 'validarSesion.php';
                                         <span class="badge bg-primary" v-if="hoja.hojaRequisicion_estatus == 'AUTORIZADA'">AUTORIZADA</span>
                                         <span class="badge bg-success" v-if="hoja.hojaRequisicion_estatus == 'PAGADA'">PAGADA</span>
                                     </td>
-                                    <td>
+                                    <td class="text-center align-middle">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <button type="button" class="btn btn-success" @click="ConsultarItemHoja(hoja.hojaRequisicion_id)">
+                                            <button type="button" class="btn btn-success" @click="ConsultarItemHoja(hoja.hojaRequisicion_id)" data-toggle="tooltip" title="Consultar Hoja">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
