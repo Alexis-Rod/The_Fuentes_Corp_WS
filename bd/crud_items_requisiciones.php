@@ -17,6 +17,7 @@ $retenciones = (isset($_POST['retenciones'])) ? $_POST['retenciones'] : '';
 $banderaFlete = (isset($_POST['banderaFlete'])) ? (int)$_POST['banderaFlete'] : '';
 $banderaFisica = (isset($_POST['banderaFisica'])) ? (int)$_POST['banderaFisica'] : '';
 $banderaResico = (isset($_POST['banderaResico'])) ? (int)$_POST['banderaResico'] : '';
+$banderaISR = (isset($_POST['banderaISR'])) ?  (int)$_POST['banderaISR'] : '';
 $precio = (isset($_POST['precio'])) ? $_POST['precio'] : '';
 $cantidad = (isset($_POST['cantidad'])) ? $_POST['cantidad'] : '';
 $total = (isset($_POST['total'])) ? $_POST['total'] : '';
@@ -27,7 +28,7 @@ $comentarios = (isset($_POST['comentarios'])) ? $_POST['comentarios'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `itemRequisicion_id`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`, `hojaRequisicion_total` FROM itemrequisicion INNER JOIN hojasrequisicion ON itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id WHERE itemRequisicion_idHoja = '$idHoja' ORDER BY itemRequisicion_id ASC";
+        $consulta = "SELECT `itemRequisicion_id`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_banderaISR`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`, `hojaRequisicion_total` FROM itemrequisicion INNER JOIN hojasrequisicion ON itemRequisicion_idHoja = hojasrequisicion.hojaRequisicion_id WHERE itemRequisicion_idHoja = '$idHoja' ORDER BY itemRequisicion_id ASC";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -39,8 +40,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad' WHERE itemRequisicion_id ='$id'";
-        $resultado = $conexion->prepare($consulta);
+        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_banderaISR`='$banderaISR', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad' WHERE itemRequisicion_id ='$id'";        $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";
         $resultado = $conexion->prepare($consulta);
@@ -71,7 +71,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 6:
-        $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`) VALUES (NULL, '$idHoja', '$unidad', '$producto', '$iva', '$retenciones', '$banderaFlete', '$banderaFisica', '$banderaResico', '$precio', '$cantidad', 'N')";
+        $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_banderaISR`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_estatus`) VALUES (NULL, '$idHoja', '$unidad', '$producto', '$iva', '$retenciones', '$banderaFlete', '$banderaFisica', '$banderaResico', '$banderaISR', '$precio', '$cantidad', 'N')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";

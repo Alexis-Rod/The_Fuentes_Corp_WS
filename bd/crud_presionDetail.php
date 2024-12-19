@@ -25,6 +25,8 @@ $time = (isset($_POST['time'])) ? $_POST['time'] : '';
 $autorizado = (isset($_POST['autorizado'])) ? $_POST['autorizado'] : '';
 $DatosExport = json_decode((isset($_POST['datos'])) ? $_POST['datos'] : '', true);
 $NombrePress = (isset($_POST['namePres'])) ? $_POST['namePres'] : '';
+$total = (isset($_POST['total'])) ? $_POST['total'] : '';
+$adeudo = (isset($_POST['adeudo'])) ? $_POST['adeudo'] : '';
 $output = "";
 $textExpecial = "";
 
@@ -68,14 +70,17 @@ switch ($accion) {
                 'clave' => $hoja['requisicion_Clave'],
                 'concepto' => convertToString($dataitms),
                 'proveedor' => $hoja['proveedor_nombre'],
-                'total' => formatearMoneda($hoja['hojaRequisicion_total']),
+                'total' => $hoja['hojaRequisicion_total'],
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
                 "Banco" => $hoja['hojasRequisicion_bancoPago'],
                 "Fecha" => $hoja['hojaRequisicion_fechaPago'],
                 "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
                 "PresionEstatus" => $hoja['presiones_estatus'],
-                "adeudo" => formatearMoneda($hoja['hojarequisicion_adeudo']),
-                "NumRequi" => $hoja['requisicion_Numero']
+                "adeudo" => $hoja['hojarequisicion_adeudo'],
+                "NumRequi" => $hoja['requisicion_Numero'],
+                "showDetail" => false,
+                "atrClass" => "text-left align-middle inline-block text-truncate fs-6",
+                "strStyle" => "max-width: 100px;"
             ));
         };
         break;
@@ -131,9 +136,9 @@ switch ($accion) {
                             <th>' . $datosExcel['NumReq'] . '</th>
                             <th>' . $datosExcel['proveedor'] . '</th>
                             <th>' . $datosExcel['concepto'] . '</th>
-                            <th>' . $datosExcel['total'] . '</th>
+                            <th>' . formatearMoneda($datosExcel['total']) . '</th>
                             <th>  </th>
-                            <th>' . $datosExcel['adeudo'] . '</th>
+                            <th>' . formatearMoneda($datosExcel['adeudo']) . '</th>
                             <th>' . $datosExcel['Observaciones'] . '</th>
                             <th>' . $datosExcel['formaPago'] . '</th>
                             <th>' . $datosExcel['Fecha'] . '</th>
@@ -147,9 +152,9 @@ switch ($accion) {
                             <th>" . $datosExcel['NumReq'] . "</th>
                             <th>" . $datosExcel['proveedor'] . "</th>
                             <th>" . $datosExcel['concepto'] . "</th>
-                            <th>" . $datosExcel['total'] . "</th>
+                            <th>" . formatearMoneda($datosExcel['total']) . "</th>
                             <th>  </th>
-                            <th>" . $datosExcel['adeudo'] . "</th>
+                            <th>" . formatearMoneda($datosExcel['adeudo']) . "</th>
                             <th>" . $datosExcel['Observaciones'] . "</th>
                             <th>" . $datosExcel['formaPago'] . "</th>
                             <th>" . $datosExcel['Fecha'] . "</th>
@@ -167,9 +172,9 @@ switch ($accion) {
             }
             $textExpecial .= '<tr bgcolor="yellow">
                             <th colspan="4" style="text-align: right;">GRAN TOTAL ' . $NombrePress . "</th>
+                            <th> ".formatearMoneda($total)." </th>
                             <th>  </th>
-                            <th>  </th>
-                            <th>  </th>
+                            <th> ".formatearMoneda($adeudo)." </th>
                             <th>  </th>
                             <th>  </th>
                             <th>  </th>
@@ -234,8 +239,8 @@ function formatearMoneda($cantidad)
         return "Entrada no válida";
     }
 
-    // Formatear la cantidad como moneda
-    return "$" . number_format($cantidad, 2, '.', '');
+    // Formatear la cantidad como moneda con separadores de miles
+    return "$ " . number_format($cantidad, 2, '.', ',');
 }
 
 function putNameSection($clave)

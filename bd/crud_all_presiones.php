@@ -47,7 +47,8 @@ switch ($accion) {
                 hojaRequisicion_estatus, 
                 presiones_estatus, 
                 hojaRequisicion_fechaPago, 
-                hojasRequisicion_bancoPago 
+                hojasRequisicion_bancoPago,
+                hojarequisicion_adeudo 
             FROM 
                 requisicionesligadas 
             JOIN 
@@ -88,12 +89,16 @@ switch ($accion) {
                         'clave' => $hoja['requisicion_Clave'],
                         'concepto' => convertToString($dataitms),
                         'proveedor' => $hoja['proveedor_nombre'],
-                        'total' => formatearMoneda($hoja['hojaRequisicion_total']),
+                        'total' => $hoja['hojaRequisicion_total'],
+                        'adeudo' => $hoja['hojarequisicion_adeudo'],
                         'Observaciones' => $hoja['hojaRequisicion_observaciones'],
                         "Banco" => $hoja['hojasRequisicion_bancoPago'],
                         "Fecha" => $hoja['hojaRequisicion_fechaPago'],
                         "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
-                        "PresionEstatus" => $hoja['presiones_estatus']
+                        "PresionEstatus" => $hoja['presiones_estatus'],
+                        "showDetail" => false,
+                        "atrClass" => "inline-block text-truncate fs-6",
+                        "strStyle" => "max-width: 100px;"
                     ));
                 };
                 if ($primeraInt > 0) {
