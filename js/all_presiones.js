@@ -38,12 +38,21 @@ const appRequesition = new Vue({
             axios.post(url, { accion: 3, obras: JSON.stringify(this.obras) }).then(response => {
                 this.presiones = response.data;
                 console.log(this.presiones);
+
+                $(document).ready(function () {
+                    $('[data-toggle="tooltip"]').tooltip(); // Inicializa los tooltips
+                });
             });
         },
         quitarEspacios: function (cadena) {
             return cadena.replace(/\s+/g, ''); // Elimina todos los espacios
         },
         convertirADecimal: function (cadena) {
+            // Verifica si cadena es una cadena de texto
+            if (typeof cadena !== 'string') {
+                // Si no es una cadena, conviértela a cadena
+                cadena = String(cadena);
+            }
             // Elimina el símbolo de dólar y convierte la cadena a número
             return parseFloat(cadena.replace('$', '').replace(',', ''));
         },
@@ -149,6 +158,91 @@ const appRequesition = new Vue({
                 this.presiones[index].Presion_Obra[indice].strStyle = "max-width: 100px;";
             }
 
+        },
+        consultarTotales: async function (totalGlobalProp, TotalGlobalAut, totalEfectivoProp, totalEfectivoAut, totalTransProp, totalTransAut, totalGlobalRechazado, totalEfectivoRechazado, totalTransRechazado, nombreObra) {
+            const { value: formValues } = await Swal.fire({
+                title: "Consulta de Totales de la Presion de " + nombreObra,
+                html: `
+                 <table class="table align-middle table-hover w-100">
+                    <thead>
+                        <tr>
+                            <th class="no-border-top-left"></th> <!-- Celda 0,0 sin borde superior ni izquierdo -->
+                            <th class="table-dark">Total Global</th>
+                            <th class="table-dark">Total Efectivo</th>
+                            <th class="table-dark">Total Transferencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="table-dark">Propuesto</td> <!-- Primera celda de la segunda fila -->
+                            <td class="table-light">`+ this.formatearMoneda(totalGlobalProp) + `</td>
+                            <td class="table-light">`+ this.formatearMoneda(totalEfectivoProp) + `</td>
+                            <td class="table-light">`+ this.formatearMoneda(totalTransProp) + `</td>
+                        </tr>
+                        <tr>
+                            <td class="table-dark">Autorizado</td> <!-- Primera celda de la tercera fila -->
+                            <td class="table-primary">`+ this.formatearMoneda(TotalGlobalAut) + `</td>
+                            <td class="table-primary">`+ this.formatearMoneda(totalEfectivoAut) + `</td>
+                            <td class="table-primary">`+ this.formatearMoneda(totalTransAut) + `</td>
+                        </tr>
+                        <tr>
+                            <td class="table-dark">Rechazado</td> <!-- Primera celda de la tercera fila -->
+                            <td class="table-danger">`+ this.formatearMoneda(totalGlobalRechazado) + `</td>
+                            <td class="table-danger">`+ this.formatearMoneda(totalEfectivoRechazado) + `</td>
+                            <td class="table-danger">`+ this.formatearMoneda(totalTransRechazado) + `</td>
+                        </tr>
+                    </tbody>
+                </table>
+                `,
+                customClass: {
+                    popup: 'custom-popup' // Clase personalizada
+                },
+                focusConfirm: false,
+            });
+        },
+        restartAlert: async function (id_Hoja) {
+            const swalWithBootstrapButtons = await Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: true
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Quieres restablecer este concepto?",
+                text: 'Al restablecer el concepto se marcara como "Ligada". Esta operacion no se puede revertir',
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "SI",
+                cancelButtonText: "NO",
+                reverseButtons: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.restart(id_Hoja);
+                    swalWithBootstrapButtons.fire({
+                        title: "Restablecida",
+                        text: "La presion a sido Restablecida con exito.",
+                        icon: "success"
+                    }).then(() => {
+                        this.listarObras();
+                    });
+                }
+            });
+        },
+        restart: function (id_Hoja) {
+            axios.post(url, { accion: 5, idHoja: id_Hoja }).then(response => {
+                this.listarObras();
+            });
+        },
+        showEdit: function (index, index2) {
+            this.presiones[index2].Presion_Obra[index].atrClass = "inline-block fs-6";
+            this.presiones[index2].Presion_Obra[index].strStyle = "max-width: 150px;";
+            this.presiones[index2].Presion_Obra[index].edit_Auto = true;
+        },
+        saveEdit: function (adeudo, observaciones, idHoja) {
+            axios.post(url, { accion: 6, idHoja: idHoja, parcial: adeudo, coments: observaciones }).then(response => {
+                this.listarObras();
+            });
         }
     },
     created: function () {

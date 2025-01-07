@@ -48,7 +48,8 @@ switch ($accion) {
                 presiones_estatus, 
                 hojaRequisicion_fechaPago, 
                 hojasRequisicion_bancoPago,
-                hojarequisicion_adeudo 
+                hojarequisicion_adeudo,
+                presiones_id 
             FROM 
                 requisicionesligadas 
             JOIN 
@@ -84,6 +85,7 @@ switch ($accion) {
                     $dataitms = $resultado->fetchAll(PDO::FETCH_ASSOC);
                     array_push($dataPresion, array(
                         'id_hoja' => $hoja['hojaRequisicion_id'],
+                        'id_presion' => $hoja['presiones_id'],
                         'formaPago' => $hoja['hojaRequisicion_formaPago'],
                         'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
                         'clave' => $hoja['requisicion_Clave'],
@@ -98,7 +100,8 @@ switch ($accion) {
                         "PresionEstatus" => $hoja['presiones_estatus'],
                         "showDetail" => false,
                         "atrClass" => "inline-block text-truncate fs-6",
-                        "strStyle" => "max-width: 100px;"
+                        "strStyle" => "max-width: 100px;",
+                        'edit_Auto' => false
                     ));
                 };
                 if ($primeraInt > 0) {
@@ -111,7 +114,16 @@ switch ($accion) {
                     'Presion_Obra' => $dataPresion,
                     'colapse_Atr' => $colapseAtr,
                     'colapse_band' => $colapseband,
-                    'colapse_show' => $colapseShow
+                    'colapse_show' => $colapseShow,
+                    'total_Glabal' => sumaTotal($conexion, $dataBD[0]['presiones_id'], "Propuesto"),
+                    'total_Global_Aut' => sumaTotal($conexion, $dataBD[0]['presiones_id'], "Auturizado"),
+                    'total_Efectivo' => sumaTotalEfectivo($conexion, $dataBD[0]['presiones_id'], "Propuesto"),
+                    'total_Efectivo_Aut' => sumaTotalEfectivo($conexion, $dataBD[0]['presiones_id'], "Auturizado"),
+                    'total_Transferencia' => sumaTotalTrans($conexion, $dataBD[0]['presiones_id'], "Propuesto"),
+                    'total_Transferencia_Aut' => sumaTotalTrans($conexion, $dataBD[0]['presiones_id'], "Auturizado"),
+                    'total_Global_Rechazado' => sumaTotal($conexion, $dataBD[0]['presiones_id'], "Rechazado"),
+                    'total_Efectivo_Rechazado' => sumaTotalEfectivo($conexion, $dataBD[0]['presiones_id'], "Rechazado"),
+                    'total_Transferencia_Rechazado' => sumaTotalTrans($conexion, $dataBD[0]['presiones_id'], "Rechazado")
                 ));
                 $primeraInt++;
             }
@@ -123,10 +135,26 @@ switch ($accion) {
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         } else {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA', `hojarequisicion_comentariosAutorizacion` = '$coments', `hojarequisicion_comentariosValidacion` = '' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA', `hojarequisicion_adeudo` = 0, `hojarequisicion_comentariosAutorizacion` = '$coments', `hojarequisicion_comentariosValidacion` = '' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
             $resultado = $conexion->prepare($consulta);
             $resultado->execute();
         }
+        break;
+    case 5:
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA' WHERE `hojasrequisicion`.`hojaRequisicion_id` = :id_hoja";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':id_hoja', $idHoja, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = 0;
+        break;
+    case 6:
+        $consulta = "UPDATE `hojasrequisicion` SET `hojarequisicion_adeudo` = :adeudo , `hojaRequisicion_observaciones` = :observaciones WHERE `hojasrequisicion`.`hojaRequisicion_id` = :id_hoja";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindValue(':adeudo', (float)$adeudo, PDO::PARAM_STR);
+        $resultado->bindValue(':observaciones', $coments, PDO::PARAM_STR);
+        $resultado->bindParam(':id_hoja', $idHoja, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = 0;
         break;
 }
 
@@ -156,4 +184,157 @@ function formatearMoneda($cantidad)
 
     // Formatear la cantidad como moneda
     return "$" . number_format($cantidad, 2, '.', '');
+}
+
+function sumaTotal($conexion, $idPresion, $tipoDeCuenta)
+{
+    switch ($tipoDeCuenta) {
+        case "Propuesto":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Auturizado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Rechazado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total - hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_estatus != 'LIGADA'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'] ?? 0;
+            break;
+        default:
+            return "Dato no válido";
+            break;
+    }
+}
+
+function sumaTotalEfectivo($conexion, $idPresion, $tipoDeCuenta)
+{
+    switch ($tipoDeCuenta) {
+        case "Propuesto":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Efectivo'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Auturizado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Efectivo'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Rechazado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total - hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_estatus != 'LIGADA'
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Efectivo'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'] ?? 0;
+            break;
+        default:
+            return "Dato no válido";
+            break;
+    }
+}
+
+function sumaTotalTrans($conexion, $idPresion, $tipoDeCuenta)
+{
+    switch ($tipoDeCuenta) {
+        case "Propuesto":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Transferencia'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Auturizado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Transferencia'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'];
+            break;
+        case "Rechazado":
+            $consulta = "SELECT SUM(hojasrequisicion.hojaRequisicion_total - hojasrequisicion.hojarequisicion_adeudo) AS total_sumatoria
+            FROM requisicionesligadas
+            INNER JOIN hojasrequisicion
+            ON requisicionesligadas.requisicionesLigadas_hojaID = hojasrequisicion.hojaRequisicion_id
+            WHERE requisicionesligadas.requisicionesLigada_presionID = :idPresion
+            AND hojasrequisicion.hojaRequisicion_estatus != 'LIGADA'
+            AND hojasrequisicion.hojaRequisicion_formaPago = 'Transferencia'";
+
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idPresion', $idPresion, PDO::PARAM_INT); // Vincula la variable $idPresion al parámetro :idPresion
+            $resultado->execute();
+            $respuestaBD = $resultado->fetch(PDO::FETCH_ASSOC);
+            return $respuestaBD['total_sumatoria'] ?? 0;
+            break;
+        default:
+            return "Dato no válido";
+            break;
+    }
 }
