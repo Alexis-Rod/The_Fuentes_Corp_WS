@@ -155,7 +155,7 @@ const appRequesition = new Vue({
             }
             else {
                 this.presiones[index].Presion_Obra[indice].atrClass = "inline-block text-truncate fs-6";
-                this.presiones[index].Presion_Obra[indice].strStyle = "";//max-width: 100px;
+                this.presiones[index].Presion_Obra[indice].strStyle = "max-width: 100px;";//max-width: 100px;
             }
 
         },
