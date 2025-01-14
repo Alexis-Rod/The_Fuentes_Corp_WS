@@ -100,7 +100,7 @@ switch ($accion) {
                         "PresionEstatus" => $hoja['presiones_estatus'],
                         "showDetail" => false,
                         "atrClass" => "inline-block text-truncate fs-6",
-                        "strStyle" => "max-width: 100px;",
+                        "strStyle" => "", //max-width: 100px;
                         'edit_Auto' => false
                     ));
                 };
