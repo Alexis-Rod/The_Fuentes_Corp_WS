@@ -155,8 +155,8 @@ include_once 'validarSesion.php';
                                                         <th scope="col" class="fs-6">N° DE REQUISICION</th>
                                                         <th scope="col" class="fs-6">PROVEEDOR</th>
                                                         <th scope="col" class="fs-6">CONCEPTO</th>
-                                                        <th scope="col" class="fs-6" style="width: 100px;">ADEUDO</th>
-                                                        <th scope="col" class="fs-6" style="width: 100px;">PAGO AUTORIZADO</th>
+                                                        <th scope="col" class="fs-6" style="width: 150px;">ADEUDO</th>
+                                                        <th scope="col" class="fs-6" style="width: 150px;">PAGO AUTORIZADO</th>
                                                         <th scope="col" class="fs-6">OBSERVACIONES</th>
                                                         <th scope="col" class="fs-6">FORMA DE PAGO</th>
                                                         <th scope="col" class="fs-6">ESTADO</th>
@@ -170,8 +170,8 @@ include_once 'validarSesion.php';
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.NumReq}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.proveedor}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.concepto}}</td>
-                                                        <td class="fs-6" style="width: 100px;">{{formatearMoneda(presionObra.total)}}</td>
-                                                        <td class="fs-6" style="width: 100px;">
+                                                        <td class="fs-6" style="width: 150px;">{{formatearMoneda(presionObra.total)}}</td>
+                                                        <td class="fs-6" style="width: 150px;">
                                                             <span v-if="presionObra.edit_Auto == false">
                                                                 {{formatearMoneda(presionObra.adeudo)}}
                                                             </span>
