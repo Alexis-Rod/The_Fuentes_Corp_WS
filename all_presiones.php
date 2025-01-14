@@ -147,7 +147,7 @@ include_once 'validarSesion.php';
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col table-responsive">
                                             <table id="example" class="table align-middle table-hover w-100">
                                                 <thead class="table-dark">
                                                     <tr>
