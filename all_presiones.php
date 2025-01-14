@@ -170,8 +170,8 @@ include_once 'validarSesion.php';
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.NumReq}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.proveedor}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.concepto}}</td>
-                                                        <td class="fs-6">{{formatearMoneda(presionObra.total)}}</td>
-                                                        <td class="fs-6">
+                                                        <td class="fs-6" style="width: 100px;">{{formatearMoneda(presionObra.total)}}</td>
+                                                        <td class="fs-6" style="width: 100px;">
                                                             <span v-if="presionObra.edit_Auto == false">
                                                                 {{formatearMoneda(presionObra.adeudo)}}
                                                             </span>
