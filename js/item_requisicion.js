@@ -416,7 +416,7 @@ const appRequesition = new Vue({
                     auxFlete = aux * 0.04
                 }
                 if (banderaFisica == true) {
-                    auxFisico = aux * 0.1067;
+                    auxFisico = aux * 0.106667;
                 }
                 if (banderaResico == true) {
                     auxResico = aux * 0.0125;
@@ -799,7 +799,7 @@ const appRequesition = new Vue({
                     auxFlete = aux * 0.04; // Retención por flete (4%)
                 }
                 if (this.bandeFisica == true) {
-                    auxFisico = aux * 0.1067; // Retención por renta persona física (10.67%)
+                    auxFisico = aux * 0.106667; // Retención por renta persona física (10.67%)
                 }
                 if (this.bandResico == true) {
                     auxResico = aux * 0.0125; // Retención por RESICO (1.25%)

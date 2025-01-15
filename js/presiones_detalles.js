@@ -170,7 +170,11 @@ const appRequesition = new Vue({
               //alert("Agregado"+id+parcial+" "+fecha+" "+banco);
               var estatus = "PAGADO";
               axios.post(url, { accion: 5, idHoja:idHoja , fechaPago: fecha, bancoPago: banco, status: estatus}).then(response => {
-                  console.log(response.data);
+                var table = $('#example').DataTable();
+                // Para reinicializarlo, primero destrúyelo
+                table.destroy();
+                this.cargarDatosPresion(localStorage.getItem("IdPresion"));  
+                console.log(response.data);
               });
         },
         imprimirReq: function(NumReq,clave,id_hoja){

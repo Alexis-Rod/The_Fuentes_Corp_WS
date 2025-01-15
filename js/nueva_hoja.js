@@ -303,7 +303,7 @@ const appRequesition = new Vue({
                     ItemElement['bandFlete'] = true;
                 }
                 if (this.RetFisica == true) {
-                    this.indexFisica = aux * 0.1067;
+                    this.indexFisica = aux * 0.106667;
                     ItemElement['bandFisico'] = true;
                 }
                 if (this.RetResico == true) {
