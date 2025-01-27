@@ -45,6 +45,7 @@ const appRequesition = new Vue({
             });
         },
         quitarEspacios: function (cadena) {
+            if (!cadena) return ''; // Si la cadena es undefined o null, retorna una cadena vacía
             return cadena.replace(/\s+/g, ''); // Elimina todos los espacios
         },
         convertirADecimal: function (cadena) {

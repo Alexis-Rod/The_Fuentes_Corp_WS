@@ -59,7 +59,9 @@ const appRequesition = new Vue({
         htmlWinRet: "",
         observaciones: "",
         timeNow: "",
-        idHoja: ""
+        idHoja: "",
+        conceptoUnico: false,
+        conceptoUnicoText: ""
     },
     methods: {
         pagoTransaccionActivado: async function () {
@@ -292,6 +294,34 @@ const appRequesition = new Vue({
             };
         },
         agregarItem: async function (ItemElement) {
+            if(this.Items.length > 4)
+            {
+                const swalWithBootstrapButtons = await Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: true
+                });
+                swalWithBootstrapButtons.fire({
+                    title: "¡ESPERA!",
+                    text: 'Estas agregando muchos conceptos en la hoja y podras saturar la presion con muchos conceptos que se pueden resumir en un concepto unico ¿Te gustaria hacer un concepto resumido unico?',
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "SI",
+                    cancelButtonText: "NO",
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.conceptoUnico = true;
+                        swalWithBootstrapButtons.fire({
+                            title: "LISTO",
+                            text: "Se agrego un campo para que puedas rescribir el concepto unico y puedes seguir agregando los conceptos que quieras",
+                            icon: "success"
+                        })
+                    }
+                });
+            }
             if (this.PagoTrans == true) {
                 var aux;
                 this.indexFisica = 0;
@@ -383,7 +413,7 @@ const appRequesition = new Vue({
             dia = dia < 10 ? '0' + dia : dia;
             FechaReq = year + "-" + mes + "-" + dia;
             console.log(this.Items);
-            axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones }).then(response => {
+            axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones, conceptoUnico: this.conceptoUnicoText }).then(response => {
                 this.idHoja = response.data;
                 console.log(response.data);
             }); 

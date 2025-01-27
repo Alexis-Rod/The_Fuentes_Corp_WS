@@ -28,7 +28,7 @@ const appRequesition = new Vue({
                 this.obras = response.data;
                 console.log(this.obras);
             } catch (error) {
-                console.error("Error al consultar la informacion de la Obra:",error);
+                console.error("Error al consultar la informacion de la Obra:", error);
             }
         },
         listarRequisiciones: async function (idObra) {
@@ -266,6 +266,94 @@ const appRequesition = new Vue({
         },
         irDireecion: function () {
             window.location.href = url2 + "/direccion.php";
+        },
+        editRequisicion: function (index) {
+            this.requisiciones[index]['requisicion_EditShow'] = true;
+        },
+        saveEditrequisicion: function (index, idReq, numeroReq, nombreReq) {
+            axios.post(url, { accion: 8, idReq: idReq, numeroReq: numeroReq, nombreReq: nombreReq }).then(response => {
+                this.requisiciones[index]['requisicion_EditShow'] = false;
+                console.log(response.data);
+            }).catch(error => {
+                this.requisiciones[index]['requisicion_EditShow'] = false;
+                console.log(error);
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
+                    title: "Cambio de forma de pago fallido"
+                });
+            });
+        },
+        deleteRequisicionShow: async function (index, idReq) {
+            const swalWithBootstrapButtons = await Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success ms-5 w-auto",
+                    cancelButton: "btn btn-danger w-auto"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "¿Quieres eliminar esta Requisicion?",
+                text: "Si la requisicion tiene hojas integradas tambien se eliminaran y esta accion ya no se puede revertir",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Si, Borralo",
+                cancelButtonText: "No",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.eliminarReq(index, idReq);
+                }
+            });
+        },
+        eliminarReq: function(index,idReq){
+     
+            axios.post(url, { accion: 9, idReq: idReq}). then(response => {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Eliminado"
+                });
+                this.requisiciones.splice(index,1);
+                console.log(response.data);
+            }).catch(error => {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
+                    title: "Error al Eliminar"
+                });
+                console.error(error);
+            });
         }
     },
     mounted: async function () {

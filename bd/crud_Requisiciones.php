@@ -14,13 +14,28 @@ $fechaReq =   (isset($_POST['fechaReq'])) ? $_POST['fechaReq'] : '';
 $clave =   (isset($_POST['clave'])) ? $_POST['clave'] : '';
 $folioReq =   (isset($_POST['folio'])) ? $_POST['folio'] : '';
 $Hoja =   (isset($_POST['hoja'])) ? $_POST['hoja'] : '';
+$idReq =   (isset($_POST['idReq'])) ? $_POST['idReq'] : '';
+$numReq =   (isset($_POST['numeroReq'])) ? $_POST['numeroReq'] : '';
 
 switch ($accion) {
     case 1:
         $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`, `requisicion_Numero`";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $dataArray = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $data = array();
+        if (count($dataArray) > 0) {
+            foreach ($dataArray as $row) {
+                array_push($data, array(
+                    'requisicion_id' => $row['requisicion_id'],
+                    'requisicion_Numero' => $row['requisicion_Numero'],
+                    'requisicion_Clave' => $row['requisicion_Clave'],
+                    'requisicion_Nombre' => $row['requisicion_Nombre'],
+                    'requisicion_estatus' => $row['requisicion_estatus'],
+                    'requisicion_EditShow' => false
+                ));
+            }
+        }
         break;
     case 2:
         $consulta = "SELECT * FROM `users` WHERE `user_id` = '$id_user';";
@@ -115,6 +130,37 @@ switch ($accion) {
         // Ejecutar la consulta
         $resultado->execute();
         break;
+    case 8:
+        $consulta = "UPDATE `requisiciones` SET `requisicion_Numero` = :newNumero, `requisicion_Nombre` = :newNombre WHERE `requisiciones`.`requisicion_id` = :idReq";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':newNumero', $numReq, PDO::PARAM_STR);
+        $resultado->bindParam(':newNombre', $nombreReq, PDO::PARAM_STR);
+        $resultado->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = 0;
+        break;
+    case 9:
+        $consulta = "SELECT `hojaRequisicion_id` FROM `hojasrequisicion` WHERE `hojaRequisicion_idReq` = :idReq";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+        $resultado->execute();
+        $idsHojas = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        foreach($idsHojas as $idHoja) {
+$consulta = "DELETE FROM `itemrequisicion` WHERE `itemrequisicion_idHoja` = :idHoja";
+            $resultado = $conexion->prepare($consulta);
+            $resultado->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $resultado->execute();
+        }
+        $consulta = "DELETE FROM `hojasrequisicion` WHERE `hojaRequisicion_id` = :idReq";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+        $resultado->execute();
+        $consulta = "DELETE FROM `requisiciones` WHERE `requisicion_id` = :idReq";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = 0;
+        break;
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -131,4 +177,3 @@ function convertFolio($folioInt)
         return $folioInt;
     }
 }
-

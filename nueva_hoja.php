@@ -268,6 +268,15 @@ include_once 'validarSesion.php';
                             </button>
                         </div>
                     </div>
+                    <div class="row my-3" v-if="conceptoUnico">
+                        <div class="col">
+                            <label for="conceptResumen" class="form-label fw-bold mb-1">Concepto Unico</label>
+                            <div id="conceptResumenHelp" class="form-text mb-1">
+                                El concepto resumido remplazara a los items de esta hoja por este unico concepto. Este "concepto unico" sera visible unicamente en la presion
+                            </div>
+                            <textarea class="form-control border-primary" id="conceptResumen" rows="3" v-model="conceptoUnicoText" placeholder="Ingresa tu concepto unico"></textarea>
+                        </div>
+                    </div>
                     <div class="row form-group mx-0 mt-0 mb-3">
                         <div class="col-12 px-0">
                             <label for="Observ">Observaciones Adicionales</label>

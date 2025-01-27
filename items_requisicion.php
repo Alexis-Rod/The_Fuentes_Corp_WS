@@ -139,9 +139,12 @@ include_once 'validarSesion.php';
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col d-flex align-items-end mb-3">
-                        <button type="button" class="btn btn-danger ms-auto" @click="imprimirReq">
+                    <div class="col d-flex flex-row-reverse mb-3">
+                        <button type="button" class="btn btn-danger ms-2" @click="imprimirReq">
                             <span class="fw-bold text-white">Imprimir Requisicion</span>
+                        </button>
+                        <button type="button" class="btn btn-primary ms-2" @click="cambiarFormaPago(hojas[0].hojaRequisicion_formaPago)" v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
+                            <span class="fw-bold text-white">Cambiar Forma de Pago</span>
                         </button>
                     </div>
                 </div>

@@ -148,8 +148,14 @@ include_once 'validarSesion.php';
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
                                 <tr class="my-3" v-for="(req,indice) of requisiciones">
-                                    <td scope="row" class="text-center align-middle">{{req.requisicion_Numero}}</td>
-                                    <td class="text-left align-middle">{{req.requisicion_Nombre}}</td>
+                                    <td scope="row" class="text-center align-middle">
+                                        <span v-if="!req.requisicion_EditShow">{{req.requisicion_Numero}}</span>
+                                        <input type="text" class="form-control" style="width: 100%;" name="req_Numero" id="req_Numero" v-model="req.requisicion_Numero" v-if="req.requisicion_EditShow">
+                                    </td>
+                                    <td class="text-left align-middle">
+                                        <span v-if="!req.requisicion_EditShow">{{req.requisicion_Nombre}}</span>
+                                        <input type="text" class="form-control" style="width: 100%;"  name="req_Nombre" id="req_Nombre" v-model="req.requisicion_Nombre" v-if="req.requisicion_EditShow">
+                                    </td>
                                     <td class="text-center align-middle">{{req.requisicion_Clave}}</td>
                                     <td class="text-center align-middle">
                                         <span class="badge bg-danger" v-if="req.requisicion_estatus == 'ABIERTO'">ABIERTO</span>
@@ -158,16 +164,17 @@ include_once 'validarSesion.php';
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <button type="button" class="btn btn-success" @click="ConsultarItemRq(req.requisicion_id)" data-toggle="tooltip" title="Consultar Requisicion">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill text-white" viewBox="0 0 16 16">
-                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                                </svg>
+                                                <img class="" src="images/icons/view.svg" alt="user-icon" height="24" width="24">
                                             </button>
-                                            <!-- <button type="button" class="btn btn-danger">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                                </svg>
-                                            </button> -->
+                                            <button type="button" class="btn btn-primary" @click="editRequisicion(indice)" data-toggle="tooltip" title="Editar Requisicion" v-if="!req.requisicion_EditShow">
+                                                <img class="" src="images/icons/edit.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-primary" @click="saveEditrequisicion(indice, req.requisicion_id, req.requisicion_Numero, req.requisicion_Nombre)" data-toggle="tooltip" title="Editar Requisicion" v-if="req.requisicion_EditShow">
+                                                <img class="" src="images/icons/save.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-danger" @click="deleteRequisicionShow(indice, req.requisicion_id)" data-toggle="tooltip" title="Eliminar Requisicion">
+                                                <img class="" src="images/icons/delete.svg" alt="user-icon" height="24" width="24">
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

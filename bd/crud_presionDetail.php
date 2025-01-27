@@ -44,7 +44,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `hojaRequisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_observaciones`, `hojaRequisicion_numero`, `requisicion_Nombre`, `proveedor_nombre`, `hojaRequisicion_total`, `hojaRequisicion_formaPago`, `hojaRequisicion_estatus`, `presiones_estatus`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago` , `hojarequisicion_adeudo` \n"
+        $consulta = "SELECT `hojaRequisicion_id`, `requisicion_Clave`, `requisicion_Numero`, `hojaRequisicion_observaciones`, `hojaRequisicion_numero`, `requisicion_Nombre`, `proveedor_nombre`, `hojaRequisicion_total`, `hojaRequisicion_formaPago`, `hojaRequisicion_estatus`, `presiones_estatus`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago` , `hojarequisicion_adeudo`,  `hojarequisicion_conceptoUnico`\n"
             . "FROM `requisicionesligadas`\n"
             . "JOIN presiones ON presiones.presiones_id = requisicionesLigada_presionID\n"
             . "JOIN requisiciones ON requisiciones.requisicion_id = requisicionesLigadas_requisicionID\n"
@@ -68,7 +68,7 @@ switch ($accion) {
                 'formaPago' => $hoja['hojaRequisicion_formaPago'],
                 'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
                 'clave' => $hoja['requisicion_Clave'],
-                'concepto' => convertToString($dataitms),
+                'concepto' => empty($hoja['hojarequisicion_conceptoUnico']) ? convertToString($dataitms) : $hoja['hojarequisicion_conceptoUnico'],
                 'proveedor' => $hoja['proveedor_nombre'],
                 'total' => $hoja['hojaRequisicion_total'],
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
@@ -172,9 +172,9 @@ switch ($accion) {
             }
             $textExpecial .= '<tr bgcolor="yellow">
                             <th colspan="4" style="text-align: right;">GRAN TOTAL ' . $NombrePress . "</th>
-                            <th> ".formatearMoneda($total)." </th>
+                            <th> " . formatearMoneda($total) . " </th>
                             <th>  </th>
-                            <th> ".formatearMoneda($adeudo)." </th>
+                            <th> " . formatearMoneda($adeudo) . " </th>
                             <th>  </th>
                             <th>  </th>
                             <th>  </th>

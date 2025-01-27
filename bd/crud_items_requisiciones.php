@@ -25,6 +25,7 @@ $id = (isset($_POST['id'])) ? $_POST['id'] : '';
 $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $idPresion = (isset($_POST['idPresion'])) ? $_POST['idPresion'] : '';
 $comentarios = (isset($_POST['comentarios'])) ? $_POST['comentarios'] : '';
+$nuevaFormaPago = (isset($_POST['formaPago'])) ? $_POST['formaPago'] : '';
 
 switch ($accion) {
     case 1:
@@ -40,7 +41,8 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_banderaISR`='$banderaISR', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad' WHERE itemRequisicion_id ='$id'";        $resultado = $conexion->prepare($consulta);
+        $consulta = "UPDATE `itemrequisicion` SET `itemRequisicion_unidad`='$unidad', `itemRequisicion_producto`='$producto', `itemRequisicion_iva`='$iva', `itemRequisicion_retenciones`='$retenciones', `itemRequisicion_banderaFlete`='$banderaFlete', `itemRequisicion_banderaFisica`='$banderaFisica', `itemRequisicion_banderaResico`='$banderaResico', `itemRequisicion_banderaISR`='$banderaISR', `itemRequisicion_precio`='$precio', `itemRequisicion_cantidad`='$cantidad' WHERE itemRequisicion_id ='$id'";
+        $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = '$idHoja';";
         $resultado = $conexion->prepare($consulta);
@@ -118,6 +120,36 @@ switch ($accion) {
         $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PENDIENTE', `hojarequisicion_comentariosValidacion` = '$comentarios' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
+        break;
+    case 13:
+        echo $nuevaFormaPago . " ". $idHoja . " " . $iva;
+        // Primera consulta
+        $consulta1 = "UPDATE `hojasrequisicion` SET `hojaRequisicion_formaPago` = :nuevaFormaPago WHERE `hojasrequisicion`.`hojaRequisicion_id` = :idHoja";
+        $resultado1 = $conexion->prepare($consulta1);
+        $resultado1->bindValue(':nuevaFormaPago', $nuevaFormaPago, PDO::PARAM_STR);
+        $resultado1->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $resultado1->execute();
+
+        // Segunda consulta
+        $consulta2 = "UPDATE `itemrequisicion` SET `itemRequisicion_iva` = ((`itemRequisicion_cantidad` * `itemRequisicion_precio`) * :iva), `itemRequisicion_retenciones` = 0, `itemRequisicion_banderaFlete` = 0, `itemRequisicion_banderaFisica` = 0, `itemRequisicion_banderaResico` = 0, `itemRequisicion_banderaISR` = 0 WHERE `itemrequisicion`.`itemRequisicion_idHoja` = :idHoja";
+        $resultado2 = $conexion->prepare($consulta2);
+        $resultado2->bindValue(':iva', (float)$iva, PDO::PARAM_STR);
+        $resultado2->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $resultado2->execute();
+
+        //Tercera Consulta
+        $consulta3 = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = :idHoja";
+        $resultado3 = $conexion->prepare($consulta3);
+        $resultado3->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $resultado3->execute();
+        $suma = $resultado3->fetchAll(PDO::FETCH_ASSOC);
+        $totalCambio = $suma[0]['TotalItem'];
+        $consulta3 = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$totalCambio' WHERE `hojaRequisicion_id` = :idHoja";
+        $resultado3 = $conexion->prepare($consulta3);
+        $resultado3->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $resultado3->execute();
+
+        $data = 0;
         break;
 }
 

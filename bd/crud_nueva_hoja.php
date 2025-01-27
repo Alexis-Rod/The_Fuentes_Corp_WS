@@ -27,6 +27,7 @@ $datos = json_decode((isset($_POST['items'])) ? $_POST['items'] : '');
 $id_user = (isset($_POST['id_user'])) ? $_POST['id_user'] : '';
 $observaciones = (isset($_POST['observaciones'])) ? $_POST['observaciones'] : '';
 $time = (isset($_POST['time'])) ? $_POST['time'] : '';
+$conceptoUnico = (isset($_POST['conceptoUnico'])) ? $_POST['conceptoUnico'] : '';
 
 switch ($accion) {
     case 1:
@@ -39,7 +40,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         $hoja = $data[0]['requisicion_Hojas'];
         $hoja++;
-        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$formaPago',NULL, NULL, '$totalPagar',0,'NUEVO')";
+        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojarequisicion_conceptoUnico`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$conceptoUnico', '$formaPago',NULL, NULL, '$totalPagar',0,'NUEVO')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "UPDATE `requisiciones` SET `requisicion_Hojas` = '$hoja' WHERE `requisiciones`.`requisicion_id` =" . $id_Req;

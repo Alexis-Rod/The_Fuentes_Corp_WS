@@ -192,11 +192,11 @@ const appRequesition = new Vue({
                             </div>
                             <div class="col-4">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit,false).toFixed(2) + `">
+                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit, false).toFixed(2) + `">
                             </div>
                             <div class="col-4">
                                 <label for="precio" class="form-label">Precio Unitario</label>
-                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit,false).toFixed(2) + `">
+                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit, false).toFixed(2) + `">
                             </div>
                         </div>
                         <hr />
@@ -272,11 +272,11 @@ const appRequesition = new Vue({
                             </div>
                             <div class="col-4">
                                 <label for="cantidad" class="form-label">Cantidad</label>
-                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit,false).toFixed(2) + `">
+                                <input type="number" min="0" class="form-control" id="cantidad" value="`+ Number.parseFloat(cantidadEdit, false).toFixed(2) + `">
                             </div>
                             <div class="col-4">
                                 <label for="precio" class="form-label">Precio Unitario</label>
-                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit,false).toFixed(2) + `">
+                                <input type="number" min="0" class="form-control" id="precio" value="`+ Number.parseFloat(precioEdit, false).toFixed(2) + `">
                             </div>
                         </div>
                         <hr />
@@ -347,7 +347,7 @@ const appRequesition = new Vue({
                     }
                 },
                 willClose: () => {
-                   this.vaciarChecks();
+                    this.vaciarChecks();
                 }
             });
             if (formValues) {
@@ -1039,19 +1039,151 @@ const appRequesition = new Vue({
             }
             // Formatear el número como moneda en pesos mexicanos
             let formato = numero.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            
+
             // Retornar el formato con o sin el símbolo de pesos
             return incluirSimbolo ? "$ " + formato : formato;
         },
-        eliminarSaltosDeLinea: function(cadena) {
+        eliminarSaltosDeLinea: function (cadena) {
             // Utiliza el método replace para eliminar los saltos de línea
             return cadena.replace(/(\r\n|\n|\r)/g, "");
         },
-        vaciarChecks: function(){
+        vaciarChecks: function () {
             this.strFisca = "";
             this.strFlete = "";
             this.strResico = "";
             this.strISR = "";
+        },
+        cambiarFormaPago: async function (formaPago) {
+            if (formaPago === "Efectivo") {
+                const swalWithBootstrapButtons = await Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: true
+                });
+                swalWithBootstrapButtons.fire({
+                    title: '¿Quieres cambiar a "Transaccion"?',
+                    text: "A los items se le agregaran el IVA (0.16) y las retenciones los debes de poner de forma manual",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "SI",
+                    cancelButtonText: "NO",
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.post(url, { accion: 13, formaPago: "Transaccion", id_Hoja: localStorage.getItem("idHoja"), iva: 0.16 }).then(response => {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "success",
+                                title: "Cambio de forma de pago exitoso"
+                            });
+                            console.log(response.data);
+                            this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                            this.listarItems(localStorage.getItem("idHoja"));
+                        }).catch(error => {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "error",
+                                title: "Cambio de forma de pago fallido"
+                            });
+                            if (error.response) {
+                                console.error('Error en la respuesta del servidor:', error.response.data);
+                                console.error('Código de estado:', error.response.status);
+                            } else if (error.request) {
+                                console.error('No se recibió respuesta del servidor:', error.request);
+                            } else {
+                                console.error('Error al configurar la solicitud:', error.message);
+                            }
+                        });
+
+                    }
+                });
+            } else {
+                const swalWithBootstrapButtons = await Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: true
+                });
+                swalWithBootstrapButtons.fire({
+                    title: '¿Quieres cambiar a "Efectivo"?',
+                    text: "A los items se le eliminara el IVA (0.16) y las Retenciones en caso de Tener",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "SI",
+                    cancelButtonText: "NO",
+                    reverseButtons: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.post(url, { accion: 13, formaPago: "Efectivo", id_Hoja: localStorage.getItem("idHoja"), iva: 0 }).then(response => {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "success",
+                                title: "Cambio de forma de pago exitoso"
+                            });
+                            console.log(response.data);
+                            this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                            this.listarItems(localStorage.getItem("idHoja"));
+                        }).catch(error => {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "error",
+                                title: "Cambio de forma de pago fallido"
+                            });
+                            if (error.response) {
+                                console.error('Error en la respuesta del servidor:', error.response.data);
+                                console.error('Código de estado:', error.response.status);
+                            } else if (error.request) {
+                                console.error('No se recibió respuesta del servidor:', error.request);
+                            } else {
+                                console.error('Error al configurar la solicitud:', error.message);
+                            }
+                        });
+                    }
+                });
+            }
         }
     },
     /**
