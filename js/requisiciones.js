@@ -158,7 +158,7 @@ const appRequesition = new Vue({
                         showConfirmButton: false,
                         timer: 3000
                     });
-                    this.newRequisicionAuto;
+                    this.newRequisicionAuto();
                     Toast.fire({
                         icon: 'success',
                         title: 'Requisicion Agregada'
