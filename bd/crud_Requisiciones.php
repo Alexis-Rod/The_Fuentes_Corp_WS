@@ -19,7 +19,7 @@ $numReq =   (isset($_POST['numeroReq'])) ? $_POST['numeroReq'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`, `requisicion_Numero`";
+        $consulta = "SELECT `requisicion_id` ,`requisicion_Numero` ,`requisicion_Clave` ,`requisicion_Nombre` ,`requisicion_estatus` FROM `requisiciones` WHERE `requisicion_Obra` = '$obra' ORDER BY `requisicion_Clave`, `requisicion_Numero` DESC";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $dataArray = $resultado->fetchAll(PDO::FETCH_ASSOC);
