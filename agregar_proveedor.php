@@ -25,7 +25,7 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>REQUISICIONES DE LA PRESION</title>
+    <title>Agregar Proveedor</title>
 </head>
 
 <body style="display: flex;">
@@ -65,29 +65,10 @@ include_once 'validarSesion.php';
                         </div>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="true">
+                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="false" @click="irMenuCatalago">
                             <img class="me-2" src="images/icons/catalagos.svg" alt="user-icon" height="24" width="24">
                             CATALAGOS
                         </a>
-                        <div class="tab-content" id="v-pills-tabContent">
-                            <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-catalago" role="tabpanel" aria-labelledby="v-pills-catalago-tab">
-                                <li>
-                                    <a href="agregar_proveedor.php" class="nav-link text-white ms-4" aria-current="page">PROVEEDORES</a>
-                                </li>
-                            </ul>
-                        </div>
                     </li>
                 </ul>
             </div>
@@ -113,7 +94,8 @@ include_once 'validarSesion.php';
                         <span>Inicio</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item"><a href="./presiones.php"><span>Catalagos</span></a></li>
+                <li class="breadcrumb-item"><a href="./menu_catalago.php"><span>Menu Catalago</span></a></li>
+                <li class="breadcrumb-item"><a href="./proveedores.php"><span>Catalago de Proveedores</span></a></li>
                 <li class="breadcrumb-item active" aria-current="page"><span>Agregar Proveedor</span></li>
             </ol>
         </nav>
@@ -126,70 +108,73 @@ include_once 'validarSesion.php';
             <div class="row my-3">
                 <div class="col">
                     <label for="nameProv" class="form-label">Nombre del Proveedor</label>
-                    <input type="text" class="form-control" id="nameProv" placeholder="Ingresa informacion..." v-model="nombre_prov">
-                </div>
-            </div>
-            <div class="row my-3">
-                <div class="col">
-                    <label for="adressProv" class="form-label">Direccion del Proveedor</label>
-                    <input type="text" class="form-control" id="adressProv" placeholder="Ingresa informacion..." v-model="direccion_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="nameProv" placeholder="Ingresa informacion..." v-model="nombre_prov" require>
+                    <div class="invalid-feedback">
+                        Por favor ingresa el nombre del proveedor.
+                    </div>
                 </div>
             </div>
             <div class="row my-3">
                 <div class="col">
                     <label for="rfcProv" class="form-label">RFC del Proveedor</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="rfc_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="rfcProv" placeholder="Ingresa informacion..." v-model="rfc_prov" require>
                 </div>
                 <div class="col">
                     <label for="clabeProv" class="form-label">Clave Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="clabeProv" placeholder="Ingresa informacion..." v-model="clabe_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="clabeProv" placeholder="Ingresa informacion..." v-model="clabe_prov" require>
                 </div>
                 <div class="col">
                     <label for="cuentaProv" class="form-label">Cuenta Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="cuentaProv" placeholder="Ingresa informacion..." v-model="cuenta_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="cuentaProv" placeholder="Ingresa informacion..." v-model="cuenta_prov" require>
                 </div>
             </div>
             <div class="row my-3">
                 <div class="col">
                     <label for="rfcProv" class="form-label">Numero de Tarjeta</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="tarjeta_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="rfcProv" placeholder="Ingresa informacion..." v-model="tarjeta_prov">
                 </div>
                 <div class="col">
                     <label for="clabeProv" class="form-label">Numero de Referencia del Proveedor</label>
-                    <input type="text" class="form-control" id="clabeProv" placeholder="Ingresa informacion..." v-model="referencia_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="clabeProv" placeholder="Ingresa informacion..." v-model="referencia_prov">
                 </div>
                 <div class="col">
                     <label for="cuentaProv" class="form-label">Tipo de Proveedor</label>
-                    <input type="text" class="form-control" id="cuentaProv" placeholder="Ingresa informacion..." v-model="tipo_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="cuentaProv" placeholder="Ingresa informacion..." v-model="tipo_prov">
                 </div>
             </div>
             <div class="row my-3">
                 <div class="col">
                     <label for="bankProv" class="form-label">Banco del Proveedor</label>
-                    <select class="form-select" aria-label="Default select example" v-model="selected_Banco">
+                    <select class="form-select border border-primary-subtle border-2" aria-label="Default select example" v-model="selected_Banco">
                         <option value="">Selecciona Banco</option>
                         <option v-for="(banco,indice) of bancos" :value="banco.banco_nombreComercial">{{banco.banco_id}}- {{banco.banco_nombreComercial}}</option>
                     </select>
                 </div>
                 <div class="col">
                     <label for="sucursalProv" class="form-label">Sucursal Bancaria del Proveedor</label>
-                    <input type="text" class="form-control" id="sucursalProv" placeholder="Ingresa informacion..." v-model="suc_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="sucursalProv" placeholder="Ingresa informacion..." v-model="suc_prov">
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col">
+                    <label for="adressProv" class="form-label">Direccion del Proveedor</label>
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="adressProv" placeholder="Ingresa informacion..." v-model="direccion_prov">
                 </div>
             </div>
             <div class="row my-3">
                 <div class="col">
                     <label for="rfcProv" class="form-label">Telefono del Proveedor</label>
-                    <input type="text" class="form-control" id="rfcProv" placeholder="Ingresa informacion..." v-model="tel_prov">
+                    <input type="text" class="form-control border border-primary-subtle border-2" id="rfcProv" placeholder="Ingresa informacion..." v-model="tel_prov">
                 </div>
                 <div class="col">
                     <label for="clabeProv" class="form-label">Correo Electronico del Proveedor</label>
-                    <input type="email" class="form-control" id="clabeProv" placeholder="Ingresa la Clabe Bancaria del Proveedor" v-model="email_prov">
+                    <input type="email" class="form-control border border-primary-subtle border-2" id="clabeProv" placeholder="Ingresa la Clabe Bancaria del Proveedor" v-model="email_prov">
                 </div>
             </div>
             <div class="row w-100 mt-5 mb-5 mx-auto">
-                <div class="col px-0 d-flex justify-content-center">
+                <div class="col px-0 d-grid gap-2">
                     <button class="btn btn-success" @click="agregarProveedor" title="Agregar Proveedor">
-                        <span class="text-center">Crear Requiscion</span>
+                        <span class="text-center">Agregar Proveedor</span>
                     </button>
                 </div>
             </div>

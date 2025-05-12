@@ -290,6 +290,9 @@ const appRequesition = new Vue({
                 totalRetunr += elemento[indice];
             });
             return totalRetunr;
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     mounted: async function () {

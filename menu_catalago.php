@@ -25,11 +25,11 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>Menu de Obras</title>
+    <title>Menu de Catalagos</title>
 </head>
 
 <body style="display: flex;">
-    <div id="AppDireccion">
+    <div id="AppIndex">
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -45,7 +45,7 @@ include_once 'validarSesion.php';
             <hr>
             <div id="sideBarItem" class="mb-auto overflow-auto">
                 <ul class="nav nav-pills flex-column f-5" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <li v-if="this.users[0].user_directionAcess == 1">
+                    <li v-if="users.length && users[0].user_directionAcess == 1">
                         <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false" @click="irDireecion">
                             <img class="me-2" src="images/icons/ceo.svg" alt="user-icon" height="24" width="24">
                             DIRECCION
@@ -58,7 +58,7 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obrasLista">
+                                <li v-for="obra in this.obras">
                                     <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
@@ -95,25 +95,31 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><span>Menu Direccion</span></li>
+                    <li class="breadcrumb-item"><span>Menu de Catalagos</span></li>
                 </ol>
             </nav>
             <div class="container px-5">
                 <div class="row">
                     <div class="col-12">
-                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de Direccion The Fuentes Corporation</h2>
+                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">CATALAGOS DE THE FUENTES CORPORATION</h2>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-dark m-2 mb-3">Selecciona la Accion que haras.</p>
+                        <p class="text-dark m-2 mb-3">Selecciona el catalago que quieres consultar</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-4 d-grid">
-                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterAllPresiones">
-                            <img class="me-2" src="images/icons/requisiciones.svg" alt="user-icon" height="100" width="100">
-                            <span class="h3 d-block mt-2 mb-0"><strong>Presiones de Obras</strong></span>
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="IrCatalagoProveedor">
+                            <img class="me-2" src="images/icons/supplier.svg" alt="user-icon" height="100" width="100">
+                            <span class="h3 d-block mt-2 mb-0"><strong>Proveedores</strong></span>
+                        </button>
+                    </div>
+                    <div class="col-4 d-grid" v-if="users.length">
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="irCatalagoBanco">
+                            <img class="me-2" src="images/icons/bank.svg" alt="user-icon" height="100" width="100">
+                            <span class="h3 d-block mt-2 mb-0"><strong>Bancos</strong></span>
                         </button>
                     </div>
                 </div>
@@ -139,7 +145,7 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!-- scripts constume-->
-    <script src="./js/direccion.js"></script>
+    <script src="./js/menu_catalagos.js"></script>
 </body>
 
 </html>

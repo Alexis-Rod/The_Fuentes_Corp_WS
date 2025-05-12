@@ -26,6 +26,7 @@ $obra = (isset($_POST['obra'])) ? $_POST['obra'] : '';
 $idPresion = (isset($_POST['idPresion'])) ? $_POST['idPresion'] : '';
 $comentarios = (isset($_POST['comentarios'])) ? $_POST['comentarios'] : '';
 $nuevaFormaPago = (isset($_POST['formaPago'])) ? $_POST['formaPago'] : '';
+$id_Prov = (isset($_POST['id_Prov'])) ? $_POST['id_Prov'] : '';
 
 switch ($accion) {
     case 1:
@@ -150,6 +151,25 @@ switch ($accion) {
         $resultado3->execute();
 
         $data = 0;
+        break;
+    case 14:
+        $consulta = "SELECT * FROM `provedores`;";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        break;
+    case 15:
+        $consulta = "UPDATE `hojasrequisicion` 
+                        SET `hojaRequisicion_proveedor` = :id_prov 
+                        WHERE `hojaRequisicion_id` = :id_hoja";
+    
+        $resultado = $conexion->prepare($consulta);
+    
+        $resultado->bindParam(':id_prov', $id_Prov, PDO::PARAM_INT);
+        $resultado->bindParam(':id_hoja', $idHoja, PDO::PARAM_INT);
+    
+        $resultado->execute();
+        $data = 1;
         break;
 }
 

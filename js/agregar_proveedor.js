@@ -45,7 +45,7 @@ const appRequesition = new Vue({
                 console.log(this.bancos);
             });
         },
-        agregarProveedor: async function () {
+        agregarProveedor: async function () {        
             const { value: formValues } = await Swal.fire({
                 title: "¿Quieres guardar el proveedor?",
                 showDenyButton: true,
@@ -66,6 +66,9 @@ const appRequesition = new Vue({
         },
         irDireecion: function(){
             window.location.href = url2 + "/direccion.php";
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     created: function () {

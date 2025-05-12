@@ -19,7 +19,7 @@ $time = (isset($_POST['time'])) ? $_POST['time'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT `presiones_id`,`presiones_nombre`, `presiones_alias`, `presiones_estatus`,`presiones_semana`,`presiones_dia`,`presiones_estatus` FROM `presiones` WHERE `presiones_obra` = " . $obra;
+        $consulta = "SELECT `presiones_id`,`presiones_nombre`, `presiones_alias`, `presiones_estatus`,`presiones_semana`,`presiones_dia`,`presiones_estatus` FROM `presiones` WHERE `presiones_obra` = " . $obra." ORDER BY presiones_fechaCreacion DESC";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

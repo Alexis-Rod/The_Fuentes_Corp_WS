@@ -25,11 +25,12 @@ include_once 'validarSesion.php';
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <!--llamar a mi documento de CSS-->
     <link rel="stylesheet" href="main.css">
-    <title>Menu de Obras</title>
+    <title>Catalago de Proveedor</title>
 </head>
 
 <body style="display: flex;">
-    <div id="AppDireccion">
+    <div id="AppIndex">
+
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -58,7 +59,7 @@ include_once 'validarSesion.php';
                         </a>
                         <div class="tab-content" id="v-pills-tabContent">
                             <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-obras" role="tabpanel" aria-labelledby="v-pills-obras-tab">
-                                <li v-for="obra in this.obrasLista">
+                                <li v-for="obra in this.obras">
                                     <a style="cursor: pointer" class="nav-link text-white ms-4" aria-current="page" @click="irObra(obra.obras_id)">{{obra.obras_nombre}}</a>
                                 </li>
                             </ul>
@@ -95,26 +96,60 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><span>Menu Direccion</span></li>
+                    <li class="breadcrumb-item"><a href="./menu_catalago.php"><span>Menu de Catalagos</span></a></li>
+                    <li class="breadcrumb-item"><span>Catalago de Proveedores</span></li>
                 </ol>
             </nav>
-            <div class="container px-5">
+            <div class="container px-5 overflow-auto">
                 <div class="row">
-                    <div class="col-12">
-                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de Direccion The Fuentes Corporation</h2>
+                    <div class="col">
+                        <h2 class="text-dark m-2 mt-5 mb-3 fw-bold">CATALAGO DE PROVEEDORES</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col d-flex align-items-end mb-3" v-if="this.users[0].user_createPresion == 1">
+                        <button type="button" class="btn btn-success ms-auto" @click="addProvedores">
+                            <span class="fw-bold">Agregar Nuevo Proveedor</span>
+                        </button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-dark m-2 mb-3">Selecciona la Accion que haras.</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4 d-grid">
-                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterAllPresiones">
-                            <img class="me-2" src="images/icons/requisiciones.svg" alt="user-icon" height="100" width="100">
-                            <span class="h3 d-block mt-2 mb-0"><strong>Presiones de Obras</strong></span>
-                        </button>
+                        <table id="example" class="table table-hover w-100">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Nombre de Proveedor</th>
+                                    <th scope="col">RFC</th>
+                                    <th scope="col">Estatus</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light" id="Tabla_Items">
+                                <tr class="my-3" v-for="(proveedor,indice) of proveedores">
+                                    <td scope="row">{{proveedor.proveedor_nombre}}</td>
+                                    <td scope="row">{{proveedor.proveedor_rfc}}</td>
+                                    <td>
+                                        <span class="badge bg-success" v-if="proveedor.proveedor_estatus == 'ACTIVO'">ACTIVO</span>
+                                        <span class="badge bg-secondary" v-if="proveedor.proveedor_estatus == 'INACTIVO'">INACTIVO</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-success" data-toggle="tooltip" title="Consultar" @click="viewProveedor(proveedor.proveedor_id)">
+                                                <img class="" src="images/icons/view.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Editar" @click="editProveedor(indice, proveedor.proveedor_id)">
+                                                <img class="" src="images/icons/edit.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-toggle="tooltip" title="Eliminar" @click="desactivarProveedor(indice, proveedor.proveedor_id)">
+                                                <img class="" src="images/icons/delete.svg" alt="user-icon" height="24" width="24">
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-dark">
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -139,7 +174,7 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
     <!-- scripts constume-->
-    <script src="./js/direccion.js"></script>
+    <script src="./js/proveedor.js"></script>
 </body>
 
 </html>

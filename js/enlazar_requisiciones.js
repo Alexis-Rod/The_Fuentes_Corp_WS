@@ -130,6 +130,9 @@ const appRequesition = new Vue({
             
             // Retornar el formato con o sin el símbolo de pesos
             return incluirSimbolo ? "$ " + formato : formato;
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     mounted: async function () {

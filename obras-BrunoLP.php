@@ -29,7 +29,7 @@ include_once 'validarSesion.php';
 </head>
 
 <body style="display: flex;">
-    <div id="AppDireccion">
+    <div id="AppObras">
         <!--sidebar-->
         <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -65,10 +65,29 @@ include_once 'validarSesion.php';
                         </div>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="false" @click="irMenuCatalago">
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
+                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
+                            REPORTES
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
+                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
+                            REPORTES
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="true">
                             <img class="me-2" src="images/icons/catalagos.svg" alt="user-icon" height="24" width="24">
                             CATALAGOS
                         </a>
+                        <div class="tab-content" id="v-pills-tabContent">
+                            <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-catalago" role="tabpanel" aria-labelledby="v-pills-catalago-tab">
+                                <li>
+                                    <a href="agregar_proveedor.php" class="nav-link text-white ms-4" aria-current="page">PROVEEDORES</a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -95,25 +114,31 @@ include_once 'validarSesion.php';
                             <span>Inicio</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item"><span>Menu Direccion</span></li>
+                    <li class="breadcrumb-item"><span>Menu de la Obra {{this.obras[0].obras_nombre}}</span></li>
                 </ol>
             </nav>
             <div class="container px-5">
                 <div class="row">
                     <div class="col-12">
-                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de Direccion The Fuentes Corporation</h2>
+                        <h2 class="text-dark m-2 mt-3 mb-3 fw-bold">Menu de la Obra: {{this.obras[0].obras_nombre}}</h2>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-dark m-2 mb-3">Selecciona la Accion que haras.</p>
+                        <p class="text-dark m-2 mb-3">Selecciona la Accion que haras sobre la obra.</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-4 d-grid">
-                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterAllPresiones">
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterPresiones">
                             <img class="me-2" src="images/icons/requisiciones.svg" alt="user-icon" height="100" width="100">
-                            <span class="h3 d-block mt-2 mb-0"><strong>Presiones de Obras</strong></span>
+                            <span class="h3 d-block mt-2 mb-0"><strong>Presiones</strong></span>
+                        </button>
+                    </div>
+                    <div class="col-4 d-grid">
+                        <button type="button" class="btnMenuObra btn btn-secondary mx-auto" @click="enterRequisiciones">
+                            <img class="me-2" src="images/icons/presiones.svg" alt="user-icon" height="100" width="100">
+                            <span class="h3 d-block mt-2 mb-0"><strong>Requisiciones</strong></span>
                         </button>
                     </div>
                 </div>
@@ -138,8 +163,4 @@ include_once 'validarSesion.php';
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
-    <!-- scripts constume-->
-    <script src="./js/direccion.js"></script>
-</body>
-
-</html>
+    <!-- scripts con

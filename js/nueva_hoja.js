@@ -479,6 +479,9 @@ const appRequesition = new Vue({
         eliminarSaltosDeLinea: function(cadena) {
             // Utiliza el método replace para eliminar los saltos de línea
             return cadena.replace(/(\r\n|\n|\r)/g, "");
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     created: function () {

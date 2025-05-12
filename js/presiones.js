@@ -195,8 +195,9 @@ const appRequesition = new Vue({
             return week;
         },
         getDayOfWeek: function (date) {
-            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            return days[date.getDay() + 1];
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            console.log(days);
+            return days[date.getDay()+1]; 
         },
         getCurrentDate: function () {
             const date = new Date();
@@ -220,6 +221,9 @@ const appRequesition = new Vue({
         },
         irDireecion: function(){
             window.location.href = url2 + "/direccion.php";
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     mounted: async function () {

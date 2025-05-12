@@ -16,7 +16,7 @@ $IdReq =   (isset($_POST['IdReq'])) ? $_POST['IdReq'] : '';
 
 switch ($accion) {
     case 1:
-        $consulta = "SELECT * FROM `hojasrequisicion` WHERE `hojaRequisicion_idReq` = '$IdReq' ORDER BY `hojaRequisicion_numero`";
+        $consulta = "SELECT * FROM `hojasrequisicion` WHERE `hojaRequisicion_idReq` = '$IdReq' ORDER BY CASE hojaRequisicion_estatus WHEN 'RECHAZADA' THEN 1 WHEN 'PENDIENTE' THEN 2  WHEN 'NUEVO' THEN 3  WHEN 'REVISION' THEN 4 WHEN 'LIGADA' THEN 5 WHEN 'AUTORIZADA' THEN 6 ELSE 7 END";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

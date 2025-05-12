@@ -65,29 +65,10 @@ include_once 'validarSesion.php';
                         </div>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">
-                            <img class="me-2" src="images/icons/reportes.svg" alt="user-icon" height="24" width="24">
-                            REPORTES
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="true">
+                        <a href="#" class="nav-link text-white" aria-current="page" id="v-pills-catalago-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalago" type="button" role="tab" aria-controls="v-pills-catalago" aria-selected="false" @click="irMenuCatalago">
                             <img class="me-2" src="images/icons/catalagos.svg" alt="user-icon" height="24" width="24">
                             CATALAGOS
                         </a>
-                        <div class="tab-content" id="v-pills-tabContent">
-                            <ul class="tab-pane fade nav nav-pills flex-column mb-auto" id="v-pills-catalago" role="tabpanel" aria-labelledby="v-pills-catalago-tab">
-                                <li>
-                                    <a href="agregar_proveedor.php" class="nav-link text-white ms-4" aria-current="page">PROVEEDORES</a>
-                                </li>
-                            </ul>
-                        </div>
                     </li>
                 </ul>
             </div>
@@ -145,6 +126,9 @@ include_once 'validarSesion.php';
                         </button>
                         <button type="button" class="btn btn-primary ms-2" @click="cambiarFormaPago(hojas[0].hojaRequisicion_formaPago)" v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
                             <span class="fw-bold text-white">Cambiar Forma de Pago</span>
+                        </button>
+                        <button type="button" class="btn btn-success ms-2" @click="cambiarProveedor()" v-if="(hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA') && this.users[0].user_editReq == 1">
+                            <span class="fw-bold text-white">Cambiar Proveedor</span>
                         </button>
                     </div>
                 </div>

@@ -244,6 +244,9 @@ const appRequesition = new Vue({
             axios.post(url, { accion: 6, idHoja: idHoja, parcial: adeudo, coments: observaciones }).then(response => {
                 this.listarObras();
             });
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     created: function () {

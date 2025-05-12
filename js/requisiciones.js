@@ -158,7 +158,7 @@ const appRequesition = new Vue({
                         showConfirmButton: false,
                         timer: 3000
                     });
-                    this.newRequisicionAuto;
+                    this.newRequisicionAuto();
                     Toast.fire({
                         icon: 'success',
                         title: 'Requisicion Agregada'
@@ -354,6 +354,9 @@ const appRequesition = new Vue({
                 });
                 console.error(error);
             });
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     mounted: async function () {

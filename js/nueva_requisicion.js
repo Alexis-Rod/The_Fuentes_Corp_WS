@@ -277,6 +277,9 @@ const appRequesition = new Vue({
         irPresion(idPresion) {
             localStorage.setItem("obraActiva", idPresion);
             window.location.href = "https://the-fuentes-corp-ws1-460518334160.us-central1.run.app/presiones.php";
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     created: function () {

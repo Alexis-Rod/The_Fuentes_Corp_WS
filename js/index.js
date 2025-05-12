@@ -28,6 +28,9 @@ const appRequesition = new Vue({
         },
         irDireecion: function(){
             window.location.href = url2 + "/direccion.php";
+        },
+        irMenuCatalago: function(){
+            window.location.href = url2 + "/menu_catalago.php";
         }
     },
     created: function () {
