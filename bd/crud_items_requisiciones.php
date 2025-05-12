@@ -153,7 +153,7 @@ switch ($accion) {
         $data = 0;
         break;
     case 14:
-        $consulta = "SELECT * FROM `provedores`;";
+        $consulta = "SELECT * FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO';";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

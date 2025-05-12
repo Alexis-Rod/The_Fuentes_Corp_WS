@@ -70,7 +70,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `proveedor_id`,`proveedor_nombre` FROM `provedores`;";
+        $consulta = "SELECT `proveedor_id`,`proveedor_nombre` FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO';";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
