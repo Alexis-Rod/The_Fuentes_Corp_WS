@@ -1185,7 +1185,7 @@ const appRequesition = new Vue({
                 });
             }
         },
-        irMenuCatalago: function(){
+        irMenuCatalago: function () {
             window.location.href = url2 + "/menu_catalago.php";
         },
         cambiarProveedor: async function () {
@@ -1196,85 +1196,91 @@ const appRequesition = new Vue({
                 timer: 3000,
                 timerProgressBar: true,
                 didOpen: (toast) => {
-                  toast.onmouseenter = Swal.stopTimer;
-                  toast.onmouseleave = Swal.resumeTimer;
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
                 }
-              });
+            });
 
             try {
                 const response = await axios.post(url, { accion: 14 });
-        
-                if (response.data) {
-                    console.log(response.data);
-                    const { value: formValues } = await Swal.fire({
-                        title: "CAMBIAR DE PROVEEDOR",
-                        html: `
-                        <div style="overflow: hidden; text-align: left;">
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-bold">Escribe el Nombre del Nuevo Proveedor y da click en "Cambiar":</label>
-                                    <input list="listaBancos" id="proveedorChange" name="banco" class="form-control">
-                                    <datalist id="listaBancos">
-                                        `+generarOpcionesProveedores(response.data)+`
-                                    </datalist>
-                                </div>
-                            </div>
+
+                if (!response.data) return;
+
+                const { value: formValues } = await Swal.fire({
+                    title: "CAMBIAR DE PROVEEDOR",
+                    html: `
+                <div style="overflow: hidden; text-align: left;">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Escribe el Nombre del Nuevo Proveedor y da click en "Cambiar":</label>
+                            <input list="listaBancos" id="proveedorChange" class="form-control">
+                            <datalist id="listaBancos">
+                                ${generarOpcionesProveedores(response.data)}
+                            </datalist>
                         </div>
-                        `,
-                        focusConfirm: false,
-                        width: '50%',
-                        showCancelButton: true,
-                        confirmButtonText: 'Cambiar',
-                        confirmButtonColor: '#0d6efd',
-                        cancelButtonColor: '#dc3545',
-                        preConfirm: () => {
-                            return {
-                                proveedorChange: this.obtenerNumeroAntesDelGuion(document.getElementById('proveedorChange')?.value || '')
-                            };
-                        }
-                    });
-        
-                    if (formValues && formValues.proveedorChange) {
-                        console.log('Proveedor seleccionado:', formValues.proveedorChange);
-                        if(this.changeProveedor(formValues.proveedorChange)){
-                            this.hojas[0].proveedor_nombre = response.data[formValues.proveedorChange-1]['proveedor_nombre'];
-                            this.hojas[0].proveedor_rfc = response.data[formValues.proveedorChange-1]['proveedor_rfc'];
-                            this.hojas[0].proveedor_clabe = response.data[formValues.proveedorChange-1]['proveedor_clabe'];
-                            this.hojas[0].proveedor_numeroCuenta = response.data[formValues.proveedorChange-1]['proveedor_numeroCuenta'];
-                            this.hojas[0].proveedor_banco = response.data[formValues.proveedorChange-1]['proveedor_banco'];
-                            this.hojas[0].presiones_tarjetaBanco = response.data[formValues.proveedorChange-1]['presiones_tarjetaBanco'];
-                            this.hojas[0].proveedor_email = response.data[formValues.proveedorChange-1]['proveedor_email'];
-                            this.hojas[0].proveedor_telefono = response.data[formValues.proveedorChange-1]['proveedor_telefono'];
-                            this.hojas[0].proveedor_sucursal = response.data[formValues.proveedorChange-1]['proveedor_sucursal'];
-                            Toast.fire({
-                                icon: "success",
-                                title: "Se Cambio de Proveedor Correctamente"
-                            });
-                        }  else{
-                            Toast.fire({
-                                icon: "error",
-                                title: "No se cambio el Proveedor"
-                            });
-                        }                    
-                    } else {
-                        console.log('No se seleccionó proveedor');
-                        Toast.fire({
-                            icon: "error",
-                            title: "No se cambio el Proveedor"
-                        });
+                    </div>
+                </div>
+            `,
+                    focusConfirm: false,
+                    width: '50%',
+                    showCancelButton: true,
+                    confirmButtonText: 'Cambiar',
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#dc3545',
+                    preConfirm: () => {
+                        return {
+                            proveedorChange: this.obtenerNumeroAntesDelGuion(document.getElementById('proveedorChange')?.value || '')
+                        };
                     }
+                });
+
+                if (!formValues || !formValues.proveedorChange) {
+                    Toast.fire({ icon: "error", title: "No se cambió el proveedor" });
+                    return;
                 }
+
+                const idProveedor = formValues.proveedorChange;
+                const index = response.data.findIndex(proveedor => proveedor.proveedor_id === idProveedor);
+
+                if (index === -1) {
+                    Toast.fire({ icon: "error", title: "Proveedor no encontrado" });
+                    return;
+                }
+
+                const proveedorSeleccionado = response.data[index];
+
+                const cambioExitoso = await this.changeProveedor(idProveedor);
+
+                if (cambioExitoso) {
+                    Object.assign(this.hojas[0], {
+                        proveedor_nombre: proveedorSeleccionado.proveedor_nombre,
+                        proveedor_rfc: proveedorSeleccionado.proveedor_rfc,
+                        proveedor_clabe: proveedorSeleccionado.proveedor_clabe,
+                        proveedor_numeroCuenta: proveedorSeleccionado.proveedor_numeroCuenta,
+                        proveedor_banco: proveedorSeleccionado.proveedor_banco,
+                        proveedor_email: proveedorSeleccionado.proveedor_email,
+                        proveedor_telefono: proveedorSeleccionado.proveedor_telefono,
+                        proveedor_sucursal: proveedorSeleccionado.proveedor_sucursal,
+                        presiones_tarjetaBanco: proveedorSeleccionado.presiones_tarjetaBanco
+                    });
+
+                    Toast.fire({ icon: "success", title: "Proveedor cambiado correctamente" });
+                } else {
+                    Toast.fire({ icon: "error", title: "No se cambió el proveedor" });
+                }
+
             } catch (error) {
                 console.error("Error al cambiar proveedor:", error);
+                Toast.fire({ icon: "error", title: "Error al procesar la solicitud" });
             }
         },
-        changeProveedor: function(id_Prov){
-            axios.post(url, {accion: 15, id_Hoja: localStorage.getItem("idHoja"), id_Prov: id_Prov}).then(Response =>{
-                if(response.data == 1){
+        changeProveedor: function (id_Prov) {
+            axios.post(url, { accion: 15, id_Hoja: localStorage.getItem("idHoja"), id_Prov: id_Prov }).then(Response => {
+                if (response.data == 1) {
                     return true;
                 }
-            }).catch(error =>{
-                console.error("Error al cambiar de proveedor "+error);
+            }).catch(error => {
+                console.error("Error al cambiar de proveedor " + error);
                 return false;
             })
             return true;
@@ -1296,7 +1302,7 @@ const appRequesition = new Vue({
 
             // Retornar el número si es válido, de lo contrario retornar null
             return isNaN(numero) ? null : numero;
-        }       
+        }
     },
     /**
          * Función que se ejecuta cuando se crea el componente.
@@ -1356,7 +1362,7 @@ const appRequesition = new Vue({
 });
 
 function generarOpcionesProveedores(lista) {
-    return lista.map(prov => 
+    return lista.map(prov =>
         `<option value="${prov.proveedor_id}-${prov.proveedor_nombre}">`
     ).join('\n');
 }
