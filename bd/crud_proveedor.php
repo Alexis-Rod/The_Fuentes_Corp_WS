@@ -25,7 +25,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT * FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO'";
+        $consulta = "SELECT * FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO' ORDER BY `obras_nombre`";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
