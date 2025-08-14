@@ -13,6 +13,7 @@ $nombreReq  = (isset($_POST['nombreReq'])) ? $_POST['nombreReq'] : '';
 $fechaReq =   (isset($_POST['fechaReq'])) ? $_POST['fechaReq'] : '';
 $clave =   (isset($_POST['clave'])) ? $_POST['clave'] : '';
 $IdReq =   (isset($_POST['IdReq'])) ? $_POST['IdReq'] : '';
+$idHoja =   (isset($_POST['idHoja'])) ? $_POST['idHoja'] : '';
 
 switch ($accion) {
     case 1:
@@ -98,6 +99,25 @@ switch ($accion) {
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
+   case 8:
+    $conexion->beginTransaction();
+    try {
+        $stmt1 = $conexion->prepare("DELETE FROM itemrequisicion WHERE itemRequisicion_idHoja = :idHoja");
+        $stmt1->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $stmt1->execute();
+
+        $stmt2 = $conexion->prepare("DELETE FROM hojasrequisicion WHERE hojaRequisicion_id = :idHoja");
+        $stmt2->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+        $stmt2->execute();
+
+        $conexion->commit();
+        $data = ['status' => 'ok'];
+    } catch (Exception $e) {
+        $conexion->rollBack();
+        $data = ['status' => 'error', 'message' => $e->getMessage()];
+    }
+    break;
+
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);

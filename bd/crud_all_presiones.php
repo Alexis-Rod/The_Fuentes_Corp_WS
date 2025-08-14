@@ -13,6 +13,7 @@ $autorizado = (isset($_POST['autorizado'])) ? $_POST['autorizado'] : '';
 $idHoja = (isset($_POST['idHoja'])) ? $_POST['idHoja'] : '';
 $adeudo = (isset($_POST['parcial'])) ? $_POST['parcial'] : '';
 $coments = (isset($_POST['coments'])) ? $_POST['coments'] : '';
+$presion = (isset($_POST['presion'])) ? $_POST['presion'] : [];
 
 switch ($accion) {
     case 1:
@@ -88,7 +89,7 @@ switch ($accion) {
                         'id_hoja' => $hoja['hojaRequisicion_id'],
                         'id_presion' => $hoja['presiones_id'],
                         'formaPago' => $hoja['hojaRequisicion_formaPago'],
-                        'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
+                        'NumReq' => obtenerNumeracionFinal($hoja['requisicion_Numero']) . " Hoja Numero: " . $hoja['hojaRequisicion_numero'],
                         'clave' => $hoja['requisicion_Clave'],
                         'concepto' => empty($hoja['hojarequisicion_conceptoUnico']) ? convertToString($dataitms) : $hoja['hojarequisicion_conceptoUnico'],
                         'proveedor' => $hoja['proveedor_nombre'],
@@ -102,7 +103,8 @@ switch ($accion) {
                         "showDetail" => false,
                         "atrClass" => "inline-block text-truncate fs-6",
                         "strStyle" => "max-width: 100px;",
-                        'edit_Auto' => false
+                        'edit_Auto' => false,
+                        'check' => 1
                     ));
                 };
                 if ($primeraInt > 0) {
@@ -132,13 +134,24 @@ switch ($accion) {
         break;
     case 4:
         if ($autorizado) {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'AUTORIZADA', `hojarequisicion_adeudo` = '$adeudo' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'AUTORIZADA', `hojarequisicion_adeudo` = :adeudo, `hojaRequisicion_observaciones` = :observaciones WHERE `hojasrequisicion`.`hojaRequisicion_id` = :idHoja";
             $resultado = $conexion->prepare($consulta);
+            $resultado->bindValue(':adeudo', (float)$adeudo, PDO::PARAM_STR);
+            $resultado->bindValue(':observaciones', $coments, PDO::PARAM_STR);
+            $resultado->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
             $resultado->execute();
+            $data = [
+                "success" => true
+            ];
         } else {
-            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'RECHAZADA', `hojarequisicion_adeudo` = 0, `hojarequisicion_comentariosAutorizacion` = '$coments', `hojarequisicion_comentariosValidacion` = '' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+            $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA', `hojarequisicion_adeudo` = 0, `hojaRequisicion_observaciones` = :observaciones WHERE `hojasrequisicion`.`hojaRequisicion_id` = :idHoja";
             $resultado = $conexion->prepare($consulta);
+            $resultado->bindValue(':observaciones', $coments, PDO::PARAM_STR);
+            $resultado->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
             $resultado->execute();
+            $data = [
+                "success" => true
+            ];
         }
         break;
     case 5:
@@ -156,6 +169,56 @@ switch ($accion) {
         $resultado->bindParam(':id_hoja', $idHoja, PDO::PARAM_INT);
         $resultado->execute();
         $data = 0;
+        break;
+    case 7:
+        try {
+            $registrosProcesados = 0;
+            $registrosFallidos = [];
+
+            foreach ($presion as $registro) {
+                $status = ($registro['adeudo'] == 0) ? "RECHAZADA" : "AUTORIZADA";
+
+                $consulta = "UPDATE hojasrequisicion 
+                     SET hojarequisicion_adeudo = :adeudo, 
+                         hojaRequisicion_observaciones = :observaciones,
+                         hojaRequisicion_estatus = :estatus
+                     WHERE hojaRequisicion_id = :id_hoja";
+
+                $resultado = $conexion->prepare($consulta);
+                $resultado->bindValue(':adeudo', (float)($registro['adeudo'] ?? 0), PDO::PARAM_STR);
+                $resultado->bindValue(':observaciones', $registro['Observaciones'] ?? '', PDO::PARAM_STR);
+                $resultado->bindValue(':id_hoja', $registro['id_hoja'], PDO::PARAM_INT);
+                $resultado->bindValue(':estatus', $status, PDO::PARAM_STR);
+
+                if ($resultado->execute()) {
+                    $registrosProcesados++;
+                } else {
+                    $registrosFallidos[] = $registro['id_hoja'];
+                }
+            }
+
+            if (count($registrosFallidos) > 0) {
+                $data = [
+                    'status' => 'error',
+                    'mensaje' => 'Algunos registros no pudieron guardarse',
+                    'fallos' => $registrosFallidos,
+                    'procesados' => $registrosProcesados
+                ];
+            } else {
+                $data = [
+                    'status' => 'success',
+                    'mensaje' => 'Todos los registros fueron guardados correctamente',
+                    'procesados' => $registrosProcesados
+                ];
+            }
+        } catch (Exception $e) {
+            $data = [
+                'status' => 'error',
+                'mensaje' => 'Error inesperado al guardar los registros',
+                'error' => $e->getMessage()
+            ];
+        }
+
         break;
 }
 
@@ -338,4 +401,24 @@ function sumaTotalTrans($conexion, $idPresion, $tipoDeCuenta)
             return "Dato no válido";
             break;
     }
+}
+
+function obtenerNumeracionFinal($cadena)
+{
+    // Explota la cadena por el separador "-"
+    $partes = explode('-', $cadena);
+
+    // Verifica que haya al menos una parte
+    if (count($partes) > 0) {
+        // Obtiene la última parte
+        $numero = end($partes);
+
+        // Verifica que sea un número
+        if (is_numeric($numero)) {
+            return $numero;
+        }
+    }
+
+    // Retorna null si no se encontró un número válido
+    return null;
 }

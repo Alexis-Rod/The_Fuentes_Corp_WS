@@ -3,6 +3,7 @@ include_once 'conexion.php';
 $objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
 $conexion = $objeto->Conectar();
 
+
 //Conexion con axios, por parametro POST
 $_POST = json_decode(file_get_contents("php://input"), true);
 

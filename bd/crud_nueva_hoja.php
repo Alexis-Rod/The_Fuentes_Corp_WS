@@ -40,7 +40,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         $hoja = $data[0]['requisicion_Hojas'];
         $hoja++;
-        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojarequisicion_conceptoUnico`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$conceptoUnico', '$formaPago',NULL, NULL, '$totalPagar',0,'NUEVO')";
+        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojarequisicion_conceptoUnico`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$conceptoUnico', '$formaPago',NULL, NULL, '$totalPagar', '$totalPagar','NUEVO')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $consulta = "UPDATE `requisiciones` SET `requisicion_Hojas` = '$hoja' WHERE `requisiciones`.`requisicion_id` =" . $id_Req;
@@ -70,7 +70,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 3:
-        $consulta = "SELECT `proveedor_id`,`proveedor_nombre` FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO';";
+        $consulta = "SELECT `proveedor_id`,`proveedor_nombre` FROM `provedores`;";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -88,7 +88,7 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 6:
-        $consulta = "SELECT * FROM `obras` WHERE `obras_estatus` = 'ACTIVO'";
+        $consulta = "SELECT * FROM `obras` WHERE `obras_estatus` = 'ACTIVO' ORDER BY `obras_nombre`";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

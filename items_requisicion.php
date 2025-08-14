@@ -359,7 +359,7 @@ include_once 'validarSesion.php';
                 </div>
                 <div class="row w-100 mt-3 mb-5 mx-auto" v-if="hojas[0].hojaRequisicion_estatus == 'REVISION' && this.validate == 'true'">
                     <div class="col px-0 d-flex justify-content-center">
-                        <button class="btn btn-success" @click="asignarAPresion(hojas[0].hojarequisicion_comentariosValidacion)" title="Solicitud de Revision">
+                        <button class="btn btn-success" @click="asignarAPresion(hojas[0].hojarequisicion_comentariosValidacion, hojas[0].hojaRequisicion_total)" title="Solicitud de Revision">
                             <span class="text-center">Validar Requisicion</span>
                         </button>
                     </div>

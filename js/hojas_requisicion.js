@@ -126,6 +126,66 @@ const appRequesition = new Vue({
         },
         irMenuCatalago: function(){
             window.location.href = url2 + "/menu_catalago.php";
+        },
+        eleminarHoja: async function(idHoja){
+            const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+            });
+           
+            swalWithBootstrapButtons.fire({
+            title: "¿Estas seguro de Eliminar la hoja?",
+            text: "Esta accion no se puede revertir",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Continuar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true
+            }).then((result) => {
+            if (result.isConfirmed) {
+                this.eliminarHojaBD(idHoja);
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                
+            }
+            });
+        },
+        eliminarHojaBD: function(idHoja){
+            const Toast = Swal.mixin({
+            toast: true,
+            position: "bottom-start",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+            });
+            axios.post(url, {accion: 8, idHoja: idHoja}).then(response => {
+                console.log(response.data['status']);
+                if(response.data['status'] == 'ok'){
+                   Toast.fire({
+                        icon: "success",
+                        title: "Elemento Eliminado correctamente"
+                    });
+                    var table = $('#example').DataTable();
+                    // Para reinicializarlo, primero destrúyelo
+                    table.destroy();
+                    this.listarHojas(localStorage.getItem("idRequisicion"));
+                }
+            }).catch(error =>{
+                console.error(error);
+                Toast.fire({
+                    icon: "error",
+                    title: "Error al eliminar el elemento"
+                });
+            });
         }
     },
     mounted: async function () {

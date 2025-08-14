@@ -976,7 +976,7 @@ const appRequesition = new Vue({
             // Redirecciona a la página de obras
             window.location.href = url2 + "/obras.php";
         },
-        asignarAPresion: async function (coments) {
+        asignarAPresion: async function (coments, total) {
             const swalWithBootstrapButtons = await Swal.mixin({
                 customClass: {
                     confirmButton: "btn btn-success",
@@ -994,7 +994,7 @@ const appRequesition = new Vue({
                 reverseButtons: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.enlazarAPresion(localStorage.getItem("IdPresion"), localStorage.getItem("idRequisicion"), localStorage.getItem("idHoja"), coments);
+                    this.enlazarAPresion(localStorage.getItem("IdPresion"), localStorage.getItem("idRequisicion"), localStorage.getItem("idHoja"), coments, total);
                     swalWithBootstrapButtons.fire({
                         title: "Asiganada",
                         text: "El articulo fue Validado y Asignado.",
@@ -1017,8 +1017,8 @@ const appRequesition = new Vue({
                 }
             });
         },
-        enlazarAPresion: function (idPresion, idReq, idHoja, coments) {
-            axios.post(url, { accion: 11, idPresion: idPresion, id_req: idReq, id_Hoja: idHoja, comentarios: coments }).then(response => {
+        enlazarAPresion: function (idPresion, idReq, idHoja, coments, total) {
+            axios.post(url, { accion: 11, idPresion: idPresion, id_req: idReq, id_Hoja: idHoja, comentarios: coments , total: total}).then(response => {
                 console.log(response.data);
             });
         },

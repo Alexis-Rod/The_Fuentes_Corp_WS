@@ -245,8 +245,126 @@ const appRequesition = new Vue({
                 this.listarObras();
             });
         },
-        irMenuCatalago: function(){
+        irMenuCatalago: function () {
             window.location.href = url2 + "/menu_catalago.php";
+        },
+        changedCheck: function (estatus, adeudo, observaciones, idHoja) {
+            if (estatus == "LIGADA") {
+                axios.post(url, { accion: 4, idHoja: idHoja, parcial: adeudo, coments: observaciones, autorizado: true }).then(response => {
+                    console.log(response.data);
+                });
+            }
+            else {
+                axios.post(url, { accion: 4, idHoja: idHoja, parcial: adeudo, coments: observaciones, autorizado: false }).then(response => {
+                    console.log(response.data);
+                });
+            }
+        },
+        guardarCambios: function (presion) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "bottom-start",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+            if (typeof presion !== 'object' || presion === null) {
+                console.error('El parámetro "presion" no es un objeto válido:', presion);
+                return;
+            }
+
+            console.log(presion);
+            axios.post(url, { accion: 7, presion: presion }).then(response => {
+                if (response.data["status"] == "success") {
+                    Toast.fire({
+                        icon: "success",
+                        title: response.data["mensaje"]
+                    });
+                }
+            }
+            ).catch(error => {
+                console.error(error);
+                Toast.fire({
+                    icon: "error",
+                    title: "Fallo al Eliminar elemento"
+                });
+            });
+        },
+        openWinPorcentaje: async function (indicePresion, indiceHoja) {
+            console.log(indicePresion + " " + indiceHoja);
+            const { value: formValues } = await Swal.fire({
+                title: "AGREGAR/DESCONTAR PORCENTAJE",
+                html: `
+                        <div style="overflow: hidden; text-align: left;">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="accion" value="Inc" id="incrementoBox" checked>
+                                        <label class="form-check-label" for="incrementoBox">
+                                           Aplicar Incremento
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="accion" value="Desc" id="descrementoBox">
+                                        <label class="form-check-label" for="descrementoBox">
+                                            Aplicar Descuento
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">Porcentaje a Aplicar:</label>
+                                    <div class="input-group mb-3"">
+                                        <input type="text" class="form-control" id="porcentaje">
+                                        <span class="input-group-text fw-bold" id="basic-addon2"> % </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `, // Tu contenido aquí
+                focusConfirm: false,
+                width: '30%',
+                showCancelButton: true,
+                confirmButtonText: 'Aplicar',
+                confirmButtonColor: '#0d6efd',
+                cancelButtonColor: '#dc3545',
+                preConfirm: () => {
+                    return {
+                        porcentaje: document.getElementById('porcentaje')?.value || '',
+                        accion: document.querySelector('input[name="accion"]:checked').value
+                    };
+                }
+            });
+            if (formValues) {
+               this.aplicarPorcentaje(indicePresion, indiceHoja, formValues);
+            }
+        },
+        convertirAdecimalEntero: function (numeroEntero) {
+            // Verificamos que sea un número
+            if (isNaN(numeroEntero)) return 0;
+
+            // Convertimos el entero a decimal dividiendo entre 100
+            return parseFloat(numeroEntero) / 100;
+        },
+        aplicarPorcentaje: function (indicePresion, indiceHoja, formValues) {
+            const porcentaje = parseInt(formValues["porcentaje"]);
+            const accion = formValues["accion"];
+            const cantidadDecimal = this.convertirAdecimalEntero(porcentaje);
+
+            let adeudoActual = parseInt(this.presiones[indicePresion]["Presion_Obra"][indiceHoja]["adeudo"]);
+            let cantidadAccion = adeudoActual * cantidadDecimal;
+
+            // Aplicar operación
+            this.presiones[indicePresion]["Presion_Obra"][indiceHoja]["adeudo"] =
+                accion === "Inc"
+                    ? adeudoActual + cantidadAccion
+                    : adeudoActual - cantidadAccion;
         }
     },
     created: function () {

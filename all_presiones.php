@@ -139,59 +139,30 @@ include_once 'validarSesion.php';
                                                         <th scope="col" class="fs-6">ADEUDO</th>
                                                         <th scope="col" class="fs-6">PAGO AUTORIZADO</th>
                                                         <th scope="col" class="fs-6">OBSERVACIONES</th>
-                                                        <th scope="col" class="fs-6">FORMA DE PAGO</th>
-                                                        <th scope="col" class="fs-6">ESTADO</th>
-                                                        <th scope="col" class="fs-6">APLICAR ACCIONES</th>
+                                                        <th scope="col" class="fs-6">FORMA DE PAGO</th>    
                                                         <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="table-light" id="Tabla_Items">
                                                     <tr class="my-3" v-for="(presionObra,indice) of obra.Presion_Obra">
                                                         <td>{{presionObra.clave}}</td>
-                                                        <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.NumReq}}</td>
+                                                        <td lass="fs-6">{{presionObra.NumReq}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.proveedor}}</td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.concepto}}</td>
                                                         <td class="fs-6">{{formatearMoneda(presionObra.total)}}</td>
                                                         <td class="fs-6">
-                                                            <span v-if="presionObra.edit_Auto == false">
-                                                                {{formatearMoneda(presionObra.adeudo)}}
-                                                            </span>
-                                                            <div class="input-group mb-3" v-if="presionObra.edit_Auto == true">
+                                                            <div class="input-group mb-3">                                                                
                                                                 <span class="input-group-text" id="dollar-sing">$</span>
                                                                 <input type="text" class="form-control" id="adeudoInput" aria-describedby="adeudo" v-model="presionObra.adeudo">
+                                                                <button class="btn btn-secondary" type="button" @click="openWinPorcentaje(index,indice)" id="button-addon1">%</button>
                                                             </div>
                                                         </td>
                                                         <td :class="presionObra.atrClass" :style="presionObra.strStyle">
-                                                            <span v-if="presionObra.edit_Auto == false">
-                                                                {{presionObra.Observaciones}}
-                                                            </span>
-                                                            <div v-if="presionObra.edit_Auto == true">
+                                                            <div>
                                                                 <textarea v-model="presionObra.Observaciones" class="form-control" id="adeudoInput" placeholder="Escribe tu Comentario aquí"></textarea>
                                                             </div>
                                                         </td>
                                                         <td>{{presionObra.formaPago}}</td>
-                                                        <td>
-                                                            <span class="badge bg-warning fs-6" v-if="presionObra.HojaEstatus == 'LIGADA'">PENDIENTE</span>
-                                                            <span class="badge bg-success fs-6" v-if="presionObra.HojaEstatus == 'AUTORIZADA'">AUTORIZADA</span>
-                                                            <span class="badge bg-danger fs-6" v-if="presionObra.HojaEstatus == 'RECHAZADA'">RECHAZADA</span>
-                                                            <span class="badge bg-success fs-6" v-if="presionObra.HojaEstatus == 'PAGADA'">PAGADA</span>
-                                                        </td>
-                                                        <td>
-                                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                                <button type="button" class="btn btn-success fs-6" @click="autoriar(presionObra.id_hoja, convertirADecimal(presionObra.total))" v-if="presionObra.HojaEstatus == 'LIGADA'" data-toggle="tooltip" title="Autorizar">
-                                                                    <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
-                                                                </button>
-                                                                <button type="button" class="btn btn-primary fs-6" @click="showEdit(indice, index)" v-if="presionObra.HojaEstatus == 'AUTORIZADA' && presionObra.edit_Auto == false" data-toggle="tooltip" title="Editar">
-                                                                    <img class="" src="images/icons/edit.svg" alt="user-icon" height="24" width="24">
-                                                                </button>
-                                                                <button type="button" class="btn btn-danger fs-6" @click="saveEdit(presionObra.adeudo, presionObra.Observaciones,  presionObra.id_hoja)" v-if="presionObra.HojaEstatus == 'AUTORIZADA' && presionObra.edit_Auto == true" data-toggle="tooltip" title="Guardar">
-                                                                    <img class="" src="images/icons/save.svg" alt="user-icon" height="24" width="24">
-                                                                </button>
-                                                                <button type="button" class="btn btn-success fs-6" @click="restartAlert(presionObra.id_hoja)" v-if="presionObra.HojaEstatus == 'AUTORIZADA' || presionObra.HojaEstatus == 'RECHAZADA'" data-toggle="tooltip" title="Restablecer">
-                                                                    <img class="" src="images/icons/restart.svg" alt="user-icon" height="24" width="24">
-                                                                </button>
-                                                            </div>
-                                                        </td>
                                                         <td>
                                                             <img class="me-2" v-if="presionObra.showDetail == false" src="images/icons/arrow_down.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
                                                             <img class="me-2" v-if="presionObra.showDetail == true" src="images/icons/arrow_up.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
@@ -201,6 +172,13 @@ include_once 'validarSesion.php';
                                                 <tfoot class="table-dark">
                                                 </tfoot>
                                             </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col d-flex justify-content-center mb-3">
+                                            <button type="button" class="btn btn-primary fw-bold text-white" @click="guardarCambios(obra.Presion_Obra)">
+                                                Guardar Cambios
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

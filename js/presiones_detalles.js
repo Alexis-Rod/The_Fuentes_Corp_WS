@@ -287,7 +287,7 @@ const appRequesition = new Vue({
         sumatoria: function(arreglo, indice){
             var totalRetunr = 0;
             arreglo.forEach(function(elemento) {
-                totalRetunr += elemento[indice];
+                totalRetunr += parseFloat(elemento[indice]);
             });
             return totalRetunr;
         },

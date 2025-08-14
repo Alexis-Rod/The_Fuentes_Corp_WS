@@ -113,7 +113,7 @@ switch ($accion) {
         $consulta = "INSERT INTO `requisicionesligadas` (`requisicionesLigada_id`, `requisicionesLigada_presionID`, `requisicionesLigadas_requisicionID`, `requisicionesLigadas_hojaID`) VALUES (NULL, '$idPresion', '$idReq', '$idHoja')";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA', `hojarequisicion_comentariosValidacion` = 'OK' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
+        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA', `hojarequisicion_comentariosValidacion` = 'OK', `hojarequisicion_comentariosValidacion`= '$total' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         break;
@@ -153,7 +153,7 @@ switch ($accion) {
         $data = 0;
         break;
     case 14:
-        $consulta = "SELECT * FROM `provedores` WHERE `proveedor_estatus` = 'ACTIVO';";
+        $consulta = "SELECT * FROM `provedores`;";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);

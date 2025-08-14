@@ -150,11 +150,11 @@ include_once 'validarSesion.php';
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
                                                 </svg>
                                             </button>
-                                            <!-- <button type="button" class="btn btn-danger">
+                                            <button type="button" class="btn btn-danger" @click="eleminarHoja(hoja.hojaRequisicion_id)" data-toggle="tooltip" title="Eliminar Hoja" v-if="hoja.hojaRequisicion_estatus == 'NUEVO' || hoja.hojaRequisicion_estatus == 'PENDIENTE' || hoja.hojaRequisicion_estatus == 'RECHAZADA'">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
                                                 </svg>
-                                            </button> -->
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

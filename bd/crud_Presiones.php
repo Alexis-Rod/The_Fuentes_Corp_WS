@@ -59,15 +59,3 @@ switch ($accion) {
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
 $conexion = NULL;
-
-
-function convertFolio($folioInt)
-{
-    if ($folioInt < 10) {
-        return "0" . "0" . $folioInt;
-    } else if ($folioInt < 100) {
-        return "0" . $folioInt;
-    } else {
-        return $folioInt;
-    }
-}
