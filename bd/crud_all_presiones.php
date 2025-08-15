@@ -88,7 +88,7 @@ switch ($accion) {
                     array_push($dataPresion, array(
                         'id_hoja' => $hoja['hojaRequisicion_id'],
                         'id_presion' => $hoja['presiones_id'],
-                        'formaPago' => $hoja['hojaRequisicion_formaPago'],
+                        'formaPago' => obtenerAbreviatura($hoja['hojaRequisicion_formaPago']),
                         'NumReq' => obtenerNumeracionFinal($hoja['requisicion_Numero']) . " Hoja Numero: " . $hoja['hojaRequisicion_numero'],
                         'clave' => $hoja['requisicion_Clave'],
                         'concepto' => empty($hoja['hojarequisicion_conceptoUnico']) ? convertToString($dataitms) : $hoja['hojarequisicion_conceptoUnico'],
@@ -99,12 +99,7 @@ switch ($accion) {
                         "Banco" => $hoja['hojasRequisicion_bancoPago'],
                         "Fecha" => $hoja['hojaRequisicion_fechaPago'],
                         "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
-                        "PresionEstatus" => $hoja['presiones_estatus'],
-                        "showDetail" => false,
-                        "atrClass" => "inline-block text-truncate fs-6",
-                        "strStyle" => "max-width: 100px;",
-                        'edit_Auto' => false,
-                        'check' => 1
+                        "PresionEstatus" => $hoja['presiones_estatus']
                     ));
                 };
                 if ($primeraInt > 0) {
@@ -421,4 +416,13 @@ function obtenerNumeracionFinal($cadena)
 
     // Retorna null si no se encontró un número válido
     return null;
+}
+
+function obtenerAbreviatura($metodoPago) {
+    $mapa = [
+        "Efectivo" => "Efec",
+        "Transferencia" => "Trans"
+    ];
+    
+    return $mapa[$metodoPago] ?? "";
 }

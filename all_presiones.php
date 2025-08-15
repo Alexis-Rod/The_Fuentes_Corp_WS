@@ -31,7 +31,7 @@ include_once 'validarSesion.php';
 <body style="display: flex;">
     <div id="AppIndex">
         <!--sidebar-->
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 15%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <div class="d-flex flex-row">
                     <div class="d-flex align-items-center me-3">
@@ -80,7 +80,7 @@ include_once 'validarSesion.php';
                 </a>
             </div>
         </div>
-        <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 75%;">
+        <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 85%;">
             <!--Navbar-->
             <nav class="navbar" style="background-color: #4468C1;">
                 <div class="container-fluid">
@@ -139,18 +139,17 @@ include_once 'validarSesion.php';
                                                         <th scope="col" class="fs-6">ADEUDO</th>
                                                         <th scope="col" class="fs-6">PAGO AUTORIZADO</th>
                                                         <th scope="col" class="fs-6">OBSERVACIONES</th>
-                                                        <th scope="col" class="fs-6">FORMA DE PAGO</th>    
-                                                        <th></th>
+                                                        <th scope="col" class="fs-6">FORMA DE PAGO</th>                                                    
                                                     </tr>
                                                 </thead>
                                                 <tbody class="table-light" id="Tabla_Items">
                                                     <tr class="my-3" v-for="(presionObra,indice) of obra.Presion_Obra">
                                                         <td>{{presionObra.clave}}</td>
-                                                        <td lass="fs-6">{{presionObra.NumReq}}</td>
-                                                        <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.proveedor}}</td>
-                                                        <td :class="presionObra.atrClass" :style="presionObra.strStyle">{{presionObra.concepto}}</td>
+                                                        <td class="fs-6">{{presionObra.NumReq}}</td>
+                                                        <td class="fs-6">{{presionObra.proveedor}}</td>
+                                                        <td class="fs-6">{{presionObra.concepto}}</td>
                                                         <td class="fs-6">{{formatearMoneda(presionObra.total)}}</td>
-                                                        <td class="fs-6">
+                                                        <td class="fs-6" style="width: 200px;">
                                                             <div class="input-group mb-3">                                                                
                                                                 <span class="input-group-text" id="dollar-sing">$</span>
                                                                 <input type="text" class="form-control" id="adeudoInput" aria-describedby="adeudo" v-model="presionObra.adeudo">
@@ -162,11 +161,7 @@ include_once 'validarSesion.php';
                                                                 <textarea v-model="presionObra.Observaciones" class="form-control" id="adeudoInput" placeholder="Escribe tu Comentario aquí"></textarea>
                                                             </div>
                                                         </td>
-                                                        <td>{{presionObra.formaPago}}</td>
-                                                        <td>
-                                                            <img class="me-2" v-if="presionObra.showDetail == false" src="images/icons/arrow_down.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
-                                                            <img class="me-2" v-if="presionObra.showDetail == true" src="images/icons/arrow_up.svg" alt="user-icon" height="24" width="24" style="cursor: pointer;" @click="cambiarBooleano(presionObra.showDetail,indice,index)">
-                                                        </td>
+                                                        <td>{{presionObra.formaPago}}</td>                
                                                     </tr>
                                                 </tbody>
                                                 <tfoot class="table-dark">

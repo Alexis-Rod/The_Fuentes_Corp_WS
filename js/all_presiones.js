@@ -304,15 +304,15 @@ const appRequesition = new Vue({
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="accion" value="Inc" id="incrementoBox" checked>
+                                        <input class="form-check-input" type="radio" name="accion" value="Desc" id="descrementBox" checked>
                                         <label class="form-check-label" for="incrementoBox">
-                                           Aplicar Incremento
+                                           Aplicar Descuento
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="accion" value="Desc" id="descrementoBox">
+                                        <input class="form-check-input" type="radio" name="accion" value="Inc" id="incrementoBox">
                                         <label class="form-check-label" for="descrementoBox">
-                                            Aplicar Descuento
+                                            Aplicar Incremento
                                         </label>
                                     </div>
                                 </div>

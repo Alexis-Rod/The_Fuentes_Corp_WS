@@ -31,7 +31,7 @@ include_once 'validarSesion.php';
 <body style="display: flex;">
     <div id="AppItems">
         <!--sidebar-->
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 25%;" id="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white position-fixed top-0 start-0 h-100" style="width: 15%;" id="sidebar">
             <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 <div class="d-flex flex-row">
                     <div class="d-flex align-items-center me-3">
@@ -80,7 +80,7 @@ include_once 'validarSesion.php';
                 </a>
             </div>
         </div>
-        <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 75%;">
+        <div class="d-flex flex-column flex-shrink-0 h-100 position-fixed top-0 end-0" style="width: 85%;">
             <!--Navbar-->
             <nav class="navbar" style="background-color: #4468C1;">
                 <div class="container-fluid">
