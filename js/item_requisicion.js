@@ -1018,7 +1018,7 @@ const appRequesition = new Vue({
             });
         },
         enlazarAPresion: function (idPresion, idReq, idHoja, coments, total) {
-            axios.post(url, { accion: 11, idPresion: idPresion, id_req: idReq, id_Hoja: idHoja, comentarios: coments , total: total}).then(response => {
+            axios.post(url, { accion: 11, idPresion: idPresion, id_req: idReq, id_Hoja: idHoja, comentarios: coments, total: total }).then(response => {
                 console.log(response.data);
             });
         },
@@ -1063,7 +1063,7 @@ const appRequesition = new Vue({
                     buttonsStyling: true
                 });
                 swalWithBootstrapButtons.fire({
-                    title: '¿Quieres cambiar a "Transaccion"?',
+                    title: '¿Quieres cambiar a "Transferencia"?',
                     text: "A los items se le agregaran el IVA (0.16) y las retenciones los debes de poner de forma manual",
                     icon: "info",
                     showCancelButton: true,
@@ -1072,25 +1072,52 @@ const appRequesition = new Vue({
                     reverseButtons: false
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        axios.post(url, { accion: 13, formaPago: "Transaccion", id_Hoja: localStorage.getItem("idHoja"), iva: 0.16 }).then(response => {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
+                        axios.post(url, { accion: 13, formaPago: "Transferencia", id_Hoja: localStorage.getItem("idHoja"), iva: 0.16 }).then(response => {
+                            if (response.data['status'] === 'success') {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: "top-end",
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: response.data['mensaje']
+                                });
+                                console.log(response.data);
+                                this.agregarInformacionHoja(localStorage.getItem("idHoja"));
+                                this.listarItems(localStorage.getItem("idHoja"));
+                            }
+                            else {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: "top-end",
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "error",
+                                    title: response.data['mensaje']
+                                });
+                                if (error.response) {
+                                    console.error('Error en la respuesta del servidor:', error.response.data);
+                                    console.error('Código de estado:', error.response.status);
+                                } else if (error.request) {
+                                    console.error('No se recibió respuesta del servidor:', error.request);
+                                } else {
+                                    console.error('Error al configurar la solicitud:', error.message);
                                 }
-                            });
-                            Toast.fire({
-                                icon: "success",
-                                title: "Cambio de forma de pago exitoso"
-                            });
-                            console.log(response.data);
-                            this.agregarInformacionHoja(localStorage.getItem("idHoja"));
-                            this.listarItems(localStorage.getItem("idHoja"));
+                            }
                         }).catch(error => {
                             const Toast = Swal.mixin({
                                 toast: true,

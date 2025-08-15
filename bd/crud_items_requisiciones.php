@@ -110,12 +110,73 @@ switch ($accion) {
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
     case 11:
-        $consulta = "INSERT INTO `requisicionesligadas` (`requisicionesLigada_id`, `requisicionesLigada_presionID`, `requisicionesLigadas_requisicionID`, `requisicionesLigadas_hojaID`) VALUES (NULL, '$idPresion', '$idReq', '$idHoja')";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'LIGADA', `hojarequisicion_comentariosValidacion` = 'OK', `hojarequisicion_comentariosValidacion`= '$total' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
+        try {
+            // Inicia transacción
+            $conexion->beginTransaction();
+
+            // Validar si ya existe una relación igual
+            $consultaExiste = "SELECT COUNT(*) AS total FROM requisicionesligadas 
+        WHERE requisicionesLigada_presionID = :idPresion 
+        AND requisicionesLigadas_requisicionID = :idReq 
+        AND requisicionesLigadas_hojaID = :idHoja";
+
+            $stmtExiste = $conexion->prepare($consultaExiste);
+            $stmtExiste->bindParam(':idPresion', $idPresion, PDO::PARAM_INT);
+            $stmtExiste->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+            $stmtExiste->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmtExiste->execute();
+
+            $resultado = $stmtExiste->fetch(PDO::FETCH_ASSOC);
+            $registroExiste = $resultado['total'] > 0;
+
+            // Si no existe, insertamos
+            if (!$registroExiste) {
+                $consultaInsert = "INSERT INTO requisicionesligadas (
+            requisicionesLigada_presionID, 
+            requisicionesLigadas_requisicionID, 
+            requisicionesLigadas_hojaID
+        ) VALUES (:idPresion, :idReq, :idHoja)";
+
+                $stmtInsert = $conexion->prepare($consultaInsert);
+                $stmtInsert->bindParam(':idPresion', $idPresion, PDO::PARAM_INT);
+                $stmtInsert->bindParam(':idReq', $idReq, PDO::PARAM_INT);
+                $stmtInsert->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+                $stmtInsert->execute();
+            }
+
+            // En ambos casos, actualizamos hojaRequisicion
+            $consultaUpdate = "UPDATE hojasrequisicion SET 
+        hojaRequisicion_estatus = 'LIGADA',
+        hojarequisicion_comentariosValidacion = :comentario,
+        hojarequisicion_adeudo = :adeudo 
+        WHERE hojaRequisicion_id = :idHoja";
+
+            $stmtUpdate = $conexion->prepare($consultaUpdate);
+            $comentario = 'OK';
+            $stmtUpdate->bindParam(':comentario', $comentario, PDO::PARAM_STR);
+            $stmtUpdate->bindParam(':adeudo', $total, PDO::PARAM_STR); // asegúrate que $total es numérico
+            $stmtUpdate->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmtUpdate->execute();
+
+            // Confirmar si todo salió bien
+            $conexion->commit();
+
+            $data = [
+                'status' => 'success',
+                'mensaje' => $registroExiste
+                    ? 'Registro ya existía, se actualizó hojaRequisicion'
+                    : 'Registro insertado y hojaRequisicion actualizada'
+            ];
+        } catch (Exception $e) {
+            // Revertir cambios si algo falla
+            $conexion->rollBack();
+
+            $data = [
+                'status' => 'error',
+                'mensaje' => 'Ocurrió un error durante la operación',
+                'error' => $e->getMessage()
+            ];
+        }
         break;
     case 12:
         $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'PENDIENTE', `hojarequisicion_comentariosValidacion` = '$comentarios' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idHoja'";
@@ -123,34 +184,77 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 13:
-        echo $nuevaFormaPago . " ". $idHoja . " " . $iva;
-        // Primera consulta
-        $consulta1 = "UPDATE `hojasrequisicion` SET `hojaRequisicion_formaPago` = :nuevaFormaPago WHERE `hojasrequisicion`.`hojaRequisicion_id` = :idHoja";
-        $resultado1 = $conexion->prepare($consulta1);
-        $resultado1->bindValue(':nuevaFormaPago', $nuevaFormaPago, PDO::PARAM_STR);
-        $resultado1->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
-        $resultado1->execute();
+        try {
+            // Iniciar transacción
+            $conexion->beginTransaction();
 
-        // Segunda consulta
-        $consulta2 = "UPDATE `itemrequisicion` SET `itemRequisicion_iva` = ((`itemRequisicion_cantidad` * `itemRequisicion_precio`) * :iva), `itemRequisicion_retenciones` = 0, `itemRequisicion_banderaFlete` = 0, `itemRequisicion_banderaFisica` = 0, `itemRequisicion_banderaResico` = 0, `itemRequisicion_banderaISR` = 0 WHERE `itemrequisicion`.`itemRequisicion_idHoja` = :idHoja";
-        $resultado2 = $conexion->prepare($consulta2);
-        $resultado2->bindValue(':iva', (float)$iva, PDO::PARAM_STR);
-        $resultado2->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
-        $resultado2->execute();
+            // Debug opcional
+            // echo "$nuevaFormaPago $idHoja $iva";
 
-        //Tercera Consulta
-        $consulta3 = "SELECT SUM((`itemRequisicion_cantidad` * `itemRequisicion_precio`)+`itemRequisicion_iva`-`itemRequisicion_retenciones`) AS `TotalItem` FROM `itemrequisicion` WHERE `itemRequisicion_idHoja` = :idHoja";
-        $resultado3 = $conexion->prepare($consulta3);
-        $resultado3->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
-        $resultado3->execute();
-        $suma = $resultado3->fetchAll(PDO::FETCH_ASSOC);
-        $totalCambio = $suma[0]['TotalItem'];
-        $consulta3 = "UPDATE `hojasrequisicion` SET `hojaRequisicion_total`='$totalCambio' WHERE `hojaRequisicion_id` = :idHoja";
-        $resultado3 = $conexion->prepare($consulta3);
-        $resultado3->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
-        $resultado3->execute();
+            // 1️⃣ Actualizar forma de pago
+            $consulta1 = "UPDATE hojasrequisicion 
+                  SET hojaRequisicion_formaPago = :nuevaFormaPago 
+                  WHERE hojaRequisicion_id = :idHoja";
+            $stmt1 = $conexion->prepare($consulta1);
+            $stmt1->bindParam(':nuevaFormaPago', $nuevaFormaPago, PDO::PARAM_STR);
+            $stmt1->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmt1->execute();
 
-        $data = 0;
+            // 2️⃣ Actualizar IVA y banderas en items
+            $consulta2 = "UPDATE itemrequisicion 
+                  SET itemRequisicion_iva = ((itemRequisicion_cantidad * itemRequisicion_precio) * :iva),
+                      itemRequisicion_retenciones = 0,
+                      itemRequisicion_banderaFlete = 0,
+                      itemRequisicion_banderaFisica = 0,
+                      itemRequisicion_banderaResico = 0,
+                      itemRequisicion_banderaISR = 0
+                  WHERE itemRequisicion_idHoja = :idHoja";
+            $stmt2 = $conexion->prepare($consulta2);
+            $stmt2->bindValue(':iva', (float)$iva, PDO::PARAM_STR);
+            $stmt2->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmt2->execute();
+
+            // 3️⃣ Calcular total actualizado
+            $consulta3 = "SELECT SUM(
+                        (itemRequisicion_cantidad * itemRequisicion_precio) 
+                        + itemRequisicion_iva 
+                        - itemRequisicion_retenciones
+                    ) AS TotalItem 
+                  FROM itemrequisicion 
+                  WHERE itemRequisicion_idHoja = :idHoja";
+            $stmt3 = $conexion->prepare($consulta3);
+            $stmt3->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmt3->execute();
+            $resultado = $stmt3->fetch(PDO::FETCH_ASSOC);
+            $totalCambio = $resultado['TotalItem'] ?? 0;
+
+            // 4️⃣ Actualizar total en hojaRequisicion
+            $consulta4 = "UPDATE hojasrequisicion 
+                  SET hojaRequisicion_total = :total 
+                  WHERE hojaRequisicion_id = :idHoja";
+            $stmt4 = $conexion->prepare($consulta4);
+            $stmt4->bindValue(':total', $totalCambio, PDO::PARAM_STR);
+            $stmt4->bindParam(':idHoja', $idHoja, PDO::PARAM_INT);
+            $stmt4->execute();
+
+            // Confirmar si todo fue exitoso
+            $conexion->commit();
+
+            $data = [
+                'status' => 'success',
+                'mensaje' => 'Forma de pago y totales actualizados correctamente',
+                'total_actualizado' => $totalCambio
+            ];
+        } catch (Exception $e) {
+            // Revertir cambios si ocurre un error
+            $conexion->rollBack();
+
+            $data = [
+                'status' => 'error',
+                'mensaje' => 'Error al actualizar los datos',
+                'error' => $e->getMessage()
+            ];
+        }
         break;
     case 14:
         $consulta = "SELECT * FROM `provedores`;";
@@ -162,12 +266,12 @@ switch ($accion) {
         $consulta = "UPDATE `hojasrequisicion` 
                         SET `hojaRequisicion_proveedor` = :id_prov 
                         WHERE `hojaRequisicion_id` = :id_hoja";
-    
+
         $resultado = $conexion->prepare($consulta);
-    
+
         $resultado->bindParam(':id_prov', $id_Prov, PDO::PARAM_INT);
         $resultado->bindParam(':id_hoja', $idHoja, PDO::PARAM_INT);
-    
+
         $resultado->execute();
         $data = 1;
         break;
