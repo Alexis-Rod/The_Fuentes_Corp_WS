@@ -125,11 +125,9 @@ include_once 'validarSesion.php';
                                     <th scope="col" class="text-center align-middle">CONCEPTO</th>
                                     <th scope="col" class="text-center align-middle">ADEUDO</th>
                                     <th scope="col" class="text-center align-middle">NETO A PAGAR</th>
-                                    <th scope="col" class="text-center align-middle">OBSERVACIONES</th>
                                     <th scope="col" class="text-center align-middle">FORMA DE PAGO</th>
                                     <th scope="col" class="text-center align-middle">FECHA DE PAGO</th>
                                     <th scope="col" class="text-center align-middle">BANCO DE PAGO</th>
-                                    <th scope="col" class="text-center align-middle">ESTATUS</th>
                                     <th scope="col" class="text-center align-middle">APLICAR ACCIONES</th>
                                     <th class="text-center align-middle"></th>
                                 </tr>
@@ -142,7 +140,6 @@ include_once 'validarSesion.php';
                                     <td :class="presion.atrClass" :style="presion.strStyle">{{presion.concepto}}</td>
                                     <td class="text-center align-middle fs-6">{{formatearMoneda(presion.total, true)}}</td>
                                     <td class="text-center align-middle fs-6">{{formatearMoneda(presion.adeudo, true)}}</td>
-                                    <td :class="presion.atrClass" :style="presion.strStyle">{{presion.Observaciones}}</td>
                                     <td class="text-center align-middle fs-6">{{presion.formaPago}}</td>
                                     <td class="text-center align-middle fs-6">
                                         <input type="date" class="form-control" id="FechaPago" v-model="presion.Fecha">
@@ -150,32 +147,8 @@ include_once 'validarSesion.php';
                                     <td class="text-center align-middle fs-6">
                                         <input type="text" class="form-control" id="BancoPago" v-model="presion.Banco" placeholder="Ingresa Banco">
                                     </td>
-                                    <td class="text-center align-middle fs-6">
-                                        <span class="badge bg-warning" v-if="presion.HojaEstatus == 'LIGADA'">PENDIENTE</span>
-                                        <span class="badge bg-success" v-if="presion.HojaEstatus == 'AUTORIZADA'">AUTORIZADO</span>
-                                        <span class="badge bg-success" v-if="presion.HojaEstatus == 'PAGADA'">PAGADA</span>
-                                    </td>
                                     <td class="text-center align-middle inline-block fs-6">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'AUTORIZADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="pagarItem(presion.id_hoja, presion.Fecha, presion.Banco)">
-                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
-                                                <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
-                                            </button>
-                                        </div>
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'LIGADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="" disabled>
-                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
-                                                <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
-                                            </button>
-                                        </div>
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="presion.HojaEstatus == 'PAGADA'">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Pagar ' + presion.NumReq" @click="" disabled>
-                                                <img class="" src="images/icons/pay.svg" alt="user-icon" height="24" width="24">
-                                            </button>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
                                             <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-toggle="tooltip" :title="'Descargar ' + presion.NumReq" @click="imprimirReq(presion.NumRequi,presion.clave,presion.id_hoja)">
                                                 <img class="" src="images/icons/download.svg" alt="user-icon" height="24" width="24">
                                             </button>
@@ -201,7 +174,7 @@ include_once 'validarSesion.php';
                 <div class="row w-100 mt-0 mb-3 mx-auto" v-if="this.estatus == 'PENDIENTE'">
                     <div class="col px-0 d-flex justify-content-center">
                         <button class="btn btn-primary" @click="cerrarPresion" title="Cerrar Presion">
-                            <span class="text-center">CERRAR PRESION</span>
+                            <span class="text-center">CERRAR Y GUARDAR PRESION</span>
                         </button>
                     </div>
                 </div>

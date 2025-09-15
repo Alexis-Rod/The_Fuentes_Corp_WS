@@ -178,6 +178,8 @@ const appRequesition = new Vue({
               });
         },
         imprimirReq: function(NumReq,clave,id_hoja){
+            console.log("Obras: ");
+            console.log(this.obraActiva[0]);
              axios.post(url, { accion: 8, idHoja: id_hoja}).then(response => {
                  console.log(response.data);
                   generarPDFRequisicion(
@@ -186,7 +188,7 @@ const appRequesition = new Vue({
                     response.data[0]['infoHoja'], // Información de la Hoja
                     this.NameUser, // Nombre del usuario
                     response.data[0]['items'], // Items de la Hoja
-                    this.obras[0] // Información de la obra
+                    this.obraActiva[0] // Información de la obra
                 ); 
              });
         },
@@ -244,7 +246,7 @@ const appRequesition = new Vue({
             });
         },
         closePresion: function (idPresion) {
-            axios.post(url, { accion: 7, idPresion: idPresion}).then(response => {
+            axios.post(url, { accion: 7, idPresion: idPresion, Presiones: JSON.stringify(this.presiones)}).then(response => {
                 console.log(response.data);
             });
         },

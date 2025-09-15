@@ -894,6 +894,8 @@ const appRequesition = new Vue({
         imprimirReq: function () {
             // Llama al método generarPDFRequisicion para generar el PDF de la Hoja
             // Pasando como parámetros los datos necesarios para la generación del PDF
+            console.log("Obras: ");
+            console.log(this.obras[0]);
             generarPDFRequisicion(
                 this.Numero_Req, // Número de la requisición
                 this.clve, // Clave de la requisición

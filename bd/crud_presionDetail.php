@@ -8,6 +8,7 @@ include_once 'conexion.php';
 $objeto = new \Google\Cloud\Samples\CloudSQL\MySQL\Conexion();
 $conexion = $objeto->Conectar();
 
+
 //Conexion con axios, por parametro POST
 $_POST = json_decode(file_get_contents("php://input"), true);
 
@@ -27,6 +28,7 @@ $DatosExport = json_decode((isset($_POST['datos'])) ? $_POST['datos'] : '', true
 $NombrePress = (isset($_POST['namePres'])) ? $_POST['namePres'] : '';
 $total = (isset($_POST['total'])) ? $_POST['total'] : '';
 $adeudo = (isset($_POST['adeudo'])) ? $_POST['adeudo'] : '';
+$Presiones = json_decode((isset($_POST['Presiones'])) ? $_POST['Presiones'] : '', true);
 $output = "";
 $textExpecial = "";
 
@@ -65,15 +67,17 @@ switch ($accion) {
             $dataitms = $resultado->fetchAll(PDO::FETCH_ASSOC);
             array_push($data, array(
                 'id_hoja' => $hoja['hojaRequisicion_id'],
-                'formaPago' => $hoja['hojaRequisicion_formaPago'],
-                'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'] . " " . $hoja['requisicion_Nombre'],
+                'formaPago' => obtenerAbreviatura($hoja['hojaRequisicion_formaPago']),
+                'NumReq' => obtenerNumeracionFinal($hoja['requisicion_Numero']) . " Hoja Numero: " . $hoja['hojaRequisicion_numero'],
                 'clave' => $hoja['requisicion_Clave'],
                 'concepto' => empty($hoja['hojarequisicion_conceptoUnico']) ? convertToString($dataitms) : $hoja['hojarequisicion_conceptoUnico'],
                 'proveedor' => $hoja['proveedor_nombre'],
                 'total' => $hoja['hojaRequisicion_total'],
                 'Observaciones' => $hoja['hojaRequisicion_observaciones'],
                 "Banco" => $hoja['hojasRequisicion_bancoPago'],
-                "Fecha" => $hoja['hojaRequisicion_fechaPago'],
+                "Fecha" => empty($hoja['hojaRequisicion_fechaPago'])
+                    ? date('Y-m-d')
+                    : $hoja['hojaRequisicion_fechaPago'],
                 "HojaEstatus" => $hoja['hojaRequisicion_estatus'],
                 "PresionEstatus" => $hoja['presiones_estatus'],
                 "adeudo" => $hoja['hojarequisicion_adeudo'],
@@ -82,10 +86,11 @@ switch ($accion) {
                 "atrClass" => "text-left align-middle inline-block text-truncate fs-6",
                 "strStyle" => "max-width: 100px;"
             ));
-        };
+        }
+        ;
         break;
     case 4:
-        $consulta = "SELECT `obras_nombre` FROM `obras` WHERE `obras_id`= '$obra'";
+        $consulta = "SELECT `obras_nombre`,`ciudadesObras_nombre` FROM `obras` JOIN estadosobra ON estadosobra.ciudadesObras_id = obras.obras_cuidad WHERE `obras_id` = '$obra'";
         $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -128,7 +133,8 @@ switch ($accion) {
             foreach ($DatosExport as $datosExcel) {
                 if ($indexAct == 0) {
                     $textExpecial .= '<tr bgcolor="Silver"><th colspan="11">' . putNameSection($datosExcel['clave']) . "</th></tr>";
-                };
+                }
+                ;
                 if ($datosExcel['formaPago'] == 'Efectivo') {
                     $textExpecial .= '
                          <tr style="color: red;">
@@ -165,7 +171,8 @@ switch ($accion) {
                 if ($indexNext < count($DatosExport)) {
                     if ($DatosExport[$indexAct]['clave'] != $DatosExport[$indexNext]['clave']) {
                         $textExpecial .= '<tr bgcolor="Silver"><th colspan="11">' . putNameSection($DatosExport[$indexNext]['clave']) . "</th></tr>";
-                    };
+                    }
+                    ;
                 }
                 $indexAct++;
                 $indexNext++;
@@ -187,9 +194,95 @@ switch ($accion) {
         }
         break;
     case 7:
-        $consulta = "UPDATE `presiones` SET `presiones_estatus` = 'AUTORIZADO' WHERE `presiones`.`presiones_id` = '$idPresion'";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
+        $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conexion->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+        try {
+            $conexion->beginTransaction();
+
+            // 1) Prepara el UPDATE una sola vez (mejor rendimiento que prepararlo en cada iteración)
+            $sqlHoja = "
+                UPDATE hojasrequisicion
+                SET hojaRequisicion_fechaPago   = :fechaPago,
+                    hojasRequisicion_bancoPago  = :bancoPago,
+                    hojaRequisicion_estatus     = :estatus
+                WHERE hojaRequisicion_id          = :id
+            ";
+            $stmtHoja = $conexion->prepare($sqlHoja);
+
+            $autorizadas = 0;
+
+            foreach ($Presiones as $presion) {
+                // Valida estructura mínima
+                if (
+                    !isset($presion['PresionEstatus'], $presion['id_hoja']) ||
+                    $presion['HojaEstatus'] !== 'AUTORIZADA'
+                ) {
+                    continue;
+                }
+
+                // Normaliza nulos / vacíos: si vienen "" o null, guarda NULL en DB
+                $fecha = isset($presion['Fecha']) && $presion['Fecha'] !== '' ? $presion['Fecha'] : null;
+                $banco = isset($presion['Banco']) && $presion['Banco'] !== '' ? $presion['Banco'] : null;
+                $idHoja = (int) $presion['id_hoja'];
+                
+
+                // Ejecuta con tipos adecuados; PDO maneja NULL si pasas null y tipo PARAM_NULL
+                if ($fecha === null) {
+                    $stmtHoja->bindValue(':fechaPago', null, PDO::PARAM_NULL);
+                } else {
+                    $stmtHoja->bindValue(':fechaPago', $fecha, PDO::PARAM_STR);
+                }
+
+                if ($banco === null) {
+                    $stmtHoja->bindValue(':bancoPago', null, PDO::PARAM_NULL);
+                } else {
+                    $stmtHoja->bindValue(':bancoPago', $banco, PDO::PARAM_STR);
+                }
+
+                $stmtHoja->bindValue(':estatus', 'PAGADA', PDO::PARAM_STR);
+                $stmtHoja->bindValue(':id', $idHoja, PDO::PARAM_INT);
+
+                $stmtHoja->execute();
+                $autorizadas += $stmtHoja->rowCount(); // opcional: cuántas filas realmente cambió
+            }
+
+            // 2) Actualiza la tabla presiones de forma SEGURA (sin interpolar variables)
+            //    Si $idPresion no está definido, lanza excepción clara.
+            if (!isset($idPresion)) {
+                throw new RuntimeException('Falta la variable $idPresion para actualizar presiones.');
+            }
+
+            $sqlPresion = "
+                UPDATE presiones
+                SET presiones_estatus = 'AUTORIZADO'
+                WHERE presiones_id      = :idPresion
+            ";
+            $stmtPresion = $conexion->prepare($sqlPresion);
+            $stmtPresion->bindValue(':idPresion', (int) $idPresion, PDO::PARAM_INT);
+            $stmtPresion->execute();
+
+            $conexion->commit();
+
+            // Nota: usabas $date; por consistencia lo dejo en $data
+            $data = [
+                'status' => 'success',
+                'mensaje' => 'Se actualizó y cerró la presión',
+                'detalle' => [
+                    'hojas_actualizadas' => $autorizadas,
+                    'presion_id' => (int) $idPresion
+                ]
+            ];
+        } catch (Throwable $e) {
+            if ($conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
+            $data = [
+                'status' => 'error',
+                'mensaje' => 'Error al actualizar',
+                'error' => $e->getMessage()
+            ];
+        }
         break;
     case 8:
         $data = array();
@@ -212,6 +305,9 @@ switch ($accion) {
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
+    case 10:
+        $data = "";
+        break;
 }
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -228,7 +324,8 @@ function convertToString($Arr)
             $result = $result . " /// ";
         }
         $indes++;
-    };
+    }
+    ;
     return $result;
 }
 
@@ -255,4 +352,34 @@ function putNameSection($clave)
         case 'MO':
             return 'MANO DE OBRA';
     }
+}
+
+function obtenerAbreviatura($metodoPago)
+{
+    $mapa = [
+        "Efectivo" => "Efec",
+        "Transferencia" => "Trans"
+    ];
+
+    return $mapa[$metodoPago] ?? "";
+}
+
+function obtenerNumeracionFinal($cadena)
+{
+    // Explota la cadena por el separador "-"
+    $partes = explode('-', $cadena);
+
+    // Verifica que haya al menos una parte
+    if (count($partes) > 0) {
+        // Obtiene la última parte
+        $numero = end($partes);
+
+        // Verifica que sea un número
+        if (is_numeric($numero)) {
+            return $numero;
+        }
+    }
+
+    // Retorna null si no se encontró un número válido
+    return null;
 }
