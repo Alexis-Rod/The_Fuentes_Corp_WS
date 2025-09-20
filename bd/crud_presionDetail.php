@@ -68,7 +68,7 @@ switch ($accion) {
             array_push($data, array(
                 'id_hoja' => $hoja['hojaRequisicion_id'],
                 'formaPago' => obtenerAbreviatura($hoja['hojaRequisicion_formaPago']),
-                'NumReq' => obtenerNumeracionFinal($hoja['requisicion_Numero']) . " Hoja Numero: " . $hoja['hojaRequisicion_numero'],
+                'NumReq' => $hoja['requisicion_Numero'] . " Hoja Numero: " . $hoja['hojaRequisicion_numero'],
                 'clave' => $hoja['requisicion_Clave'],
                 'concepto' => empty($hoja['hojarequisicion_conceptoUnico']) ? convertToString($dataitms) : $hoja['hojarequisicion_conceptoUnico'],
                 'proveedor' => $hoja['proveedor_nombre'],
@@ -135,7 +135,7 @@ switch ($accion) {
                     $textExpecial .= '<tr bgcolor="Silver"><th colspan="11">' . putNameSection($datosExcel['clave']) . "</th></tr>";
                 }
                 ;
-                if ($datosExcel['formaPago'] == 'Efectivo') {
+                if ($datosExcel['formaPago'] == 'Efec') {
                     $textExpecial .= '
                          <tr style="color: red;">
                            <th>' . $datosExcel['clave'] . '</th>
