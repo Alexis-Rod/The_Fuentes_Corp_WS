@@ -146,7 +146,7 @@ switch ($accion) {
                             <th>  </th>
                             <th>' . formatearMoneda($datosExcel['adeudo']) . '</th>
                             <th>' . $datosExcel['Observaciones'] . '</th>
-                            <th>' . $datosExcel['formaPago'] . '</th>
+                            <th> </th>
                             <th>' . $datosExcel['Fecha'] . '</th>
                             <th>' . $datosExcel['Banco'] . '</th>
                         </tr>
