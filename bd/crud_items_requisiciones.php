@@ -87,12 +87,7 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 7:
-        $consulta = "UPDATE `hojasrequisicion` SET `hojaRequisicion_estatus` = 'REVISION', `hojaRequisicion_observaciones` = '$comentarios' WHERE `hojasrequisicion`.`hojaRequisicion_id` = '$idReq'";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
-        break;
-    case 8:
-       $consulta =  "
+        $consulta =  "
             UPDATE hojasrequisicion
             SET hojaRequisicion_estatus       = :estatus,
                 hojaRequisicion_observaciones = :obs
@@ -102,6 +97,12 @@ switch ($accion) {
         $resultado->bindValue(':estatus', 'REVISION', PDO::PARAM_STR);
         $resultado->bindValue(':obs', $comentarios, PDO::PARAM_STR);
         $resultado->bindValue(':id', $idReq, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        break;
+    case 8:
+       $ $consulta = "SELECT `obras_nombre`,`ciudadesObras_nombre` FROM `obras` JOIN estadosobra ON estadosobra.ciudadesObras_id = obras.obras_cuidad WHERE `obras_id` = '$obra'";
+        $resultado = $conexion->prepare($consulta);
         $resultado->execute();
         $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
         break;
