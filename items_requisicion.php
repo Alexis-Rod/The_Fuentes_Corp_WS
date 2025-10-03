@@ -251,7 +251,12 @@ include_once 'validarSesion.php';
                                     <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_precio,true)}}</td>
                                     <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_iva,true)}}</td>
                                     <td class="text-center align-middle">{{formatearMoneda(item.itemRequisicion_retenciones,true)}}</td>
-                                    <td class="text-center align-middle">{{formatearMoneda((((item.itemRequisicion_cantidad * item.itemRequisicion_precio) + parseFloat(item.itemRequisicion_iva)) - item.itemRequisicion_retenciones).toFixed(2),true)}}</td>
+                                    <td class="text-center align-middle">{{ formatearMoneda((
+                                        Number(item.itemRequisicion_cantidad ?? 0) * Number(item.itemRequisicion_precio ?? 0)
+                                        + Number(item.itemRequisicion_iva ?? 0)
+                                        - Number(item.itemRequisicion_retenciones ?? 0)
+                                        ).toFixed(2), true) }}
+                                    </td>
                                     <!--<td><span class="badge bg-danger">Pendiente</span></td>-->
                                     <td class="align-middle">
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example" v-if="hojas[0].hojaRequisicion_estatus == 'NUEVO' || hojas[0].hojaRequisicion_estatus == 'PENDIENTE' || hojas[0].hojaRequisicion_estatus == 'RECHAZADA'|| hojas[0].hojaRequisicion_estatus == 'RECHAZADA'">
@@ -273,7 +278,7 @@ include_once 'validarSesion.php';
                             <tfoot class="table-dark">
                                 <tr>
                                     <td colspan="6" class="text-end fw-bold">Total:</td>
-                                    <td class="fw-bold text-center">{{formatearMoneda((hojas[0].hojaRequisicion_total).toFixed(2),true)}}</td>
+                                    <td class="fw-bold text-center">{{ formatearMoneda(Number(hojas[0]?.hojaRequisicion_total ?? 0).toFixed(2), true) }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>

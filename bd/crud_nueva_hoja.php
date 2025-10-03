@@ -31,37 +31,157 @@ $conceptoUnico = (isset($_POST['conceptoUnico'])) ? $_POST['conceptoUnico'] : ''
 
 switch ($accion) {
     case 1:
-        /*  $consulta = "INSERT INTO `logs` (`log_id`, `log_accion`, `log_fechaAccion`, `log_usuario`, `log_horaAccion`, `log_moduloAccion`) VALUES (NULL, 'Agregar', '$fechaSolicitud', 0, '$time', 'Requesiciones')";
+         try {
+        $conexion->beginTransaction();
+
+        // 1) Lee y bloquea la fila para calcular $hoja sin condiciones de carrera
+        $consulta = "SELECT `requisicion_Hojas` 
+                    FROM `requisiciones` 
+                    WHERE `requisicion_id` = :id_req
+                    FOR UPDATE";
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute(); */
-        $consulta = "SELECT `requisicion_Hojas` FROM `requisiciones` WHERE `requisicion_id` = " . $id_Req;
-        $resultado = $conexion->prepare($consulta);
+        $resultado->bindValue(':id_req', $id_Req, PDO::PARAM_INT);
         $resultado->execute();
-        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        $hoja = $data[0]['requisicion_Hojas'];
-        $hoja++;
-        $consulta = "INSERT INTO `hojasrequisicion` (`hojaRequisicion_id`, `hojaRequisicion_idReq`, `hojaRequisicion_numero`, `hojaRequisicion_FechaSolicitud`, `hojaRequisicion_empresa`, `hojaRequisicion_proveedor`, `hojaRequisicion_observaciones`, `hojarequisicion_comentariosValidacion`, `hojarequisicion_comentariosAutorizacion`, `hojarequisicion_conceptoUnico`, `hojaRequisicion_formaPago`, `hojaRequisicion_fechaPago`, `hojasRequisicion_bancoPago`, `hojaRequisicion_total`, `hojarequisicion_adeudo`, `hojaRequisicion_estatus`) VALUES ('$id_hoja', '$id_Req', '$hoja', '$fechaSolicitud', '$clv_Emisor', '$clv_Prov', '$observaciones', NULL, NULL, '$conceptoUnico', '$formaPago',NULL, NULL, '$totalPagar', '$totalPagar','NUEVO')";
+
+        $row = $resultado->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            throw new RuntimeException('No existe la requisición con id ' . $id_Req);
+        }
+
+        $hoja = (int)$row['requisicion_Hojas'];
+        $hoja++; // siguiente número de hoja
+
+        // 2) Inserta la hoja
+        $consulta = "INSERT INTO `hojasrequisicion` (
+            `hojaRequisicion_id`,
+            `hojaRequisicion_idReq`,
+            `hojaRequisicion_numero`,
+            `hojaRequisicion_FechaSolicitud`,
+            `hojaRequisicion_empresa`,
+            `hojaRequisicion_proveedor`,
+            `hojaRequisicion_observaciones`,
+            `hojarequisicion_comentariosValidacion`,
+            `hojarequisicion_comentariosAutorizacion`,
+            `hojarequisicion_conceptoUnico`,
+            `hojaRequisicion_formaPago`,
+            `hojaRequisicion_fechaPago`,
+            `hojasRequisicion_bancoPago`,
+            `hojaRequisicion_total`,
+            `hojarequisicion_adeudo`,
+            `hojaRequisicion_estatus`
+        ) VALUES (
+            :id_hoja,
+            :id_req,
+            :numero,
+            :fecha_solicitud,
+            :empresa,
+            :proveedor,
+            :observaciones,
+            :coment_val,
+            :coment_aut,
+            :concepto_unico,
+            :forma_pago,
+            :fecha_pago,
+            :banco_pago,
+            :total,
+            :adeudo,
+            :estatus
+        )";
+
         $resultado = $conexion->prepare($consulta);
+
+        // OJO: aquí había un bug: usabas $resultado = bindValue(...). Debe ser ->bindValue
+        $resultado->bindValue(':id_hoja',        $id_hoja, PDO::PARAM_INT);
+        $resultado->bindValue(':id_req',         $id_Req,  PDO::PARAM_INT);
+        $resultado->bindValue(':numero',         $hoja,    PDO::PARAM_INT);
+
+        // fecha: si viene vacía, manda NULL real
+        if (!isset($fechaSolicitud) || $fechaSolicitud === '' || $fechaSolicitud === null) {
+            $resultado->bindValue(':fecha_solicitud', null, PDO::PARAM_NULL);
+        } else {
+            $resultado->bindValue(':fecha_solicitud', $fechaSolicitud, PDO::PARAM_STR);
+        }
+
+        $resultado->bindValue(':empresa',        $clv_Emisor, PDO::PARAM_INT);
+        $resultado->bindValue(':proveedor',      $clv_Prov,   PDO::PARAM_INT);
+        $resultado->bindValue(':observaciones',  $observaciones ?? '', PDO::PARAM_STR);
+
+        // estos dos los estás usando como NULL explícito
+        $resultado->bindValue(':coment_val',     $comentariosValidacion,   PDO::PARAM_NULL);
+        $resultado->bindValue(':coment_aut',     $comentariosAutorizacion, PDO::PARAM_NULL);
+
+        $resultado->bindValue(':concepto_unico', $conceptoUnico ?? '', PDO::PARAM_STR);
+        $resultado->bindValue(':forma_pago',     $formaPago, PDO::PARAM_STR);
+
+        // también NULL reales
+        $resultado->bindValue(':fecha_pago',     $fechaPago,  PDO::PARAM_NULL);
+        $resultado->bindValue(':banco_pago',     $bancoPago,  PDO::PARAM_NULL);
+
+        // DECIMAL como string para evitar líos de locale/comas
+        $resultado->bindValue(':total',          $totalPagar, PDO::PARAM_STR);
+        $resultado->bindValue(':adeudo',         $totalPagar, PDO::PARAM_STR);
+
+        $resultado->bindValue(':estatus',        'NUEVO', PDO::PARAM_STR);
+
         $resultado->execute();
-        $consulta = "UPDATE `requisiciones` SET `requisicion_Hojas` = '$hoja' WHERE `requisiciones`.`requisicion_id` =" . $id_Req;
+
+        // 3) Actualiza el contador de hojas con parámetros (sin concatenar)
+        $consulta = "UPDATE `requisiciones` 
+                    SET `requisicion_Hojas` = :hoja 
+                    WHERE `requisiciones`.`requisicion_id` = :id_req";
         $resultado = $conexion->prepare($consulta);
+        $resultado->bindValue(':hoja',   $hoja,   PDO::PARAM_INT);
+        $resultado->bindValue(':id_req', $id_Req, PDO::PARAM_INT);
         $resultado->execute();
+
+        // 4) Inserta los ítems. Reusa el statement para rendimiento.
+        $consulta = "INSERT INTO `itemrequisicion` (
+            `itemRequisicion_id`,
+            `itemRequisicion_idHoja`,
+            `itemRequisicion_unidad`,
+            `itemRequisicion_producto`,
+            `itemRequisicion_iva`,
+            `itemRequisicion_retenciones`,
+            `itemRequisicion_banderaFlete`,
+            `itemRequisicion_banderaFisica`,
+            `itemRequisicion_banderaResico`,
+            `itemRequisicion_banderaISR`,
+            `itemRequisicion_precio`,
+            `itemRequisicion_cantidad`,
+            `itemRequisicion_parcialidad`,
+            `itemRequisicion_estatus`
+        ) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'N')";
+        $stmtItem = $conexion->prepare($consulta);
+
         foreach ($datos as $item) {
-            $Unidad = $item->Unidad;
-            $Producto =  $item->Nombre;
-            $Precio = (float)$item->UnitedPrice;
-            $IVA = $item->IVA;
-            $Ret = $item->Retenciones;
-            $cantidad = $item->Cantidad;
-            $banderaFlete = (int)$item->bandFlete;
+            $Unidad        = $item->Unidad;
+            $Producto      = $item->Nombre;
+            $Precio        = (float)$item->UnitedPrice;
+            $IVA           = $item->IVA;
+            $Ret           = $item->Retenciones;
+            $cantidad      = $item->Cantidad;
+            $banderaFlete  = (int)$item->bandFlete;
             $banderaFisica = (int)$item->bandFisico;
             $banderaResico = (int)$item->bandResico;
-            $banderaISR = (int)$item->bandISR;
-            $consulta = "INSERT INTO `itemrequisicion` (`itemRequisicion_id`, `itemRequisicion_idHoja`, `itemRequisicion_unidad`, `itemRequisicion_producto`, `itemRequisicion_iva`, `itemRequisicion_retenciones`, `itemRequisicion_banderaFlete`, `itemRequisicion_banderaFisica`, `itemRequisicion_banderaResico`, `itemRequisicion_banderaISR`, `itemRequisicion_precio`, `itemRequisicion_cantidad`, `itemRequisicion_parcialidad`, `itemRequisicion_estatus`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'N')";
-            $resultado = $conexion->prepare($consulta);
-            $resultado->execute([$id_hoja, $Unidad, $Producto, $IVA, $Ret, $banderaFlete, $banderaFisica, $banderaResico, $banderaISR, $Precio, $cantidad]);
+            $banderaISR    = (int)$item->bandISR;
+
+            $stmtItem->execute([
+                $id_hoja, $Unidad, $Producto, $IVA, $Ret,
+                $banderaFlete, $banderaFisica, $banderaResico, $banderaISR,
+                $Precio, $cantidad
+            ]);
         }
+
+        $conexion->commit();
+
         $data = $id_hoja;
+        // break; // si esto está dentro de un switch, déjalo
+        } catch (Throwable $e) {
+            if ($conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
+            throw $e; // o maneja/loguea como prefieras
+        }
         break;
     case 2:
         $consulta = "SELECT `emisor_id`,`emisor_nombre`,`emisor_rfc`,`emisor_direccion`,`emisor_telefono`,`emisor_fax`,`emisor_zipCode` FROM `emisores`;";
