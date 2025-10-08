@@ -131,13 +131,67 @@ switch ($accion) {
         $resultado->execute();
         break;
     case 8:
-        $consulta = "UPDATE `requisiciones` SET `requisicion_Numero` = :newNumero, `requisicion_Nombre` = :newNombre WHERE `requisiciones`.`requisicion_id` = :idReq";
-        $resultado = $conexion->prepare($consulta);
-        $resultado->bindParam(':newNumero', $numReq, PDO::PARAM_STR);
-        $resultado->bindParam(':newNombre', $nombreReq, PDO::PARAM_STR);
-        $resultado->bindParam(':idReq', $idReq, PDO::PARAM_INT);
-        $resultado->execute();
-        $data = 0;
+       try {
+        // (Opcional pero recomendable) Modo excepción:
+        $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // 1) Obtener el número actual
+        $sqlGet = "SELECT `requisicion_Numero`
+                FROM `requisiciones`
+                WHERE `requisicion_id` = :idReq";
+
+        $stmtGet = $conexion->prepare($sqlGet);
+        $stmtGet->bindValue(':idReq', (int)$idReq, PDO::PARAM_INT);
+        $stmtGet->execute();
+
+        $numeroActual = $stmtGet->fetchColumn();
+
+            if ($numeroActual === false) {
+                // No existe la requisición
+                $data = [
+                    'success' => false,
+                    'message' => 'Requisición no encontrada',
+                    'idReq'   => (int)$idReq
+                ];
+                // Puedes return aquí si estás dentro de una función
+            } else {
+                // 2) Calcular el nuevo número (conservando ceros si aplica)
+                $nuevoNumero = reemplazarUltimosDigitos($numeroActual, $numReq);
+
+                // 3) Actualizar
+                $sqlUpd = "UPDATE `requisiciones`
+                        SET `requisicion_Numero` = :newNumero,
+                            `requisicion_Nombre` = :newNombre
+                        WHERE `requisicion_id` = :idReq";
+
+                $stmtUpd = $conexion->prepare($sqlUpd);
+                // Para valores calculados usa bindValue o variables previas
+                $stmtUpd->bindValue(':newNumero', $nuevoNumero, PDO::PARAM_STR);
+                $stmtUpd->bindValue(':newNombre', $nombreReq, PDO::PARAM_STR);
+                $stmtUpd->bindValue(':idReq', (int)$idReq, PDO::PARAM_INT);
+                $stmtUpd->execute();
+
+                // 4) (Opcional) Releer para confirmar (si tu UPDATE no cambia triggers, te puedes saltar esto)
+                $stmtGet->execute(); // Reutilizamos la consulta SELECT inicial
+                $numeroFinal = $stmtGet->fetchColumn();
+
+                // 5) Armar $data con información útil
+                $data = [
+                    'success'        => true,
+                    'idReq'          => (int)$idReq,
+                    'numero_anterior'=> $numeroActual,
+                    'numero_nuevo'   => $numeroFinal,
+                    'nombre_nuevo'   => $nombreReq,
+                    'rows_affected'  => $stmtUpd->rowCount(),
+                ];
+            }
+        } catch (PDOException $e) {
+            $data = [
+                'success' => false,
+                'message' => 'Error de BD: ' . $e->getMessage(),
+                'idReq'   => (int)$idReq
+            ];
+        }
         break;
     case 9:
         $consulta = "SELECT `hojaRequisicion_id` FROM `hojasrequisicion` WHERE `hojaRequisicion_idReq` = :idReq";
@@ -176,4 +230,14 @@ function convertFolio($folioInt)
     } else {
         return $folioInt;
     }
+}
+
+function reemplazarUltimosDigitos($cadenaOriginal, $nuevoNumero) {
+    // Aseguramos que el nuevo número sea string
+    $nuevoNumero = (string)$nuevoNumero;
+
+    // Usamos una expresión regular para reemplazar solo los dígitos al final
+    $nuevaCadena = preg_replace('/\d+$/', $nuevoNumero, $cadenaOriginal);
+
+    return $nuevaCadena;
 }

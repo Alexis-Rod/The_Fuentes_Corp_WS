@@ -269,10 +269,12 @@ const appRequesition = new Vue({
         },
         editRequisicion: function (index) {
             this.requisiciones[index]['requisicion_EditShow'] = true;
+            this.requisiciones[index]['requisicion_Numero'] = this.ultimosDigitos(this.requisiciones[index]['requisicion_Numero']);
         },
         saveEditrequisicion: function (index, idReq, numeroReq, nombreReq) {
             axios.post(url, { accion: 8, idReq: idReq, numeroReq: numeroReq, nombreReq: nombreReq }).then(response => {
                 this.requisiciones[index]['requisicion_EditShow'] = false;
+                 this.requisiciones[index]['requisicion_Numero'] = response.data['numero_nuevo'];
                 console.log(response.data);
             }).catch(error => {
                 this.requisiciones[index]['requisicion_EditShow'] = false;
@@ -357,6 +359,12 @@ const appRequesition = new Vue({
         },
         irMenuCatalago: function(){
             window.location.href = url2 + "/menu_catalago.php";
+        },
+        ultimosDigitos: function(Folio){
+            const partes = Folio.split('-');
+            const ultimaParte = partes[partes.length - 1];
+            const numeros = ultimaParte.match(/\d+$/);
+            return numeros ? numeros[0] : null;
         }
     },
     mounted: async function () {
