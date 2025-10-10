@@ -230,14 +230,46 @@ include_once 'validarSesion.php';
                                     <th scope="col">IVA</th>
                                     <th scope="col">Retenciones</th>
                                     <th scope="col">Total</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody class="table-light" id="Tabla_Items">
+                                <tr class="my-3" v-for="(item,indice) of Items">
+                                    <th scope="row" class="py-3 celda_Item text-center align-middle">
+                                        {{item.Lote}}
+                                    </th>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        {{ item.Unidad }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-break" style="max-width: 200px">
+                                       {{ item.Nombre }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        {{ item.Cantidad }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        {{ formatearMoneda(item.UnitedPrice) }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        + {{ formatearMoneda(item.IVA) }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                       - {{ formatearMoneda(item.Retenciones) }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        {{ formatearMoneda(item.STotal) }}
+                                    </td>
+                                    <td class="py-3 celda_Item text-center align-middle">
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar item" @click="eliminarItem(indice)">
+                                            <img class="" src="images/icons/delete.svg" alt="user-icon" height="24" width="24">
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                             <tfoot class="table-dark">
                                 <tr>
                                     <th colspan="7" class="table-active text-end">Total: </th>
-                                    <td>{{formatearMoneda(Total_Pagar_Mostrar)}}</td>
+                                    <td colspan="2">{{formatearMoneda(Total_Pagar_Mostrar)}}</td>
                                 </tr>
                             </tfoot>
                         </table>

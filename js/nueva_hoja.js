@@ -158,7 +158,6 @@ const appRequesition = new Vue({
                             <label class="text-start py-2" for="Unidad">Unidad</label>
                             <select class="form-select" aria-label="Default select example" id="Unidad">
                                 <option value="Selecciona Unidad">SELECCIONA UNIDAD</option>
-                                <option> Selecciona Clave</option>
                                 <option value="DISEÑO">DISEÑO</option>
                                 <option value="PIEZAS">PIEZAS</option>
                                 <option value="BULTOS">BULTOS</option>
@@ -358,8 +357,6 @@ const appRequesition = new Vue({
             this.SubTotal = this.SubTotal + Number.parseFloat(ItemElement['STotal']);
             this.Subtotal_Mostrar = Number.parseFloat(this.SubTotal).toFixed(2);
             this.Item_Lote++;
-            var HtmlTableRow = '<tr><th scope="row" class="py-3 celda_Item text-center align-middle">' + this.Item_Lote + '</th><td class="py-3 celda_Item text-center align-middle">' + ItemElement['Unidad'] + '</td><td class="py-3 celda_Item text-break" style="max-width: 200px">' + ItemElement['Nombre'] + '</td><td class="py-3 celda_Item text-center align-middle">' + ItemElement['Cantidad'] + '</td><td class="py-3 celda_Item text-center align-middle">' + this.formatearMoneda(Number.parseFloat(ItemElement['UnitedPrice'])) + '</td><td class="py-3 celda_Item text-center align-middle">+ ' + this.formatearMoneda(Number.parseFloat(this.IVA)) + '</td><td class="py-3 celda_Item text-center align-middle">- ' + this.formatearMoneda(Number.parseFloat(this.retenciones)) + '</td><td class="py-3 celda_Item text-center align-middle">' + this.formatearMoneda(Number.parseFloat(ItemElement['STotal'])) + '</td></tr>';
-            $('#Tabla_Items').append(HtmlTableRow);
             ItemElement['Lote'] = this.Item_Lote;
             this.Items.unshift(ItemElement);
             this.Total_Pagar = this.SubTotal;
@@ -413,7 +410,8 @@ const appRequesition = new Vue({
             dia = dia < 10 ? '0' + dia : dia;
             FechaReq = year + "-" + mes + "-" + dia;
             console.log(this.Items);
-            axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones, conceptoUnico: this.conceptoUnicoText }).then(response => {
+            axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones, conceptoUnico: this.conceptoUnicoText })
+            .then(response => {
                 this.idHoja = response.data;
                 console.log(response.data);
             }); 
@@ -482,6 +480,25 @@ const appRequesition = new Vue({
         },
         irMenuCatalago: function(){
             window.location.href = url2 + "/menu_catalago.php";
+        },
+        eliminarItem: function(indice){
+            var totalAnterior = this.Items[indice]['STotal'];
+            this.SubTotal = Number.parseFloat(this.Total_Pagar_Mostrar) - Number.parseFloat(totalAnterior)
+            this.Total_Pagar_Mostrar = (this.SubTotal).toFixed(2);
+            this.Items.splice(indice,1);
+            this.recalcularLotes();
+            if(this.Items.length == 0){
+                 $("#PagoTransfs").prop('disabled', false);
+            }
+        },
+        recalcularLotes: function(){
+            var index = 0;
+
+            for(index = 0; index < this.Items.length;index++)
+            {
+                this.Items[index]['Lote'] = String(index + 1);
+            }
+            this.Item_Lote = this.Items.length;
         }
     },
     created: function () {
