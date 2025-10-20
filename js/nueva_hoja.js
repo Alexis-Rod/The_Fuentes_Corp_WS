@@ -412,7 +412,7 @@ const appRequesition = new Vue({
             console.log(this.Items);
             axios.post(url, { accion: 1, time: this.timeNow, id_emisor: this.Emisor_Id, id_prov: this.Prov_Id, Total: this.Total_Pagar, formaPago: this.FormaPago, fechaSolicitud: FechaReq, items: JSON.stringify(this.Items), idReq: idReq, observaciones: this.observaciones, conceptoUnico: this.conceptoUnicoText })
             .then(response => {
-                this.idHoja = response.data[idReq];
+                this.idHoja = response.data;
                 console.log(response.data);
             }); 
         },
